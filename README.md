@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/hero.png" alt="Final(ish): Frame.io app for Android, video review with time-coded comments" width="100%">
+  <img src="docs/images/hero.png" alt="Final(ish): video review on Android, an unofficial Frame.io client" width="100%">
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@
 
 *Open source. Native. Unofficial Frame.io client.*
 
-**A free, open-source Frame.io app for Android: an unofficial client for [Frame.io](https://frame.io).**
+**A free, open-source, unofficial [Frame.io](https://frame.io) client for Android.**
 Review videos, leave time-coded comments, approve versions and share review links from your Android phone
 or tablet. Built with Kotlin, Jetpack Compose and Media3, designed to feel fast and look great.
 Website: [teovader.github.io/finalish](https://teovader.github.io/finalish/) ·
@@ -95,14 +95,14 @@ The full list, area by area, and what the Frame.io API doesn't allow yet: [docs/
 
 ## Download and build
 
-There are no public builds yet. Signed APKs will be attached to [Releases](https://github.com/TeoVader/finalish/releases),
-followed by Google Play. Until then, build it yourself with JDK 21 and the Android SDK:
+Download the signed APK from [Releases](https://github.com/TeoVader/finalish/releases/latest) (pre-release,
+Android 8.0 or later); Google Play will follow. Or build it yourself with JDK 21 and the Android SDK:
 
 ```bash
 ./gradlew assembleDebug        # app/build/outputs/apk/debug/
 ```
 
-To sign in you need your own free Adobe Developer credential (or use demo mode, no account needed).
+A debug build needs your own free Adobe Developer credential to sign in (or use demo mode, no account needed).
 Setup, release signing, tests and the code layout: [docs/building.md](docs/building.md).
 
 ## How this was built
