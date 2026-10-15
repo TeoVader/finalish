@@ -2,8 +2,7 @@
 # Works on GitHub Actions and on Forgejo/Gitea Actions (use a runner image that has Docker, e.g. catthehacker/ubuntu:act-latest).
 name: Android
 
-# The private repo has 2,000 Actions minutes a month and a run takes ~8: pushes that change
-# no app code (docs, Markdown, the relay, issue templates) don't build.
+# Pushes to main that change no app code (docs, Markdown, the relay, issue templates) don't build.
 on:
   push:
     branches: [main]
@@ -19,18 +18,8 @@ on:
       - ".github/pull_request_template.md"
       - ".github/workflows/report-relay.yml"
       - ".github/workflows/label-reports.yml"
+  # Every pull request builds, so the required "build" check always reports.
   pull_request:
-    paths-ignore:
-      - "**.md"
-      - "docs/**"
-      - "relay/**"
-      - "LICENSE"
-      - ".github/ISSUE_TEMPLATE/**"
-      - ".github/dependabot.yml"
-      - ".github/FUNDING.yml"
-      - ".github/pull_request_template.md"
-      - ".github/workflows/report-relay.yml"
-      - ".github/workflows/label-reports.yml"
   workflow_dispatch:
 
 # Read-only by default; only the publish job (tags) can write, to create the release.
