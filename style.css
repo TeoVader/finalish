@@ -11,3 +11,4 @@ h1 { font-size: 30px; line-height: 1.25; }
 h2 { font-size: 21px; margin-top: 2em; }
 a { color: var(--link); }
 em { color: var(--muted); }
+img { max-width: 100%; height: auto; border-radius: 12px; }
