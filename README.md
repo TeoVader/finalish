@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/hero.png" alt="Final(ish): Frame.io review on Android" width="100%">
+  <img src="docs/images/hero.png" alt="Final(ish): Frame.io app for Android, video review with time-coded comments" width="100%">
 </p>
 
 <p align="center">
@@ -15,8 +15,11 @@
 
 *Open source. Native. Unofficial Frame.io client.*
 
-**An unofficial, open-source Android client for [Frame.io](https://frame.io).** Built with Kotlin, Jetpack
-Compose and Media3, designed to feel fast and look great.
+**A free, open-source Frame.io app for Android: an unofficial client for [Frame.io](https://frame.io).**
+Review videos, leave time-coded comments, approve versions and share review links from your Android phone
+or tablet. Built with Kotlin, Jetpack Compose and Media3, designed to feel fast and look great.
+Website: [teovader.github.io/finalish](https://teovader.github.io/finalish/) ·
+Download: [latest APK](https://github.com/TeoVader/finalish/releases/latest).
 
 Frame.io has no official Android app (as of 2026). Final(ish) brings the Frame.io review workflow to
 Android phones and tablets, using the official Frame.io **V4** API.
