@@ -1,0 +1,22 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/app/build/
+/baselineprofile/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+*.keystore
+*.jks
+keystore.properties
+
+# Local agent worktrees
+.claude/worktrees/
+.kotlin/
+
+# Claude working files (kept in the private repository)
+.claude/
+CLAUDE.md

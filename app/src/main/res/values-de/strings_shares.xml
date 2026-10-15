@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ui/shares: CreateShareSheet -->
+    <string name="shares_expiry_never">Nie</string>
+    <string name="shares_expiry_1_day">1 Tag</string>
+    <string name="shares_expiry_7_days">7 Tage</string>
+    <string name="shares_expiry_30_days">30 Tage</string>
+    <plurals name="shares_n_items">
+        <item quantity="one">%d Element</item>
+        <item quantity="other">%d Elemente</item>
+    </plurals>
+    <string name="shares_new_link_title">Neuer Freigabelink</string>
+    <string name="shares_name">Name</string>
+    <string name="shares_who_can_open">WER IHN ÖFFNEN KANN</string>
+    <string name="shares_anyone_with_link">Alle mit dem Link</string>
+    <string name="shares_only_invited">Nur Eingeladene</string>
+    <string name="shares_allow_comments">Kommentare erlauben</string>
+    <string name="shares_allow_downloads">Downloads erlauben</string>
+    <string name="shares_show_all_versions">Alle Versionen anzeigen</string>
+    <string name="shares_require_passphrase">Passwort verlangen</string>
+    <string name="shares_passphrase">Passwort</string>
+    <string name="shares_expires">LÄUFT AB</string>
+    <string name="shares_not_on_plan">Nicht in deinem Frame.io-Abo enthalten: %1$s.</string>
+    <string name="shares_plan_invite_only_links">Links nur auf Einladung</string>
+    <string name="shares_plan_passphrases">Passwörter</string>
+    <string name="shares_plan_expiry_dates">Ablaufdaten</string>
+    <string name="shares_creating">Wird erstellt…</string>
+    <string name="shares_create_and_copy">Link erstellen und kopieren</string>
+    <string name="shares_link_ready_copied">Link erstellt und kopiert</string>
+    <string name="shares_link_ready">Link erstellt</string>
+    <string name="shares_passphrase_value">Passwort: %1$s</string>
+    <string name="shares_copied">Kopiert</string>
+    <string name="shares_copy">Kopieren</string>
+    <string name="shares_share">Teilen</string>
+    <plurals name="shares_n_files">
+        <item quantity="one">%d Datei</item>
+        <item quantity="other">%d Dateien</item>
+    </plurals>
+    <plurals name="shares_n_folders">
+        <item quantity="one">%d Ordner</item>
+        <item quantity="other">%d Ordner</item>
+    </plurals>
+    <string name="shares_selected">%1$s ausgewählt</string>
+    <string name="shares_change">Ändern</string>
+
+    <!-- ui/shares: ProjectSharesStrip -->
+    <string name="shares_share_links">Freigabelinks</string>
+    <plurals name="shares_n_share_links">
+        <item quantity="one">%d Freigabelink</item>
+        <item quantity="other">%d Freigabelinks</item>
+    </plurals>
+    <string name="shares_see_all">Alle ansehen</string>
+    <string name="shares_loading">Wird geladen…</string>
+    <string name="shares_none_yet">Noch keine Freigabelinks.</string>
+    <string name="shares_untitled">Unbenannte Freigabe</string>
+    <string name="shares_status_off">Aus</string>
+    <string name="shares_expires_in">Läuft ab in %1$s</string>
+    <string name="shares_status_expired">Abgelaufen</string>
+    <string name="shares_viewed">Angesehen %1$s</string>
+    <string name="shares_not_viewed_yet">Noch nicht angesehen</string>
+
+    <!-- ui/shares: ShareEditorSheet -->
+    <string name="shares_share_link">Freigabelink</string>
+    <string name="shares_rename">Umbenennen</string>
+    <string name="shares_status_active">Aktiv</string>
+    <string name="shares_status_turned_off">Deaktiviert</string>
+    <string name="shares_access_public">Öffentlich</string>
+    <string name="shares_link_visibility">Sichtbarkeit des Links</string>
+    <string name="shares_anyone_can_view">Alle mit dem Link können ihn ansehen</string>
+    <string name="shares_link_turned_off">Link ist deaktiviert</string>
+    <string name="shares_link_copied">Link kopiert</string>
+    <string name="shares_qr_code">QR-Code</string>
+    <string name="shares_open">Öffnen</string>
+    <string name="shares_label_access">Zugriff</string>
+    <string name="shares_invite_reviewers">Prüfer einladen</string>
+    <string name="shares_remove_reviewer">Prüfer entfernen</string>
+    <string name="shares_label_permissions">Berechtigungen</string>
+    <string name="shares_show_transcripts">Transkripte anzeigen</string>
+    <string name="shares_show_captions">Untertitel anzeigen</string>
+    <string name="shares_label_layout">Layout</string>
+    <string name="shares_layout_grid">Raster</string>
+    <string name="shares_layout_list">Liste</string>
+    <string name="shares_layout_reel">Reel</string>
+    <string name="shares_theme_dark">Dunkel</string>
+    <string name="shares_theme_light">Hell</string>
+    <string name="shares_theme_neutral">Neutral</string>
+    <string name="shares_accent">Akzentfarbe</string>
+    <string name="shares_description">Beschreibung</string>
+    <string name="shares_add">Hinzufügen</string>
+    <string name="shares_label_security">Sicherheit</string>
+    <string name="shares_not_on_your_plan">Nicht in deinem Abo</string>
+    <string name="shares_set">Festlegen</string>
+    <string name="shares_expiration">Ablaufdatum</string>
+    <string name="shares_watermark">Wasserzeichen</string>
+    <string name="shares_watermark_template">Wasserzeichenvorlage</string>
+    <string name="shares_watermark_default_summary">Standard des Workspace oder Kontos</string>
+    <string name="shares_default">Standard</string>
+    <string name="shares_label_activity">Aktivität</string>
+    <string name="shares_no_activity">Noch keine Aktivität</string>
+    <string name="shares_activity_someone">Jemand</string>
+    <!-- %1$s: who, %2$s: what they did (e.g. "viewed") -->
+    <string name="shares_activity">%1$s hat %2$s</string>
+    <!-- %1$s: who, %2$s: what they did, %3$s: file name -->
+    <string name="shares_activity_on_asset">%1$s hat „%3$s“ %2$s</string>
+    <string name="shares_activity_opened_link">den Link geöffnet</string>
+    <string name="shares_activity_viewed">angesehen</string>
+    <string name="shares_activity_downloaded">heruntergeladen</string>
+    <string name="shares_activity_commented_on">kommentiert</string>
+    <string name="shares_files_in_link">Dateien im Link</string>
+    <string name="shares_no_assets">Keine Dateien in dieser Freigabe</string>
+    <string name="shares_remove">Entfernen</string>
+    <string name="shares_delete_link">Link löschen</string>
+    <string name="shares_delete_link_detail">Alle mit dem Link verlieren den Zugriff</string>
+    <string name="shares_choose_files_to_add">Dateien zum Hinzufügen auswählen</string>
+    <string name="shares_add_n_to_link">%1$d zum Link hinzufügen</string>
+    <plurals name="shares_couldnt_add_items">
+        <item quantity="one">%d Element konnte nicht hinzugefügt werden</item>
+        <item quantity="other">%d Elemente konnten nicht hinzugefügt werden</item>
+    </plurals>
+    <string name="shares_added_n_to_link">%1$d zum Link hinzugefügt</string>
+    <plurals name="shares_invited_reviewers">
+        <item quantity="one">%d Prüfer eingeladen</item>
+        <item quantity="other">%d Prüfer eingeladen</item>
+    </plurals>
+    <string name="shares_description_hint">Wird Prüfern angezeigt</string>
+    <string name="shares_save">Speichern</string>
+    <string name="shares_rename_title">Freigabe umbenennen</string>
+    <string name="shares_passphrase_hint">Leer lassen zum Entfernen</string>
+    <string name="shares_watermark_template_intro">Was jeder Betrachter über die Medien eingeblendet sieht. Vorlagen werden auf frame.io erstellt.</string>
+    <string name="shares_selected_cd">Ausgewählt</string>
+    <string name="shares_watermark_default_template">Standardvorlage des Workspace oder Kontos</string>
+    <string name="shares_no_templates">Dieses Konto hat noch keine Vorlagen.</string>
+    <string name="shares_untitled_template">Unbenannt</string>
+    <string name="shares_qr_code_for">QR-Code für %1$s</string>
+    <string name="shares_done">Fertig</string>
+    <string name="shares_stat_views">Aufrufe</string>
+    <string name="shares_stat_comments">Kommentare</string>
+    <string name="shares_stat_downloads">Downloads</string>
+    <string name="shares_emails_label">E-Mail-Adressen (durch Komma getrennt)</string>
+    <string name="shares_message">Nachricht</string>
+    <string name="shares_send_email">E-Mail senden</string>
+    <string name="shares_please_review">Bitte prüfen</string>
+    <string name="shares_invite">Einladen</string>
+    <string name="shares_invite_n">%1$d einladen</string>
+    <string name="shares_cancel">Abbrechen</string>
+
+    <!-- ui/shares: SharesScreen -->
+    <string name="shares_deleted">Freigabe gelöscht</string>
+    <string name="shares_filter_active">Aktiv · %1$d</string>
+    <string name="shares_filter_off">Aus · %1$d</string>
+    <string name="shares_filter_all">Alle</string>
+    <string name="shares_empty_title">Keine Freigabelinks</string>
+    <string name="shares_empty_body">Wähle über „Neuer Link“ Dateien oder Ordner zum Teilen aus.</string>
+    <string name="shares_new_link">Neuer Link</string>
+    <string name="shares_choose_what_to_share">Auswählen, was geteilt wird</string>
+    <plurals name="shares_share_n_items">
+        <item quantity="one">%d Element teilen</item>
+        <item quantity="other">%d Elemente teilen</item>
+    </plurals>
+    <string name="shares_delete_title">„%1$s“ löschen?</string>
+    <string name="shares_share_fallback">Freigabe</string>
+    <string name="shares_delete_body">Alle mit diesem Link verlieren den Zugriff.</string>
+    <string name="shares_delete">Löschen</string>
+    <string name="shares_created">erstellt %1$s</string>
+    <string name="shares_invited_only">Nur Eingeladene</string>
+    <string name="shares_pill_comments">Kommentare</string>
+    <string name="shares_pill_download">Download</string>
+    <string name="shares_pill_view_only">Nur ansehen</string>
+    <string name="shares_more">Mehr</string>
+    <string name="shares_send">Senden…</string>
+    <string name="shares_edit">Bearbeiten</string>
+    <string name="shares_back">Zurück</string>
+    <string name="shares_collections">Sammlungen</string>
+    <string name="shares_collections_empty_title">Keine Sammlungen</string>
+    <string name="shares_collections_empty_body">Sammlungen fassen Dateien aus verschiedenen Ordnern zusammen. Erstelle sie im Web.</string>
+    <string name="shares_smart_collection">Intelligente Sammlung</string>
+    <string name="shares_collection">Sammlung</string>
+    <string name="shares_private">Privat</string>
+    <string name="shares_collections_hint">Eine Sammlung öffnet sich wie ein Ordner und kann per Link geteilt werden. Sammlungen werden auf frame.io erstellt.</string>
+
+    <!-- ui/members: GroupsScreen -->
+    <string name="members_group_created">%1$s erstellt</string>
+    <string name="members_added_person">%1$s hinzugefügt</string>
+    <string name="members_removed_person">%1$s entfernt</string>
+    <string name="members_groups">Gruppen</string>
+    <string name="members_new_group">Neue Gruppe</string>
+    <string name="members_no_groups_title">Noch keine Gruppen</string>
+    <string name="members_no_groups_body">Fasse Personen in einer Gruppe zusammen und gib dann der ganzen Gruppe eine Rolle in einem Projekt.</string>
+    <string name="members_create_group">Gruppe erstellen</string>
+    <string name="members_groups_unavailable_title">Gruppen sind nicht in deinem Abo enthalten</string>
+    <string name="members_groups_unavailable_body">Dein Frame.io-Abo enthält keine Benutzergruppen. Mitglieder funktionieren weiterhin Person für Person.</string>
+    <plurals name="members_n_groups">
+        <item quantity="one">%d Gruppe</item>
+        <item quantity="other">%d Gruppen</item>
+    </plurals>
+    <string name="members_synced_from">Synchronisiert von %1$s</string>
+    <string name="members_groups_hint">Gib einer Gruppe unter „Mitglieder“ eines Projekts oder Workspace eine Rolle, und alle darin erhalten diesen Zugriff.</string>
+    <string name="members_add">Hinzufügen</string>
+    <string name="members_more">Mehr</string>
+    <string name="members_rename">Umbenennen</string>
+    <string name="members_delete_group">Gruppe löschen</string>
+    <string name="members_add_to">Zu %1$s hinzufügen</string>
+    <string name="members_rename_group">Gruppe umbenennen</string>
+    <string name="members_save">Speichern</string>
+    <string name="members_delete_group_title">%1$s löschen?</string>
+    <string name="members_delete_group_body">Die Personen darin verlieren den Zugriff, den die Gruppe ihnen gab. Ihre eigenen Rollen bleiben bestehen.</string>
+    <string name="members_cancel">Abbrechen</string>
+    <string name="members_remove_title">%1$s entfernen?</string>
+    <string name="members_remove_from_group_body">Die Person verlässt %1$s und verliert den Zugriff, den die Gruppe ihr gab.</string>
+    <string name="members_remove">Entfernen</string>
+    <string name="members_synced_from_detail">Synchronisiert von %1$s. Personen werden dort hinzugefügt oder entfernt.</string>
+    <string name="members_group_empty_title">Niemand in dieser Gruppe</string>
+    <string name="members_group_empty_body">Füge Personen aus deinem Konto hinzu.</string>
+    <string name="members_inactive">Inaktiv</string>
+    <string name="members_remove_person">%1$s entfernen</string>
+    <string name="members_name">Name</string>
+    <string name="members_group_name_placeholder">Editoren, Kunde, Sound-Team…</string>
+    <string name="members_search_account_people">Personen in diesem Konto suchen</string>
+    <string name="members_loading">Wird geladen…</string>
+    <string name="members_everyone_in_group">Alle Personen in diesem Konto sind bereits in der Gruppe.</string>
+    <string name="members_no_matches">Keine Treffer</string>
+
+    <!-- ui/members: MembersScreen -->
+    <string name="members_role_owner">Inhaber</string>
+    <string name="members_role_account_admin">Kontoadmin</string>
+    <string name="members_role_workspace_admin">Workspace-Admin</string>
+    <string name="members_role_full_access">Vollzugriff</string>
+    <string name="members_role_editor">Bearbeiter</string>
+    <string name="members_role_edit_only">Nur bearbeiten</string>
+    <string name="members_role_commenter">Kommentator</string>
+    <string name="members_role_viewer">Betrachter</string>
+    <string name="members_role_member">Mitglied</string>
+    <string name="members_role_reviewer">Prüfer</string>
+    <string name="members_role_workspace_admin_desc">Workspace und alle seine Projekte verwalten</string>
+    <string name="members_role_full_access_desc">Hochladen, bearbeiten, teilen und löschen</string>
+    <string name="members_role_editor_desc">Hochladen und bearbeiten, aber keine fremden Inhalte löschen</string>
+    <string name="members_role_edit_only_desc">Nur vorhandene Dateien bearbeiten</string>
+    <string name="members_role_commenter_desc">Ansehen und kommentieren</string>
+    <string name="members_role_viewer_desc">Nur ansehen</string>
+    <!-- %1$s: person or group, %2$s: role -->
+    <string name="members_is_now_role">%1$s hat jetzt die Rolle „%2$s“</string>
+    <string name="members_members">Mitglieder</string>
+    <string name="members_no_members_title">Noch keine Mitglieder</string>
+    <plurals name="members_n_members">
+        <item quantity="one">%d Mitglied</item>
+        <item quantity="other">%d Mitglieder</item>
+    </plurals>
+    <string name="members_roles_hint">Vollzugriff › Bearbeiter › Nur bearbeiten › Kommentator › Betrachter. Tippe auf eine Rolle, um sie zu ändern oder die Person zu entfernen.</string>
+    <string name="members_remove_group_body_workspace">Die Personen darin verlieren den Zugriff, den die Gruppe ihnen auf diesen Workspace gab.</string>
+    <string name="members_remove_group_body_folder">Die Personen darin verlieren den Zugriff, den die Gruppe ihnen auf diesen Ordner gab.</string>
+    <string name="members_remove_group_body_project">Die Personen darin verlieren den Zugriff, den die Gruppe ihnen auf dieses Projekt gab.</string>
+    <string name="members_remove_member_body_workspace">Die Person verliert den Zugriff auf diesen Workspace.</string>
+    <string name="members_remove_member_body_folder">Die Person verliert den Zugriff auf diesen Ordner.</string>
+    <string name="members_remove_member_body_project">Die Person verliert den Zugriff auf dieses Projekt.</string>
+    <string name="members_group_subtitle">Gruppe · %1$s</string>
+    <string name="members_add_member">Mitglied hinzufügen</string>
+    <string name="members_search_people_groups">Personen und Gruppen suchen</string>
+    <string name="members_role">Rolle</string>
+    <string name="members_everyone_member">Alle Personen in diesem Konto sind bereits Mitglied.</string>
+    <string name="members_people">Personen</string>
+
+    <!-- ui/components -->
+    <string name="common_couldnt_load">Laden fehlgeschlagen</string>
+    <!-- %1$s: the error message, without its final period -->
+    <string name="common_retrying_shortly">%1$s. Neuer Versuch erfolgt gleich automatisch.</string>
+    <string name="common_retry_now">Jetzt wiederholen</string>
+    <string name="common_try_again">Erneut versuchen</string>
+    <string name="common_offline_title">Du bist offline.</string>
+    <string name="common_offline_body">Die zuletzt gespeicherte Kopie wird angezeigt; Kommentare und Uploads werden gesendet, sobald du wieder online bist.</string>
+</resources>

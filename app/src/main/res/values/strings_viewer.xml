@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Asset actions sheet -->
+    <string name="viewer_action_share">Share</string>
+    <string name="viewer_action_download">Download</string>
+    <string name="viewer_action_offline">Offline</string>
+    <string name="viewer_action_offline_done">Offline ✓</string>
+    <string name="viewer_action_add_to_existing_share">Add to existing share link</string>
+    <string name="viewer_action_versions">Versions</string>
+    <string name="viewer_action_upload_new_version">Upload new version</string>
+    <string name="viewer_action_compare_take">Compare with another take…</string>
+    <string name="viewer_action_save_frame">Save frame</string>
+    <string name="viewer_action_move_to">Move to…</string>
+    <string name="viewer_action_copy_to">Copy to…</string>
+    <string name="viewer_action_duplicate">Duplicate</string>
+    <string name="viewer_action_show_in_project">Show in project</string>
+    <string name="viewer_action_send_link">Send Frame.io link</string>
+    <string name="viewer_action_rename">Rename</string>
+    <string name="viewer_action_delete">Delete</string>
+    <string name="viewer_action_report_problem">Report a problem</string>
+    <string name="viewer_version_short">V%1$d</string>
+    <string name="viewer_uploaded_by">Uploaded by %1$s</string>
+    <string name="viewer_back">Back</string>
+    <string name="viewer_add_to_share_link">Add to share link</string>
+    <string name="viewer_no_share_links">This project has no share links yet.</string>
+    <string name="viewer_untitled_share">Untitled share</string>
+
+    <!-- Office documents -->
+    <string name="viewer_page_counter">%1$d / %2$d</string>
+    <plurals name="viewer_more_sheets">
+        <item quantity="one">+%1$d more sheet in the file</item>
+        <item quantity="other">+%1$d more sheets in the file</item>
+    </plurals>
+    <string name="viewer_first_rows_only">first rows only</string>
+    <string name="viewer_slide_number">Slide %1$d</string>
+    <string name="viewer_slide_no_text">(no text on this slide)</string>
+
+    <!-- Picture-in-picture -->
+    <string name="viewer_pause">Pause</string>
+    <string name="viewer_play">Play</string>
+
+    <!-- Audio channels -->
+
+    <!-- Comments -->
+    <string name="viewer_filter_all">All</string>
+    <string name="viewer_filter_open">Open</string>
+    <string name="viewer_filter_done">Done</string>
+    <string name="viewer_tab_comments">Comments</string>
+    <string name="viewer_tab_info">Info</string>
+    <string name="viewer_tab_versions">Versions</string>
+    <string name="viewer_comments_empty_title">No comments yet</string>
+    <string name="viewer_comments_empty_filtered">Nothing here</string>
+    <string name="viewer_comments_empty_body">Be the first to leave feedback.</string>
+    <string name="viewer_comments_empty_body_video">Be the first to leave feedback. Comments are pinned to the current frame.</string>
+    <string name="viewer_comments_empty_body_audio">Be the first to leave feedback. Comments are pinned to the current time.</string>
+    <string name="viewer_comments_empty_body_pdf">Be the first to leave feedback. Comments are pinned to the current page.</string>
+    <string name="viewer_comments_empty_body_image">Be the first to leave feedback. Pin one to a spot on the image.</string>
+    <string name="viewer_comment_not_sent">Not sent</string>
+    <string name="viewer_comment_sending">Sending…</string>
+    <string name="viewer_retry">Retry</string>
+    <string name="viewer_comment_edited_suffix">" · edited"</string>
+    <string name="viewer_page_short">p.%1$d</string>
+    <string name="viewer_comment_drawing">Drawing</string>
+    <string name="viewer_pinned">Pinned</string>
+    <string name="viewer_pin">Pin</string>
+    <string name="viewer_range">Range</string>
+    <string name="viewer_comment_range_with">Range · %1$s</string>
+    <string name="viewer_comment_queued">Queued</string>
+    <string name="viewer_more">More</string>
+    <string name="viewer_mark_open">Mark as open</string>
+    <string name="viewer_mark_done">Mark as done</string>
+    <string name="viewer_retry_sending">Retry sending</string>
+    <string name="viewer_go_to_time">Go to %1$s</string>
+    <string name="viewer_go_to_page">Go to page</string>
+    <string name="viewer_copy_text">Copy text</string>
+    <string name="viewer_edit">Edit</string>
+    <string name="viewer_remove_attachment">Remove attachment</string>
+    <string name="viewer_remove_attachment_title">Remove “%1$s” from this comment?</string>
+    <string name="viewer_remove_attachment_body">Everyone who can see the comment will no longer see this file.</string>
+    <string name="viewer_editing_comment">Editing comment</string>
+    <string name="viewer_move_to_playhead">Move to playhead</string>
+    <string name="viewer_cancel">Cancel</string>
+    <string name="viewer_no_time">No time</string>
+    <string name="viewer_draw">Draw</string>
+    <string name="viewer_file">File</string>
+    <string name="viewer_remove">Remove</string>
+    <string name="viewer_comment_placeholder">Leave a comment…</string>
+    <string name="viewer_save">Save</string>
+    <string name="viewer_send">Send</string>
+    <string name="viewer_undo">Undo</string>
+    <string name="viewer_done">Done</string>
+    <string name="viewer_tool_pen">Pen</string>
+    <string name="viewer_tool_line">Line</string>
+    <string name="viewer_tool_arrow">Arrow</string>
+    <string name="viewer_tool_rect">Rect</string>
+
+    <!-- Compare -->
+    <string name="viewer_compare_takes">Compare takes</string>
+    <string name="viewer_compare_versions">Compare versions</string>
+    <string name="viewer_compare_wipe">Wipe</string>
+    <string name="viewer_compare_side_by_side">Side by side</string>
+    <string name="viewer_back_5_seconds">Back 5 seconds</string>
+    <string name="viewer_forward_5_seconds">Forward 5 seconds</string>
+    <string name="viewer_previous_frame">Previous frame</string>
+    <string name="viewer_next_frame">Next frame</string>
+    <string name="viewer_listening">Listening</string>
+    <string name="viewer_compare_audio_hint">Both takes play in sync. Tap one to hear it without stopping.</string>
+
+    <!-- Info panel -->
+    <string name="viewer_save_offline">Save offline</string>
+    <string name="viewer_share_link">Share link</string>
+    <string name="viewer_open_web">Open web</string>
+    <string name="viewer_card_seen_by">Seen by</string>
+    <plurals name="viewer_seen_by_people">
+        <item quantity="one">%1$d person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
+    <plurals name="viewer_seen_by_name_and_others">
+        <item quantity="one">%1$s and %2$d other</item>
+        <item quantity="other">%1$s and %2$d others</item>
+    </plurals>
+    <string name="viewer_card_status">Status</string>
+    <string name="viewer_card_rating">Rating</string>
+    <string name="viewer_card_details">Details</string>
+    <string name="viewer_card_metadata">Metadata</string>
+    <string name="viewer_card_camera">Camera</string>
+    <string name="viewer_detail_name">Name</string>
+    <string name="viewer_detail_type">Type</string>
+    <string name="viewer_detail_format">Format</string>
+    <string name="viewer_detail_size">Size</string>
+    <string name="viewer_detail_uploaded">Uploaded</string>
+    <string name="viewer_detail_updated">Updated</string>
+    <string name="viewer_detail_uploader">Uploader</string>
+    <string name="viewer_copy_link">Copy Frame.io link</string>
+    <string name="viewer_fields_all">All fields</string>
+    <string name="viewer_fields_filled">Filled</string>
+    <string name="viewer_fields_editable">Editable</string>
+    <string name="viewer_search_fields">Search fields</string>
+    <string name="viewer_no_fields_match">No fields match.</string>
+    <string name="viewer_summary_codec">Codec</string>
+    <string name="viewer_summary_resolution">Resolution</string>
+    <string name="viewer_summary_bitrate">Bitrate</string>
+    <string name="viewer_summary_sample_rate">Sample rate</string>
+    <string name="viewer_summary_format">Format</string>
+
+    <!-- Versions panel -->
+    <string name="viewer_pick_two_versions">Pick two versions</string>
+    <plurals name="viewer_versions_count">
+        <item quantity="one">%1$d version</item>
+        <item quantity="other">%1$d versions</item>
+    </plurals>
+    <string name="viewer_compare">Compare</string>
+    <plurals name="viewer_comment_count">
+        <item quantity="one">%1$d comment</item>
+        <item quantity="other">%1$d comments</item>
+    </plurals>
+    <string name="viewer_version_current">Current</string>
+    <string name="viewer_version_viewing">Viewing</string>
+    <string name="viewer_version_actions">Version actions</string>
+    <string name="viewer_version_move_up">Move up (newer)</string>
+    <string name="viewer_version_move_down">Move down (older)</string>
+    <string name="viewer_version_make_current">Make current version</string>
+    <string name="viewer_new_version">New version</string>
+    <string name="viewer_versions_reorder_hint">From each version\'s ⋯: make it current, or move it up or down.</string>
+
+    <!-- Media stage -->
+    <string name="viewer_pin_comment">Comment %1$d</string>
+    <string name="viewer_playback_error">Playback error: %1$s</string>
+    <string name="viewer_pdf_page">Page %1$d</string>
+    <string name="viewer_pdf_scroll_pages">Scroll pages</string>
+    <string name="viewer_pdf_single_page">Single page</string>
+    <string name="viewer_pdf_find">Find in document</string>
+    <string name="viewer_pdf_no_matches">No matches</string>
+    <string name="viewer_pdf_match_position">%1$d of %2$d</string>
+    <string name="viewer_pdf_previous_match">Previous match</string>
+    <string name="viewer_pdf_next_match">Next match</string>
+    <string name="viewer_pdf_close_search">Close search</string>
+    <string name="viewer_no_preview_title">No preview on the device</string>
+    <string name="viewer_no_preview_body">You can still comment on it, download it or open it with another app.</string>
+    <string name="viewer_open_with">Open with…</string>
+    <string name="viewer_open_interactive_preview">Open the interactive preview on frame.io</string>
+    <string name="viewer_zip_contents">CONTENTS · %1$d</string>
+    <string name="viewer_seek_back_flash">« 5s</string>
+    <string name="viewer_seek_forward_flash">5s »</string>
+
+    <!-- Metadata editors -->
+    <string name="viewer_yes">Yes</string>
+    <string name="viewer_no">No</string>
+    <string name="viewer_field_assign">Assign</string>
+    <string name="viewer_field_choose">Choose</string>
+    <string name="viewer_field_set_date">Set date</string>
+    <string name="viewer_field_add">Add</string>
+    <string name="viewer_unknown_user">Unknown user</string>
+    <string name="viewer_clear">Clear</string>
+    <string name="viewer_loading_people">Loading people…</string>
+
+    <!-- Playback options / Tools sheet -->
+    <string name="viewer_zoom_fit">Fit</string>
+    <string name="viewer_zoom_fill">Fill</string>
+    <string name="viewer_zoom_actual" formatted="false">100%</string>
+    <string name="viewer_guide_off">Off</string>
+    <string name="viewer_guide_safe">Safe</string>
+    <string name="viewer_quality_original">Original</string>
+    <string name="viewer_quality_auto">Auto</string>
+    <string name="viewer_quality_currently">Currently %1$s</string>
+    <string name="viewer_quality_source_file">Source file</string>
+    <string name="viewer_opt_comment_markers">Comment markers</string>
+    <string name="viewer_opt_quality">Quality</string>
+    <string name="viewer_opt_guides">Guides</string>
+    <string name="viewer_opt_zoom">Zoom</string>
+    <string name="viewer_opt_view_on_asset">View on Asset</string>
+    <string name="viewer_opt_download_still">Download Still</string>
+    <string name="viewer_opt_loop">Loop</string>
+    <string name="viewer_opt_mute">Mute</string>
+    <string name="viewer_opt_title_safe_80" formatted="false">Title safe (80%)</string>
+    <string name="viewer_opt_action_safe_90" formatted="false">Action safe (90%)</string>
+    <string name="viewer_opt_rule_of_thirds">Rule of thirds</string>
+    <string name="viewer_opt_annotations">Annotations</string>
+    <string name="viewer_tools">Tools</string>
+    <string name="viewer_opt_speed">Speed</string>
+    <string name="viewer_opt_pip">PiP</string>
+    <string name="viewer_opt_aspect_ratio">Aspect ratio</string>
+    <string name="viewer_opt_title_safe">Title safe</string>
+    <string name="viewer_opt_action_safe">Action safe</string>
+    <string name="viewer_opt_thirds">Thirds</string>
+    <string name="viewer_opt_drawings_on_frames">Drawings on frames</string>
+    <string name="viewer_opt_comment_pins">Comment pins on the timeline</string>
+    <string name="viewer_opt_mute_audio">Mute audio</string>
+
+    <!-- Viewer screen -->
+    <string name="viewer_error_open_file">Couldn\'t open this file</string>
+    <string name="viewer_delete_title">Delete “%1$s”?</string>
+    <string name="viewer_delete_body">It moves to the project\'s Recently Deleted, where admins can restore it.</string>
+    <string name="viewer_project">Project</string>
+    <string name="viewer_copy">Copy</string>
+    <string name="viewer_move">Move</string>
+    <string name="viewer_zoom_chip">%1$d%% · Fit</string>
+    <string name="viewer_fullscreen">Fullscreen</string>
+    <string name="viewer_tap_to_place_pin">Tap to place a pin</string>
+    <string name="viewer_comment_at">Comment at %1$s</string>
+    <string name="viewer_play_pause">Play/pause</string>
+    <plurals name="viewer_page_count">
+        <item quantity="one">%1$d page</item>
+        <item quantity="other">%1$d pages</item>
+    </plurals>
+    <string name="viewer_audio_mono">mono</string>
+    <string name="viewer_audio_stereo">stereo</string>
+    <string name="viewer_hide_comments">Hide comments</string>
+    <string name="viewer_show_comments">Show comments</string>
+    <string name="viewer_no_status">No status</string>
+    <string name="viewer_time_format">Time format</string>
+    <string name="viewer_quality_description">Quality: %1$s</string>
+    <string name="viewer_player_tools">Player tools</string>
+    <string name="viewer_change_version">Change version</string>
+    <string name="viewer_preparing_audio">Frame.io is preparing the audio</string>
+    <string name="viewer_preparing_video">Frame.io is preparing the video</string>
+    <string name="viewer_preparing_body">It starts on its own as soon as it\'s ready</string>
+
+    <!-- Viewer messages (snackbars) -->
+    <string name="viewer_msg_offline_comment_queued">You\'re offline — comment will be sent when you reconnect</string>
+    <string name="viewer_msg_offline_comment_retry">You\'re offline — tap Retry to send the comment with its attachments</string>
+    <string name="viewer_msg_upload_failed">Upload failed (%1$d)</string>
+    <string name="viewer_msg_attach_failed">Couldn\'t attach %1$s: %2$s</string>
+    <plurals name="viewer_msg_attachments_uploaded">
+        <item quantity="one">%1$d attachment uploaded</item>
+        <item quantity="other">%1$d attachments uploaded</item>
+    </plurals>
+    <string name="viewer_msg_version_order_updated">Version order updated</string>
+    <string name="viewer_msg_comment_deleted">Comment deleted</string>
+    <string name="viewer_msg_no_frame">No frame to capture yet</string>
+    <string name="viewer_msg_still_saved">Still saved to Pictures/Finalish</string>
+    <string name="viewer_msg_still_failed">Couldn\'t save the still</string>
+    <string name="viewer_msg_added_to_share">Added to “%1$s”</string>
+    <string name="viewer_msg_share_fallback">share</string>
+    <string name="viewer_msg_copied_to">Copied to “%1$s”</string>
+    <string name="viewer_msg_no_folder_to_copy">No folder to copy into</string>
+    <string name="viewer_msg_duplicated">Duplicated “%1$s”</string>
+    <string name="viewer_msg_renamed">Renamed</string>
+    <string name="viewer_msg_moved_to">Moved to “%1$s”</string>
+    <string name="viewer_msg_downloads_disabled">Downloads are disabled for this file.</string>
+    <string name="viewer_msg_downloading">Downloading “%1$s” to Download/Finalish</string>
+    <string name="viewer_open_file_with">Open “%1$s” with</string>
+    <string name="viewer_msg_saving_offline">Saving “%1$s” for offline</string>
+    <string name="viewer_msg_folder_not_found">Couldn\'t find this file\'s folder</string>
+    <string name="viewer_msg_uploading_version">Uploading the new version · see Transfers</string>
+    <plurals name="viewer_zip_more">
+        <item quantity="one">+ %1$d more</item>
+        <item quantity="other">+ %1$d more</item>
+    </plurals>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated: accent Menta. Final(ish) mark: nested parentheses (past versions) around a check (the current one). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:translateX="23.0" android:translateY="23.0" android:scaleX="0.62" android:scaleY="0.62">
+        <path
+            android:pathData="M34,31c-8,12 -8,26 0,38M66,31c8,12 8,26 0,38"
+            android:strokeColor="#FF4BE0BC"
+            android:strokeWidth="8.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:fillColor="#00000000" />
+        <path
+            android:pathData="M22,23c-12,17 -12,37 0,54M78,23c12,17 12,37 0,54"
+            android:strokeColor="#FF4BE0BC"
+            android:strokeWidth="7.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:fillColor="#00000000"
+            android:strokeAlpha="0.5" />
+        <path
+            android:pathData="M40,51l7,7 13,-15"
+            android:strokeColor="#FFF4F4F6"
+            android:strokeWidth="8.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:fillColor="#00000000" />
+    </group>
+</vector>

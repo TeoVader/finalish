@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="UnusedResources">Final(ish)</string>
+    <string name="channel_transfers">Transferts</string>
+    <string name="channel_transfers_desc">Progression des importations et téléchargements</string>
+</resources>

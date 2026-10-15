@@ -1,0 +1,26 @@
+# Issues sent from the app through the GitHub Android app arrive without labels (the app ignores
+# the issue form and its labels). Label them from the section headings the app writes in the body.
+name: Label in-app reports
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  label:
+    if: ${{ github.event.issue.labels[0] == null }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add bug or enhancement
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY: ${{ github.event.issue.body }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          if printf '%s\n' "$BODY" | grep -q '^### What happened'; then label=bug
+          elif printf '%s\n' "$BODY" | grep -q '^### What and why'; then label=enhancement
+          else exit 0; fi
+          gh issue edit "$NUMBER" --repo "$GITHUB_REPOSITORY" --add-label "$label"

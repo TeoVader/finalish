@@ -1,0 +1,34 @@
+name: Bug report
+description: Something in Final(ish) doesn't work as it should.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: report
+    attributes:
+      label: Full report on Frame.io
+      description: Screenshot, recording and logs uploaded by the app (filled in automatically).
+  - type: textarea
+    id: screens
+    attributes:
+      label: Recent screens
+      description: Where you were in the app before it happened (filled in automatically).
+      render: text
+  - type: textarea
+    id: device
+    attributes:
+      label: Device and app
+      description: Filled in automatically by the in-app reporter.
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log excerpt
+      description: Recent warnings and errors (tokens, emails and signed links are removed).
+      render: text

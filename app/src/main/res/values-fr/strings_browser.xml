@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ui/browser: shared -->
+    <string name="browser_back">Retour</string>
+    <string name="browser_cancel">Annuler</string>
+    <string name="browser_clear">Effacer</string>
+    <string name="browser_folder">Dossier</string>
+    <string name="browser_version_stack">Pile de versions</string>
+    <string name="browser_restricted">Restreint</string>
+    <string name="browser_available_offline">Disponible hors connexion</string>
+    <string name="browser_recently_deleted">Récemment supprimés</string>
+    <plurals name="browser_selected_count">
+        <item quantity="one">%1$d sélectionné</item>
+        <item quantity="many">%1$d sélectionnés</item>
+        <item quantity="other">%1$d sélectionnés</item>
+    </plurals>
+    <plurals name="browser_item_count">
+        <item quantity="one">%1$d élément</item>
+        <item quantity="many">%1$d éléments</item>
+        <item quantity="other">%1$d éléments</item>
+    </plurals>
+    <plurals name="browser_uploading_files">
+        <item quantity="one">Importation de %1$d fichier</item>
+        <item quantity="many">Importation de %1$d fichiers</item>
+        <item quantity="other">Importation de %1$d fichiers</item>
+    </plurals>
+
+    <!-- ui/browser: Sort & view sheet -->
+    <string name="browser_sort_by_field">Trier par champ</string>
+    <string name="browser_fields_on_cards">Champs sur les cartes</string>
+    <string name="browser_fields_on_cards_hint">Affichés sous le nom de chaque fichier, dans l\'ordre où vous les activez.</string>
+    <string name="browser_sort_and_view">Tri et affichage</string>
+    <string name="browser_sort_by">Trier par</string>
+    <string name="browser_other_field">Autre champ ›</string>
+    <string name="browser_direction">Ordre</string>
+    <string name="browser_card_size">Taille des cartes</string>
+    <string name="browser_aspect_ratio">Format d\'image</string>
+    <string name="browser_thumbnail_scale">Échelle des miniatures</string>
+    <string name="browser_thumb_fit">Ajuster</string>
+    <string name="browser_thumb_fill">Remplir</string>
+    <string name="browser_titles">Titres</string>
+    <plurals name="browser_title_lines">
+        <item quantity="one">%1$d ligne</item>
+        <item quantity="many">%1$d lignes</item>
+        <item quantity="other">%1$d lignes</item>
+    </plurals>
+    <string name="browser_show_card_info">Afficher les infos des cartes</string>
+    <string name="browser_card_fields_on">%1$d activés</string>
+    <string name="browser_none">Aucun</string>
+    <string name="browser_group_sections">Grouper dossiers et fichiers</string>
+    <string name="browser_flatten_folders">Aplatir les dossiers</string>
+    <string name="browser_flatten_folders_hint">Tous les fichiers des sous-dossiers dans une seule liste</string>
+    <string name="browser_dir_ascending">Croissant</string>
+    <string name="browser_dir_descending">Décroissant</string>
+    <string name="browser_dir_newest">Plus récents</string>
+    <string name="browser_dir_oldest">Plus anciens</string>
+    <string name="browser_dir_largest">Plus grands</string>
+    <string name="browser_dir_smallest">Plus petits</string>
+    <string name="browser_dir_a_z">A → Z</string>
+    <string name="browser_dir_z_a">Z → A</string>
+
+    <!-- ui/browser: cards -->
+    <plurals name="browser_comment_count">
+        <item quantity="one">%1$d commentaire</item>
+        <item quantity="many">%1$d commentaires</item>
+        <item quantity="other">%1$d commentaires</item>
+    </plurals>
+    <string name="browser_needs_network">Connexion requise pour l\'ouvrir</string>
+    <string name="browser_more_actions_for">Plus d\'actions pour %1$s</string>
+    <string name="browser_action_share_link">Lien de partage</string>
+    <string name="browser_action_save_offline">Enregistrer hors connexion</string>
+    <string name="browser_action_members">Membres</string>
+    <string name="browser_action_rename">Renommer</string>
+    <string name="browser_action_move_to">Déplacer vers…</string>
+    <string name="browser_action_copy_to">Copier vers…</string>
+    <string name="browser_action_delete">Supprimer</string>
+    <string name="browser_processing">Traitement</string>
+    <string name="browser_version_badge">V%1$d</string>
+    <string name="browser_versions">Versions</string>
+
+    <!-- ui/browser: pickers -->
+    <string name="browser_pick_one_file">Choisissez un fichier</string>
+    <string name="browser_tick_files">Cochez des fichiers ou des dossiers</string>
+    <string name="browser_nothing_here">Rien ici</string>
+    <string name="browser_selected">Sélectionné</string>
+    <string name="browser_open_folder">Ouvrir le dossier</string>
+    <string name="browser_no_subfolders">Aucun sous-dossier</string>
+    <!-- %1$s: the action ("Move", "Copy"), %2$s: the destination folder. -->
+    <string name="browser_picker_action">%1$s vers « %2$s »</string>
+
+    <!-- ui/browser: filters -->
+    <string name="browser_filter_by_field">Filtrer par champ</string>
+    <string name="browser_filters">Filtres</string>
+    <string name="browser_remove_filter">Supprimer le filtre</string>
+    <string name="browser_add_filter">Ajouter un filtre</string>
+    <string name="browser_clear_all">Tout effacer</string>
+    <string name="browser_enter_number">Saisissez un nombre</string>
+    <string name="browser_enter_value">Saisissez une valeur</string>
+    <string name="browser_apply_filter">Appliquer le filtre</string>
+    <string name="browser_search_fields">Rechercher des champs</string>
+    <string name="browser_type_number">Nombre</string>
+    <string name="browser_type_rating">Note</string>
+    <string name="browser_type_choice">Choix</string>
+    <string name="browser_type_toggle">Oui / non</string>
+    <string name="browser_type_date">Date</string>
+    <string name="browser_type_people">Personnes</string>
+    <string name="browser_type_text">Texte</string>
+    <string name="browser_op_contains">contient</string>
+    <string name="browser_op_is">est</string>
+    <string name="browser_op_is_not">n\'est pas</string>
+    <string name="browser_op_greater">supérieur à</string>
+    <string name="browser_op_less">inférieur à</string>
+    <string name="browser_op_empty">est vide</string>
+    <string name="browser_op_not_empty">n\'est pas vide</string>
+    <plurals name="browser_people_count">
+        <item quantity="one">%1$d personne</item>
+        <item quantity="many">%1$d personnes</item>
+        <item quantity="other">%1$d personnes</item>
+    </plurals>
+
+    <!-- ui/browser: folder screen -->
+    <string name="browser_upload_photos_videos">Importer des photos et des vidéos</string>
+    <string name="browser_upload">Importer</string>
+    <plurals name="browser_folder_count">
+        <item quantity="one">%1$d dossier</item>
+        <item quantity="many">%1$d dossiers</item>
+        <item quantity="other">%1$d dossiers</item>
+    </plurals>
+    <plurals name="browser_asset_count">
+        <item quantity="one">%1$d élément</item>
+        <item quantity="many">%1$d éléments</item>
+        <item quantity="other">%1$d éléments</item>
+    </plurals>
+    <string name="browser_empty">Vide</string>
+    <string name="browser_loading_subfolders">Chargement des fichiers des sous-dossiers…</string>
+    <string name="browser_showing_subfolders">Affichage de tous les fichiers de ce dossier et de ses sous-dossiers</string>
+    <string name="browser_no_matches">Aucun résultat</string>
+    <string name="browser_no_matches_message">Rien dans ce dossier ne correspond à « %1$s ».</string>
+    <string name="browser_empty_title">Rien à relire pour l\'instant</string>
+    <string name="browser_empty_message">Importez le premier fichier : vidéo, images, audio ou PDF. Les importations continuent même si vous fermez l\'application.</string>
+    <string name="browser_new_folder">Nouveau dossier</string>
+    <string name="browser_folder_name">Nom du dossier</string>
+    <string name="browser_create">Créer</string>
+    <string name="browser_name">Nom</string>
+    <string name="browser_delete_one">Supprimer « %1$s » ?</string>
+    <plurals name="browser_delete_many">
+        <item quantity="one">Supprimer %1$d élément ?</item>
+        <item quantity="many">Supprimer %1$d éléments ?</item>
+        <item quantity="other">Supprimer %1$d éléments ?</item>
+    </plurals>
+    <string name="browser_delete_message">Les éléments sont placés dans les éléments récemment supprimés du projet, où les administrateurs peuvent les restaurer.</string>
+    <string name="browser_project">Projet</string>
+    <string name="browser_copy">Copier</string>
+    <string name="browser_move">Déplacer</string>
+    <string name="browser_import_from_link">Importer depuis un lien</string>
+    <string name="browser_import_message">Frame.io télécharge le fichier directement depuis le lien : rien ne passe par votre appareil. Jusqu\'à 50 Go.</string>
+    <string name="browser_file_url">URL du fichier</string>
+    <string name="browser_file_name">Nom du fichier</string>
+    <string name="browser_imported_file">Fichier importé</string>
+    <string name="browser_import">Importer</string>
+    <string name="browser_collapse">Réduire</string>
+    <string name="browser_expand">Développer</string>
+    <string name="browser_filter">Filtrer</string>
+    <string name="browser_filters_on">Filtres, %1$d actifs</string>
+    <string name="browser_project_options">Options du projet</string>
+    <string name="browser_folder_members">Membres du dossier</string>
+    <string name="browser_project_members">Membres du projet</string>
+    <string name="browser_share_links">Liens de partage</string>
+    <string name="browser_select_all">Tout sélectionner</string>
+    <string name="browser_share">Partager</string>
+    <string name="browser_more">Plus</string>
+    <string name="browser_stack_as_versions">Empiler en versions</string>
+    <string name="browser_done">OK</string>
+    <string name="browser_filter_this_folder">Filtrer ce dossier</string>
+    <string name="browser_open_transfers">Ouvrir les transferts</string>
+    <string name="browser_layout_grid">Grille</string>
+    <string name="browser_layout_list">Liste</string>
+    <string name="browser_add_to">Ajouter à %1$s</string>
+    <string name="browser_uploads_keep_going">Les importations continuent même si vous fermez l\'application</string>
+    <string name="browser_photos_videos">Photos et vidéos</string>
+    <string name="browser_files">Fichiers</string>
+    <string name="browser_use_mobile_data">Utiliser les données mobiles</string>
+    <string name="browser_kind_all">Tout</string>
+    <string name="browser_kind_video">Vidéo</string>
+    <string name="browser_kind_images">Images</string>
+    <string name="browser_kind_audio">Audio</string>
+    <string name="browser_kind_docs">Docs</string>
+    <string name="browser_kind_review">À relire</string>
+
+    <!-- ui/browser: folder messages (snackbars) -->
+    <string name="browser_msg_folder_created">Dossier créé</string>
+    <string name="browser_msg_renamed">Renommé</string>
+    <string name="browser_msg_deleted">Supprimé</string>
+    <plurals name="browser_msg_deleted_many">
+        <item quantity="one">%1$d élément supprimé</item>
+        <item quantity="many">%1$d éléments supprimés</item>
+        <item quantity="other">%1$d éléments supprimés</item>
+    </plurals>
+    <plurals name="browser_msg_moved">
+        <item quantity="one">%1$d élément déplacé</item>
+        <item quantity="many">%1$d éléments déplacés</item>
+        <item quantity="other">%1$d éléments déplacés</item>
+    </plurals>
+    <plurals name="browser_msg_copied">
+        <item quantity="one">%1$d élément copié</item>
+        <item quantity="many">%1$d éléments copiés</item>
+        <item quantity="other">%1$d éléments copiés</item>
+    </plurals>
+    <string name="browser_msg_importing">Importation en cours : suivez-la dans Transferts</string>
+    <string name="browser_msg_stack_created">Pile de versions créée</string>
+    <plurals name="browser_msg_saving_offline">
+        <item quantity="one">Enregistrement de %1$d élément hors connexion</item>
+        <item quantity="many">Enregistrement de %1$d éléments hors connexion</item>
+        <item quantity="other">Enregistrement de %1$d éléments hors connexion</item>
+    </plurals>
+
+    <!-- ui/browser: Recently deleted -->
+    <string name="browser_trash_restored">« %1$s » restauré</string>
+    <string name="browser_trash_restore_unavailable">La restauration n\'est pas encore disponible via l\'API pour ce compte</string>
+    <string name="browser_trash_empty_title">Aucun élément supprimé</string>
+    <string name="browser_trash_empty_message">Les éléments supprimés apparaissent ici et peuvent être restaurés.</string>
+    <string name="browser_trash_restore_web">Restaurer depuis le Web</string>
+    <string name="browser_trash_restore_web_message">Frame.io n\'a pas activé la restauration via l\'API pour ce compte. Ouvrez le projet sur frame.io et restaurez-le depuis les éléments récemment supprimés.</string>
+    <string name="browser_trash_open_web">Ouvrir frame.io</string>
+    <!-- %1$s: a relative time, e.g. "il y a 2 jours". -->
+    <string name="browser_trash_deleted_ago">Supprimé %1$s</string>
+    <string name="browser_trash_restore">Restaurer</string>
+    <string name="browser_trash_retention">Les éléments restent ici pendant 30 jours, puis Frame.io les supprime définitivement.</string>
+
+    <!-- ui/transfers -->
+    <string name="transfers_title">Transferts</string>
+    <string name="transfers_cancel">Annuler</string>
+    <string name="transfers_clear">Effacer</string>
+    <string name="transfers_remove">Retirer</string>
+    <string name="transfers_remove_all">Tout retirer</string>
+    <string name="transfers_remove_all_title">Retirer toutes les copies hors connexion ?</string>
+    <string name="transfers_remove_all_message">Libère %1$s sur cet appareil. Les fichiers restent sur Frame.io.</string>
+    <string name="transfers_tab_uploads">Importations · %1$d</string>
+    <string name="transfers_tab_offline">Hors connexion · %1$d</string>
+    <plurals name="transfers_in_progress_files">
+        <item quantity="one">En cours · %1$d fichier</item>
+        <item quantity="many">En cours · %1$d fichiers</item>
+        <item quantity="other">En cours · %1$d fichiers</item>
+    </plurals>
+    <string name="transfers_eta_min">%1$d min</string>
+    <string name="transfers_eta_sec">%1$d s</string>
+    <string name="transfers_on_this_phone">%1$s sur cet appareil</string>
+    <string name="transfers_offline_empty_title">Rien hors connexion pour l\'instant</string>
+    <string name="transfers_offline_empty_message">Enregistrez des fichiers pour les relire hors connexion depuis le lecteur ou en les sélectionnant dans un dossier. Les commentaires écrits hors connexion se synchronisent automatiquement.</string>
+    <string name="transfers_uploads_empty_title">Aucune importation</string>
+    <string name="transfers_uploads_empty_message">Importez depuis n\'importe quel dossier avec le bouton +, ou partagez des fichiers vers Final(ish) depuis d\'autres applications.</string>
+    <string name="transfers_section_in_progress">En cours</string>
+    <string name="transfers_section_attention">Action requise</string>
+    <string name="transfers_section_completed">Terminés</string>
+    <string name="transfers_available_offline">Disponible hors connexion · %1$s</string>
+    <string name="transfers_failed">Échec</string>
+    <string name="transfers_cancelled">Annulé</string>
+    <string name="transfers_to_folder">vers %1$s</string>
+    <string name="transfers_folder">dossier</string>
+    <string name="transfers_imported">Importé depuis un lien</string>
+    <string name="transfers_import_failed">Échec de l\'importation</string>
+    <string name="transfers_stopped_following">Suivi arrêté · Frame.io peut encore le terminer</string>
+    <string name="transfers_importing">Importation sur Frame.io…</string>
+    <string name="transfers_uploaded_version">Importé comme nouvelle version · %1$s</string>
+    <string name="transfers_uploaded">Importé · %1$s</string>
+    <string name="transfers_paused">En pause · %1$s sur %2$s envoyés</string>
+    <string name="transfers_resume">Reprendre</string>
+    <string name="transfers_retry">Réessayer</string>
+    <string name="transfers_waiting">En attente du réseau… %1$s</string>
+    <string name="transfers_waiting_wifi">En attente du Wi-Fi… %1$s</string>
+
+    <!-- ui/search -->
+    <string name="search_title">Rechercher</string>
+    <string name="search_filter_all">Tout</string>
+    <string name="search_filter_files">Fichiers</string>
+    <string name="search_filter_folders">Dossiers</string>
+    <string name="search_filter_projects">Projets</string>
+    <string name="search_hint_smart">Décrivez ce que vous cherchez</string>
+    <string name="search_hint">Fichiers, dossiers, projets…</string>
+    <string name="search_clear">Effacer</string>
+    <string name="search_smart">Recherche intelligente</string>
+    <string name="search_smart_hint">La recherche intelligente trouve les médias selon leur contenu : essayez « plan de drone au-dessus de l\'eau ».</string>
+    <string name="search_failed">Échec de la recherche</string>
+    <string name="search_recently_opened">OUVERTS RÉCEMMENT</string>
+    <string name="search_recent_searches">RECHERCHES RÉCENTES</string>
+    <string name="search_everything">Tout rechercher</string>
+    <string name="search_everything_message">Trouvez des fichiers, des dossiers et des projets dans ce compte.</string>
+    <string name="search_no_results">Aucun résultat</string>
+    <string name="search_try_different">Essayez un autre terme.</string>
+    <string name="search_try_different_smart">Essayez un autre terme ou activez la recherche intelligente.</string>
+    <string name="search_folder">Dossier</string>
+    <string name="search_version_stack">Pile de versions</string>
+    <string name="search_kind_video">Vidéo</string>
+    <string name="search_kind_image">Image</string>
+    <string name="search_kind_audio">Audio</string>
+    <string name="search_kind_pdf">PDF</string>
+    <string name="search_kind_other">Autre</string>
+    <string name="search_project">Projet</string>
+
+    <!-- ui/notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_mark_all_read">Tout marquer comme lu</string>
+    <string name="notifications_settings">Paramètres des notifications</string>
+    <string name="notifications_empty_title">Aucune notification pour l\'instant</string>
+    <string name="notifications_empty_message">Les commentaires, réponses et mentions sur les fichiers que vous ouvrez ou importez, les importations terminées et les consultations de vos liens de partage s\'affichent ici.</string>
+    <string name="notifications_today">Aujourd\'hui</string>
+    <string name="notifications_yesterday">Hier</string>
+    <string name="notifications_someone">Quelqu\'un</string>
+    <!-- %1$s: the latest person, %2$d: how many others. -->
+    <plurals name="notifications_actors_others">
+        <item quantity="one">%1$s et %2$d autre personne</item>
+        <item quantity="many">%1$s et %2$d autres personnes</item>
+        <item quantity="other">%1$s et %2$d autres personnes</item>
+    </plurals>
+    <!-- %1$s: who, %2$s: the file. -->
+    <string name="notifications_comment_one">%1$s a laissé un commentaire sur %2$s</string>
+    <!-- %1$s: who, %2$d: how many, %3$s: the file. -->
+    <plurals name="notifications_comments_many">
+        <item quantity="one">%1$s a laissé %2$d commentaire sur %3$s</item>
+        <item quantity="many">%1$s a laissé %2$d commentaires sur %3$s</item>
+        <item quantity="other">%1$s a laissé %2$d commentaires sur %3$s</item>
+    </plurals>
+    <string name="notifications_reply_one">%1$s vous a répondu sur %2$s</string>
+    <plurals name="notifications_replies_many">
+        <item quantity="one">%1$s vous a laissé %2$d réponse sur %3$s</item>
+        <item quantity="many">%1$s vous a laissé %2$d réponses sur %3$s</item>
+        <item quantity="other">%1$s vous a laissé %2$d réponses sur %3$s</item>
+    </plurals>
+    <string name="notifications_mention">%1$s vous a mentionné sur %2$s</string>
+    <string name="notifications_upload_ready">Votre importation %1$s est prête pour la relecture</string>
+    <string name="notifications_link_opened_once">Quelqu\'un a ouvert votre lien %1$s</string>
+    <!-- %1$s: the share link, %2$d: how many times. -->
+    <plurals name="notifications_link_opened_times">
+        <item quantity="one">Votre lien %1$s a été ouvert %2$d fois</item>
+        <item quantity="many">Votre lien %1$s a été ouvert %2$d fois</item>
+        <item quantity="other">Votre lien %1$s a été ouvert %2$d fois</item>
+    </plurals>
+    <string name="notifications_link_opened_by">%1$s a ouvert votre lien %2$s</string>
+    <string name="notifications_activity">Notifications d\'activité</string>
+    <string name="notifications_activity_detail">Vérification environ toutes les 15 minutes</string>
+    <string name="notifications_comments">Commentaires, réponses et mentions</string>
+    <string name="notifications_uploads_ready">Importations prêtes</string>
+    <string name="notifications_share_views">Consultations des liens de partage</string>
+    <string name="notifications_settings_footer">Désactivez les notifications d\'un projet sur l\'appareil depuis son menu ⋯. Les notifications par e-mail se règlent sur frame.io.</string>
+    <plurals name="notifications_unread">
+        <item quantity="one">%1$d non lu</item>
+        <item quantity="many">%1$d non lus</item>
+        <item quantity="other">%1$d non lus</item>
+    </plurals>
+</resources>

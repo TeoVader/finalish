@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Errors shown on screen (core/network userMessage) -->
+    <string name="core_error_no_api_route">Frame.io bietet das für dein Konto noch nicht über die API an.</string>
+    <string name="core_error_session_expired">Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.</string>
+    <string name="core_error_forbidden">Du hast keine Berechtigung dafür.</string>
+    <string name="core_error_not_found">Dieses Element existiert nicht mehr.</string>
+    <string name="core_error_rate_limited">Frame.io begrenzt gerade die Anfragen. Versuch es gleich noch einmal.</string>
+    <string name="core_error_http">Frame.io hat einen Fehler zurückgegeben (%1$d).</string>
+    <string name="core_error_offline">Du scheinst offline zu sein.</string>
+    <string name="core_error_storage_full">Nicht genügend freier Speicher auf diesem Gerät.</string>
+    <string name="core_error_file">Die Datei auf diesem Gerät konnte nicht gelesen oder geschrieben werden.</string>
+    <string name="core_error_network">Die Verbindung zu Frame.io ist fehlgeschlagen. Versuche es erneut.</string>
+    <string name="core_error_generic">Etwas ist schiefgelaufen.</string>
+
+    <!-- Plan limits (core/network PlanLimits) -->
+    <string name="core_plan_limit">Dein Frame.io-Abo enthält keine %1$s.</string>
+    <!-- Joins the last feature of a list: "expiring share links or passphrase-protected share links" -->
+    <string name="core_plan_list_or">%1$s oder %2$s</string>
+    <string name="core_plan_feature_share_link_expiration">ablaufenden Freigabelinks</string>
+    <string name="core_plan_feature_password_protected_shares">passwortgeschützten Freigabelinks</string>
+    <string name="core_plan_feature_secure_sharing">Freigabelinks nur auf Einladung</string>
+    <string name="core_plan_feature_comment_attachments">Kommentaranhänge</string>
+    <string name="core_plan_feature_watermark">Wasserzeichen</string>
+    <string name="core_plan_feature_forensic_watermark">forensischen Wasserzeichen</string>
+    <string name="core_plan_feature_user_groups">Benutzergruppen</string>
+    <string name="core_plan_feature_custom_metadata">benutzerdefinierten Metadatenfelder</string>
+
+    <!-- Transfers: notifications and errors -->
+    <string name="core_transfer_preparing_upload">Upload wird vorbereitet…</string>
+    <string name="core_transfer_preparing_download">Download wird vorbereitet…</string>
+    <string name="core_transfer_to_destination">nach %1$s</string>
+    <string name="core_transfer_from_source">von %1$s</string>
+    <string name="core_transfer_cancel">Abbrechen</string>
+    <string name="core_transfer_cancel_all">Alle abbrechen</string>
+    <plurals name="core_transfer_uploading_files">
+        <item quantity="one">%1$d Datei wird hochgeladen</item>
+        <item quantity="other">%1$d Dateien werden hochgeladen</item>
+    </plurals>
+    <string name="core_transfer_uploading_to_frameio">Upload zu Frame.io</string>
+    <string name="core_transfer_downloading_offline">Download für offline</string>
+    <string name="core_transfer_no_rendition">Für diese Datei ist keine herunterladbare Version verfügbar.</string>
+    <string name="core_transfer_not_stacked">Hochgeladen, aber nicht als neue Version hinzugefügt: %1$s</string>
+    <string name="core_transfer_import_failed">Frame.io konnte die Datei nicht über den Link abrufen</string>
+    <string name="core_transfer_import_timeout">Nach einem Tag noch immer nicht importiert</string>
+    <string name="core_transfer_read_failed">Die geteilte Datei konnte nicht gelesen werden</string>
+    <!-- "25.1 MB of 79.0 MB" -->
+    <string name="core_transfer_progress">%1$s von %2$s</string>
+    <string name="core_transfer_speed">%1$s/s</string>
+    <string name="core_transfer_eta_seconds">Noch %1$d s</string>
+    <string name="core_transfer_eta_minutes">Noch %1$d min %2$d s</string>
+    <string name="core_transfer_eta_hours">Noch %1$d h %2$d min</string>
+
+    <!-- Activity notifications (core/notify) -->
+    <string name="core_notify_channel_activity">Kommentare &amp; Aktivität</string>
+    <string name="core_notify_channel_activity_desc">Neue Kommentare, verarbeitete Uploads und Aufrufe von Freigabelinks</string>
+    <string name="core_notify_upload_ready">Upload verarbeitet – bereit zur Prüfung</string>
+    <string name="core_notify_share_opened_someone">Jemand hat deinen Link geöffnet</string>
+    <plurals name="core_notify_share_opened_times">
+        <item quantity="one">Dein Link wurde %1$d-mal geöffnet</item>
+        <item quantity="other">Dein Link wurde %1$d-mal geöffnet</item>
+    </plurals>
+    <string name="core_notify_share_opened_by">%1$s hat deinen Link geöffnet</string>
+    <plurals name="core_notify_share_opened_by_others">
+        <item quantity="one">%1$s und %2$d weitere Person haben deinen Link geöffnet</item>
+        <item quantity="other">%1$s und %2$d weitere Personen haben deinen Link geöffnet</item>
+    </plurals>
+    <string name="core_notify_commented">%1$s hat kommentiert</string>
+    <string name="core_notify_new_comment">Neuer Kommentar</string>
+    <plurals name="core_notify_new_comments">
+        <item quantity="one">%1$d neuer Kommentar</item>
+        <item quantity="other">%1$d neue Kommentare</item>
+    </plurals>
+    <string name="core_notify_open">Öffnen</string>
+    <string name="core_notify_mark_read">Als gelesen markieren</string>
+    <string name="core_notify_share">Teilen</string>
+
+    <!-- Playback quality (core/data Settings) -->
+    <string name="core_quality_auto">Automatisch</string>
+    <string name="core_quality_2160">2160p (4K)</string>
+    <string name="core_quality_1080">1080p (HD)</string>
+    <string name="core_quality_720">720p (HD)</string>
+    <string name="core_quality_540">540p</string>
+    <string name="core_quality_360">360p</string>
+    <string name="core_quality_180">180p</string>
+    <!-- A rendition height without a named quality: "1440p" -->
+    <string name="core_quality_height">%1$dp</string>
+
+    <!-- Time format -->
+    <string name="core_time_format_timecode">Timecode</string>
+    <string name="core_time_format_standard">Standard</string>
+    <string name="core_time_format_frames">Frames</string>
+
+    <!-- Sort orders -->
+    <string name="core_sort_name">Name</string>
+    <string name="core_sort_last_modified">Zuletzt geändert</string>
+    <string name="core_sort_date_uploaded">Hochladedatum</string>
+    <string name="core_sort_type">Typ</string>
+    <string name="core_sort_size">Größe</string>
+    <string name="core_sort_status">Status</string>
+
+    <!-- Models -->
+    <string name="core_user_unknown">Unbekannt</string>
+    <string name="core_workspace_shared_with_you">Mit dir geteilt</string>
+    <plurals name="core_group_members">
+        <item quantity="one">%1$d Person</item>
+        <item quantity="other">%1$d Personen</item>
+    </plurals>
+
+    <!-- Watermark data points -->
+    <string name="core_watermark_email">E-Mail</string>
+    <string name="core_watermark_name">Name</string>
+    <string name="core_watermark_ip_address">IP-Adresse</string>
+    <string name="core_watermark_time">Uhrzeit</string>
+    <string name="core_watermark_viewer_text">Text des Betrachters</string>
+    <string name="core_watermark_text">Text</string>
+    <string name="core_watermark_custom_text">„%1$s“</string>
+
+    <!-- Metadata field types and summaries -->
+    <string name="core_field_type_text">Text</string>
+    <string name="core_field_type_long_text">Langer Text</string>
+    <string name="core_field_type_select">Einfachauswahl</string>
+    <string name="core_field_type_select_multi">Mehrfachauswahl</string>
+    <string name="core_field_type_number">Zahl</string>
+    <string name="core_field_type_date">Datum</string>
+    <string name="core_field_type_rating">Bewertung</string>
+    <string name="core_field_type_toggle">Schalter</string>
+    <string name="core_field_type_user_single">Person</string>
+    <string name="core_field_type_user_multi">Personen</string>
+    <plurals name="core_field_options">
+        <item quantity="one">%1$d Option</item>
+        <item quantity="other">%1$d Optionen</item>
+    </plurals>
+    <plurals name="core_field_rating_stars">
+        <item quantity="one">%1$s Stern</item>
+        <item quantity="other">%1$s Sterne</item>
+    </plurals>
+    <plurals name="core_field_rating_hearts">
+        <item quantity="one">%1$s Herz</item>
+        <item quantity="other">%1$s Herzen</item>
+    </plurals>
+    <plurals name="core_field_rating_thumbs">
+        <item quantity="one">%1$s Daumen</item>
+        <item quantity="other">%1$s Daumen</item>
+    </plurals>
+    <string name="core_field_with_time">mit Uhrzeit</string>
+
+    <!-- Photo details (core/media ExifPeek) -->
+    <string name="core_exif_camera">Kamera</string>
+    <string name="core_exif_lens">Objektiv</string>
+    <string name="core_exif_exposure">Belichtung</string>
+    <string name="core_exif_taken">Aufgenommen</string>
+
+    <!-- In-app reports: what the user sees (the report itself stays English) -->
+    <string name="core_feedback_kind_bug">Fehler</string>
+    <string name="core_feedback_kind_feature">Funktionswunsch</string>
+    <string name="core_feedback_kind_change">Verbesserung</string>
+    <string name="core_feedback_not_set_up">Berichte sind in diesem Build nicht eingerichtet. Teile den Bericht stattdessen.</string>
+    <string name="core_feedback_waiting">Wartet auf Senden</string>
+    <string name="core_feedback_paused">Berichte sind für heute pausiert</string>
+    <string name="core_feedback_too_large">Anhänge sind zu groß</string>
+    <string name="core_feedback_refused">Der Relay-Server hat den Bericht abgelehnt (%1$d)</string>
+    <!-- "Waiting to send · around 09:47" -->
+    <string name="core_feedback_around">%1$s · gegen %2$s</string>
+    <string name="core_feedback_send_report">Bericht senden</string>
+    <plurals name="core_transfer_batch_done">
+        <item quantity="one">%1$s · %2$d fertig</item>
+        <item quantity="other">%1$s · %2$d fertig</item>
+    </plurals>
+    <string name="core_time_just_now">gerade eben</string>
+    <string name="core_time_minutes_ago">vor %1$d min</string>
+    <string name="core_time_hours_ago">vor %1$d h</string>
+    <string name="core_time_days_ago">vor %1$d T.</string>
+</resources>

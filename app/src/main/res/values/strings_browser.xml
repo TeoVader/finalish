@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ui/browser: shared -->
+    <string name="browser_back">Back</string>
+    <string name="browser_cancel">Cancel</string>
+    <string name="browser_clear">Clear</string>
+    <string name="browser_folder">Folder</string>
+    <string name="browser_version_stack">Version stack</string>
+    <string name="browser_restricted">Restricted</string>
+    <string name="browser_available_offline">Available offline</string>
+    <string name="browser_recently_deleted">Recently deleted</string>
+    <plurals name="browser_selected_count">
+        <item quantity="one">%1$d selected</item>
+        <item quantity="other">%1$d selected</item>
+    </plurals>
+    <plurals name="browser_item_count">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
+    <plurals name="browser_uploading_files">
+        <item quantity="one">Uploading %1$d file</item>
+        <item quantity="other">Uploading %1$d files</item>
+    </plurals>
+
+    <!-- ui/browser: Sort & view sheet -->
+    <string name="browser_sort_by_field">Sort by field</string>
+    <string name="browser_fields_on_cards">Fields on cards</string>
+    <string name="browser_fields_on_cards_hint">Shown under each file\'s name, in the order you turn them on.</string>
+    <string name="browser_sort_and_view">Sort &amp; view</string>
+    <string name="browser_sort_by">Sort by</string>
+    <string name="browser_other_field">Other field ›</string>
+    <string name="browser_direction">Direction</string>
+    <string name="browser_card_size">Card size</string>
+    <string name="browser_aspect_ratio">Aspect ratio</string>
+    <string name="browser_thumbnail_scale">Thumbnail scale</string>
+    <string name="browser_thumb_fit">Fit</string>
+    <string name="browser_thumb_fill">Fill</string>
+    <string name="browser_titles">Titles</string>
+    <plurals name="browser_title_lines">
+        <item quantity="one">%1$d line</item>
+        <item quantity="other">%1$d lines</item>
+    </plurals>
+    <string name="browser_show_card_info">Show card info</string>
+    <string name="browser_card_fields_on">%1$d on</string>
+    <string name="browser_none">None</string>
+    <string name="browser_group_sections">Group folders and files</string>
+    <string name="browser_flatten_folders">Flatten folders</string>
+    <string name="browser_flatten_folders_hint">Every file from the subfolders in one list</string>
+    <string name="browser_dir_ascending">Ascending</string>
+    <string name="browser_dir_descending">Descending</string>
+    <string name="browser_dir_newest">Newest</string>
+    <string name="browser_dir_oldest">Oldest</string>
+    <string name="browser_dir_largest">Largest</string>
+    <string name="browser_dir_smallest">Smallest</string>
+    <string name="browser_dir_a_z">A → Z</string>
+    <string name="browser_dir_z_a">Z → A</string>
+
+    <!-- ui/browser: cards -->
+    <plurals name="browser_comment_count">
+        <item quantity="one">%1$d comment</item>
+        <item quantity="other">%1$d comments</item>
+    </plurals>
+    <string name="browser_needs_network">Needs network to open</string>
+    <string name="browser_more_actions_for">More actions for %1$s</string>
+    <string name="browser_action_share_link">Share link</string>
+    <string name="browser_action_save_offline">Save offline</string>
+    <string name="browser_action_members">Members</string>
+    <string name="browser_action_rename">Rename</string>
+    <string name="browser_action_move_to">Move to…</string>
+    <string name="browser_action_copy_to">Copy to…</string>
+    <string name="browser_action_delete">Delete</string>
+    <string name="browser_processing">Processing</string>
+    <string name="browser_version_badge">V%1$d</string>
+    <string name="browser_versions">Versions</string>
+
+    <!-- ui/browser: pickers -->
+    <string name="browser_pick_one_file">Pick one file</string>
+    <string name="browser_tick_files">Tick files or folders</string>
+    <string name="browser_nothing_here">Nothing here</string>
+    <string name="browser_selected">Selected</string>
+    <string name="browser_open_folder">Open folder</string>
+    <string name="browser_no_subfolders">No subfolders</string>
+    <!-- %1$s: the action ("Move", "Copy"), %2$s: the destination folder. -->
+    <string name="browser_picker_action">%1$s to “%2$s”</string>
+
+    <!-- ui/browser: filters -->
+    <string name="browser_filter_by_field">Filter by field</string>
+    <string name="browser_filters">Filters</string>
+    <string name="browser_remove_filter">Remove filter</string>
+    <string name="browser_add_filter">Add filter</string>
+    <string name="browser_clear_all">Clear all</string>
+    <string name="browser_enter_number">Enter a number</string>
+    <string name="browser_enter_value">Enter a value</string>
+    <string name="browser_apply_filter">Apply filter</string>
+    <string name="browser_search_fields">Search fields</string>
+    <string name="browser_type_number">Number</string>
+    <string name="browser_type_rating">Rating</string>
+    <string name="browser_type_choice">Choice</string>
+    <string name="browser_type_toggle">Yes / no</string>
+    <string name="browser_type_date">Date</string>
+    <string name="browser_type_people">People</string>
+    <string name="browser_type_text">Text</string>
+    <string name="browser_op_contains">contains</string>
+    <string name="browser_op_is">is</string>
+    <string name="browser_op_is_not">is not</string>
+    <string name="browser_op_greater">greater than</string>
+    <string name="browser_op_less">less than</string>
+    <string name="browser_op_empty">is empty</string>
+    <string name="browser_op_not_empty">is not empty</string>
+    <plurals name="browser_people_count">
+        <item quantity="one">%1$d person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
+
+    <!-- ui/browser: folder screen -->
+    <string name="browser_upload_photos_videos">Upload photos and videos</string>
+    <string name="browser_upload">Upload</string>
+    <plurals name="browser_folder_count">
+        <item quantity="one">%1$d folder</item>
+        <item quantity="other">%1$d folders</item>
+    </plurals>
+    <plurals name="browser_asset_count">
+        <item quantity="one">%1$d asset</item>
+        <item quantity="other">%1$d assets</item>
+    </plurals>
+    <string name="browser_empty">Empty</string>
+    <string name="browser_loading_subfolders">Loading files from subfolders…</string>
+    <string name="browser_showing_subfolders">Showing every file in this folder and its subfolders</string>
+    <string name="browser_no_matches">No matches</string>
+    <string name="browser_no_matches_message">Nothing in this folder matches “%1$s”.</string>
+    <string name="browser_empty_title">Nothing to review yet</string>
+    <string name="browser_empty_message">Upload the first file: video, images, audio or PDF. Uploads keep going even if you close the app.</string>
+    <string name="browser_new_folder">New folder</string>
+    <string name="browser_folder_name">Folder name</string>
+    <string name="browser_create">Create</string>
+    <string name="browser_name">Name</string>
+    <string name="browser_delete_one">Delete “%1$s”?</string>
+    <plurals name="browser_delete_many">
+        <item quantity="one">Delete %1$d item?</item>
+        <item quantity="other">Delete %1$d items?</item>
+    </plurals>
+    <string name="browser_delete_message">Items move to the project\'s Recently Deleted, where admins can restore them.</string>
+    <string name="browser_project">Project</string>
+    <string name="browser_copy">Copy</string>
+    <string name="browser_move">Move</string>
+    <string name="browser_import_from_link">Import from link</string>
+    <string name="browser_import_message">Frame.io downloads the file directly from the link — nothing goes through your device. Up to 50 GB.</string>
+    <string name="browser_file_url">File URL</string>
+    <string name="browser_file_name">File name</string>
+    <string name="browser_imported_file">Imported file</string>
+    <string name="browser_import">Import</string>
+    <string name="browser_collapse">Collapse</string>
+    <string name="browser_expand">Expand</string>
+    <string name="browser_filter">Filter</string>
+    <string name="browser_filters_on">Filters, %1$d on</string>
+    <string name="browser_project_options">Project options</string>
+    <string name="browser_folder_members">Folder members</string>
+    <string name="browser_project_members">Project members</string>
+    <string name="browser_share_links">Share links</string>
+    <string name="browser_select_all">Select all</string>
+    <string name="browser_share">Share</string>
+    <string name="browser_more">More</string>
+    <string name="browser_stack_as_versions">Stack as versions</string>
+    <string name="browser_done">Done</string>
+    <string name="browser_filter_this_folder">Filter this folder</string>
+    <string name="browser_open_transfers">Open Transfers</string>
+    <string name="browser_layout_grid">Grid</string>
+    <string name="browser_layout_list">List</string>
+    <string name="browser_add_to">Add to %1$s</string>
+    <string name="browser_uploads_keep_going">Uploads keep going even if you close the app</string>
+    <string name="browser_photos_videos">Photos &amp; videos</string>
+    <string name="browser_files">Files</string>
+    <string name="browser_use_mobile_data">Use mobile data</string>
+    <string name="browser_kind_all">All</string>
+    <string name="browser_kind_video">Video</string>
+    <string name="browser_kind_images">Images</string>
+    <string name="browser_kind_audio">Audio</string>
+    <string name="browser_kind_docs">Docs</string>
+    <string name="browser_kind_review">Needs review</string>
+
+    <!-- ui/browser: folder messages (snackbars) -->
+    <string name="browser_msg_folder_created">Folder created</string>
+    <string name="browser_msg_renamed">Renamed</string>
+    <string name="browser_msg_deleted">Deleted</string>
+    <plurals name="browser_msg_deleted_many">
+        <item quantity="one">Deleted %1$d item</item>
+        <item quantity="other">Deleted %1$d items</item>
+    </plurals>
+    <plurals name="browser_msg_moved">
+        <item quantity="one">Moved %1$d item</item>
+        <item quantity="other">Moved %1$d items</item>
+    </plurals>
+    <plurals name="browser_msg_copied">
+        <item quantity="one">Copied %1$d item</item>
+        <item quantity="other">Copied %1$d items</item>
+    </plurals>
+    <string name="browser_msg_importing">Importing — follow it in Transfers</string>
+    <string name="browser_msg_stack_created">Version stack created</string>
+    <plurals name="browser_msg_saving_offline">
+        <item quantity="one">Saving %1$d item for offline</item>
+        <item quantity="other">Saving %1$d items for offline</item>
+    </plurals>
+
+    <!-- ui/browser: Recently deleted -->
+    <string name="browser_trash_restored">Restored “%1$s”</string>
+    <string name="browser_trash_restore_unavailable">Restoring isn\'t available through the API for this account yet</string>
+    <string name="browser_trash_empty_title">Nothing deleted</string>
+    <string name="browser_trash_empty_message">Deleted items appear here and can be restored.</string>
+    <string name="browser_trash_restore_web">Restore from the web</string>
+    <string name="browser_trash_restore_web_message">Frame.io hasn\'t enabled restoring through the API for this account. Open the project on frame.io and restore from Recently Deleted.</string>
+    <string name="browser_trash_open_web">Open frame.io</string>
+    <!-- %1$s: a relative time, e.g. "2 days ago". -->
+    <string name="browser_trash_deleted_ago">Deleted %1$s</string>
+    <string name="browser_trash_restore">Restore</string>
+    <string name="browser_trash_retention">Items stay here for 30 days, then Frame.io deletes them for good.</string>
+
+    <!-- ui/transfers -->
+    <string name="transfers_title">Transfers</string>
+    <string name="transfers_cancel">Cancel</string>
+    <string name="transfers_clear">Clear</string>
+    <string name="transfers_remove">Remove</string>
+    <string name="transfers_remove_all">Remove all</string>
+    <string name="transfers_remove_all_title">Remove all offline copies?</string>
+    <string name="transfers_remove_all_message">Frees %1$s on this device. The files stay on Frame.io.</string>
+    <string name="transfers_tab_uploads">Uploads · %1$d</string>
+    <string name="transfers_tab_offline">Offline · %1$d</string>
+    <plurals name="transfers_in_progress_files">
+        <item quantity="one">In progress · %1$d file</item>
+        <item quantity="other">In progress · %1$d files</item>
+    </plurals>
+    <string name="transfers_eta_min">%1$d min</string>
+    <string name="transfers_eta_sec">%1$d s</string>
+    <string name="transfers_on_this_phone">%1$s on this device</string>
+    <string name="transfers_offline_empty_title">Nothing offline yet</string>
+    <string name="transfers_offline_empty_message">Save files for offline review from the file viewer or by selecting them in a folder. Comments you write offline sync automatically.</string>
+    <string name="transfers_uploads_empty_title">No uploads</string>
+    <string name="transfers_uploads_empty_message">Upload from any folder with the + button, or share files to Final(ish) from other apps.</string>
+    <string name="transfers_section_in_progress">In progress</string>
+    <string name="transfers_section_attention">Needs attention</string>
+    <string name="transfers_section_completed">Completed</string>
+    <string name="transfers_available_offline">Available offline · %1$s</string>
+    <string name="transfers_failed">Failed</string>
+    <string name="transfers_cancelled">Cancelled</string>
+    <string name="transfers_to_folder">to %1$s</string>
+    <string name="transfers_folder">folder</string>
+    <string name="transfers_imported">Imported from link</string>
+    <string name="transfers_import_failed">Import failed</string>
+    <string name="transfers_stopped_following">Stopped following · Frame.io may still finish it</string>
+    <string name="transfers_importing">Importing on Frame.io…</string>
+    <string name="transfers_uploaded_version">Uploaded as new version · %1$s</string>
+    <string name="transfers_uploaded">Uploaded · %1$s</string>
+    <string name="transfers_paused">Paused · %1$s of %2$s sent</string>
+    <string name="transfers_resume">Resume</string>
+    <string name="transfers_retry">Retry</string>
+    <string name="transfers_waiting">Waiting for network… %1$s</string>
+    <string name="transfers_waiting_wifi">Waiting for Wi-Fi… %1$s</string>
+
+    <!-- ui/search -->
+    <string name="search_title">Search</string>
+    <string name="search_filter_all">All</string>
+    <string name="search_filter_files">Files</string>
+    <string name="search_filter_folders">Folders</string>
+    <string name="search_filter_projects">Projects</string>
+    <string name="search_hint_smart">Describe what you\'re looking for</string>
+    <string name="search_hint">Files, folders, projects…</string>
+    <string name="search_clear">Clear</string>
+    <string name="search_smart">Smart search</string>
+    <string name="search_smart_hint">Smart search finds media by what\'s in it — try “drone shot over water”.</string>
+    <string name="search_failed">Search failed</string>
+    <string name="search_recently_opened">RECENTLY OPENED</string>
+    <string name="search_recent_searches">RECENT SEARCHES</string>
+    <string name="search_everything">Search everything</string>
+    <string name="search_everything_message">Find files, folders and projects across this account.</string>
+    <string name="search_no_results">No results</string>
+    <string name="search_try_different">Try a different term.</string>
+    <string name="search_try_different_smart">Try a different term or turn on Smart search.</string>
+    <string name="search_folder">Folder</string>
+    <string name="search_version_stack">Version stack</string>
+    <string name="search_kind_video">Video</string>
+    <string name="search_kind_image">Image</string>
+    <string name="search_kind_audio">Audio</string>
+    <string name="search_kind_pdf">Pdf</string>
+    <string name="search_kind_other">Other</string>
+    <string name="search_project">Project</string>
+
+    <!-- ui/notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_mark_all_read">Mark all as read</string>
+    <string name="notifications_settings">Notification settings</string>
+    <string name="notifications_empty_title">No notifications yet</string>
+    <string name="notifications_empty_message">Comments, replies and mentions on files you open or upload, finished uploads and views of your share links show up here.</string>
+    <string name="notifications_today">Today</string>
+    <string name="notifications_yesterday">Yesterday</string>
+    <string name="notifications_someone">Someone</string>
+    <!-- %1$s: the latest person, %2$d: how many others. -->
+    <plurals name="notifications_actors_others">
+        <item quantity="one">%1$s and %2$d other</item>
+        <item quantity="other">%1$s and %2$d others</item>
+    </plurals>
+    <!-- %1$s: who, %2$s: the file. -->
+    <string name="notifications_comment_one">%1$s left a comment on %2$s</string>
+    <!-- %1$s: who, %2$d: how many, %3$s: the file. -->
+    <plurals name="notifications_comments_many">
+        <item quantity="one">%1$s left %2$d comment on %3$s</item>
+        <item quantity="other">%1$s left %2$d comments on %3$s</item>
+    </plurals>
+    <string name="notifications_reply_one">%1$s left a reply to you on %2$s</string>
+    <plurals name="notifications_replies_many">
+        <item quantity="one">%1$s left %2$d reply to you on %3$s</item>
+        <item quantity="other">%1$s left %2$d replies to you on %3$s</item>
+    </plurals>
+    <string name="notifications_mention">%1$s mentioned you on %2$s</string>
+    <string name="notifications_upload_ready">Your upload %1$s is ready to review</string>
+    <string name="notifications_link_opened_once">Someone opened your link %1$s</string>
+    <!-- %1$s: the share link, %2$d: how many times. -->
+    <plurals name="notifications_link_opened_times">
+        <item quantity="one">Your link %1$s was opened %2$d time</item>
+        <item quantity="other">Your link %1$s was opened %2$d times</item>
+    </plurals>
+    <string name="notifications_link_opened_by">%1$s opened your link %2$s</string>
+    <string name="notifications_activity">Activity notifications</string>
+    <string name="notifications_activity_detail">Checked about every 15 minutes</string>
+    <string name="notifications_comments">Comments, replies and mentions</string>
+    <string name="notifications_uploads_ready">Uploads ready</string>
+    <string name="notifications_share_views">Share link views</string>
+    <string name="notifications_settings_footer">Turn a project\'s device notifications off from its ⋯ menu. Email notifications are set on frame.io.</string>
+    <plurals name="notifications_unread">
+        <item quantity="one">%1$d unread</item>
+        <item quantity="other">%1$d unread</item>
+    </plurals>
+</resources>

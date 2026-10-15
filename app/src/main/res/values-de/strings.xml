@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Used through the appLabel manifest placeholder (release label), which lint cannot see. -->
+    <string name="app_name" tools:ignore="UnusedResources">Final(ish)</string>
+    <string name="channel_transfers">Übertragungen</string>
+    <string name="channel_transfers_desc">Fortschritt von Uploads und Downloads</string>
+</resources>

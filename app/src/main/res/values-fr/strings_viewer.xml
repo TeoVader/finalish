@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Asset actions sheet -->
+    <string name="viewer_action_share">Partager</string>
+    <string name="viewer_action_download">Télécharger</string>
+    <string name="viewer_action_offline">Hors connexion</string>
+    <string name="viewer_action_offline_done">Hors connexion ✓</string>
+    <string name="viewer_action_add_to_existing_share">Ajouter à un lien de partage existant</string>
+    <string name="viewer_action_versions">Versions</string>
+    <string name="viewer_action_upload_new_version">Importer une nouvelle version</string>
+    <string name="viewer_action_compare_take">Comparer avec une autre prise…</string>
+    <string name="viewer_action_save_frame">Enregistrer l\'image</string>
+    <string name="viewer_action_move_to">Déplacer vers…</string>
+    <string name="viewer_action_copy_to">Copier vers…</string>
+    <string name="viewer_action_duplicate">Dupliquer</string>
+    <string name="viewer_action_show_in_project">Afficher dans le projet</string>
+    <string name="viewer_action_send_link">Envoyer le lien Frame.io</string>
+    <string name="viewer_action_rename">Renommer</string>
+    <string name="viewer_action_delete">Supprimer</string>
+    <string name="viewer_action_report_problem">Signaler un problème</string>
+    <string name="viewer_version_short">V%1$d</string>
+    <string name="viewer_uploaded_by">Importé par %1$s</string>
+    <string name="viewer_back">Retour</string>
+    <string name="viewer_add_to_share_link">Ajouter au lien de partage</string>
+    <string name="viewer_no_share_links">Ce projet n\'a encore aucun lien de partage.</string>
+    <string name="viewer_untitled_share">Partage sans titre</string>
+
+    <!-- Office documents -->
+    <string name="viewer_page_counter">%1$d / %2$d</string>
+    <plurals name="viewer_more_sheets">
+        <item quantity="one">+%1$d autre feuille dans le fichier</item>
+        <item quantity="many">+%1$d autres feuilles dans le fichier</item>
+        <item quantity="other">+%1$d autres feuilles dans le fichier</item>
+    </plurals>
+    <string name="viewer_first_rows_only">premières lignes uniquement</string>
+    <string name="viewer_slide_number">Diapositive %1$d</string>
+    <string name="viewer_slide_no_text">(aucun texte sur cette diapositive)</string>
+
+    <!-- Picture-in-picture -->
+    <string name="viewer_pause">Pause</string>
+    <string name="viewer_play">Lecture</string>
+
+    <!-- Audio channels -->
+
+    <!-- Comments -->
+    <string name="viewer_filter_all">Tous</string>
+    <string name="viewer_filter_open">Ouverts</string>
+    <string name="viewer_filter_done">Terminés</string>
+    <string name="viewer_tab_comments">Commentaires</string>
+    <string name="viewer_tab_info">Infos</string>
+    <string name="viewer_tab_versions">Versions</string>
+    <string name="viewer_comments_empty_title">Aucun commentaire pour l\'instant</string>
+    <string name="viewer_comments_empty_filtered">Rien ici</string>
+    <string name="viewer_comments_empty_body">Soyez le premier à donner votre avis.</string>
+    <string name="viewer_comments_empty_body_video">Soyez le premier à donner votre avis. Les commentaires sont épinglés à l\'image en cours.</string>
+    <string name="viewer_comments_empty_body_audio">Soyez le premier à donner votre avis. Les commentaires sont épinglés au moment en cours.</string>
+    <string name="viewer_comments_empty_body_pdf">Soyez le premier à donner votre avis. Les commentaires sont épinglés à la page en cours.</string>
+    <string name="viewer_comments_empty_body_image">Soyez le premier à donner votre avis. Épinglez un commentaire à un endroit de l\'image.</string>
+    <string name="viewer_comment_not_sent">Non envoyé</string>
+    <string name="viewer_comment_sending">Envoi…</string>
+    <string name="viewer_retry">Réessayer</string>
+    <string name="viewer_comment_edited_suffix">" · modifié"</string>
+    <string name="viewer_page_short">p. %1$d</string>
+    <string name="viewer_comment_drawing">Dessin</string>
+    <string name="viewer_pinned">Épinglé</string>
+    <string name="viewer_pin">Épingler</string>
+    <string name="viewer_range">Plage</string>
+    <string name="viewer_comment_range_with">Plage · %1$s</string>
+    <string name="viewer_comment_queued">En file d\'attente</string>
+    <string name="viewer_more">Plus</string>
+    <string name="viewer_mark_open">Marquer comme ouvert</string>
+    <string name="viewer_mark_done">Marquer comme terminé</string>
+    <string name="viewer_retry_sending">Réessayer l\'envoi</string>
+    <string name="viewer_go_to_time">Aller à %1$s</string>
+    <string name="viewer_go_to_page">Aller à la page</string>
+    <string name="viewer_copy_text">Copier le texte</string>
+    <string name="viewer_edit">Modifier</string>
+    <string name="viewer_remove_attachment">Retirer la pièce jointe</string>
+    <string name="viewer_remove_attachment_title">Retirer « %1$s » de ce commentaire ?</string>
+    <string name="viewer_remove_attachment_body">Les personnes qui voient le commentaire ne verront plus ce fichier.</string>
+    <string name="viewer_editing_comment">Modification du commentaire</string>
+    <string name="viewer_move_to_playhead">Déplacer à la tête de lecture</string>
+    <string name="viewer_cancel">Annuler</string>
+    <string name="viewer_no_time">Sans horodatage</string>
+    <string name="viewer_draw">Dessiner</string>
+    <string name="viewer_file">Fichier</string>
+    <string name="viewer_remove">Retirer</string>
+    <string name="viewer_comment_placeholder">Laisser un commentaire…</string>
+    <string name="viewer_save">Enregistrer</string>
+    <string name="viewer_send">Envoyer</string>
+    <string name="viewer_undo">Annuler</string>
+    <string name="viewer_done">OK</string>
+    <string name="viewer_tool_pen">Stylo</string>
+    <string name="viewer_tool_line">Ligne</string>
+    <string name="viewer_tool_arrow">Flèche</string>
+    <string name="viewer_tool_rect">Rect.</string>
+
+    <!-- Compare -->
+    <string name="viewer_compare_takes">Comparer les prises</string>
+    <string name="viewer_compare_versions">Comparer les versions</string>
+    <string name="viewer_compare_wipe">Volet</string>
+    <string name="viewer_compare_side_by_side">Côte à côte</string>
+    <string name="viewer_back_5_seconds">Reculer de 5 secondes</string>
+    <string name="viewer_forward_5_seconds">Avancer de 5 secondes</string>
+    <string name="viewer_previous_frame">Image précédente</string>
+    <string name="viewer_next_frame">Image suivante</string>
+    <string name="viewer_listening">Écoute</string>
+    <string name="viewer_compare_audio_hint">Les deux prises sont lues en synchronisation. Appuyez sur l\'une d\'elles pour l\'écouter sans arrêter la lecture.</string>
+
+    <!-- Info panel -->
+    <string name="viewer_save_offline">Enregistrer hors connexion</string>
+    <string name="viewer_share_link">Lien de partage</string>
+    <string name="viewer_open_web">Ouvrir sur le Web</string>
+    <string name="viewer_card_seen_by">Vu par</string>
+    <plurals name="viewer_seen_by_people">
+        <item quantity="one">%1$d personne</item>
+        <item quantity="many">%1$d personnes</item>
+        <item quantity="other">%1$d personnes</item>
+    </plurals>
+    <plurals name="viewer_seen_by_name_and_others">
+        <item quantity="one">%1$s et %2$d autre personne</item>
+        <item quantity="many">%1$s et %2$d autres personnes</item>
+        <item quantity="other">%1$s et %2$d autres personnes</item>
+    </plurals>
+    <string name="viewer_card_status">Statut</string>
+    <string name="viewer_card_rating">Note</string>
+    <string name="viewer_card_details">Détails</string>
+    <string name="viewer_card_metadata">Métadonnées</string>
+    <string name="viewer_card_camera">Caméra</string>
+    <string name="viewer_detail_name">Nom</string>
+    <string name="viewer_detail_type">Type</string>
+    <string name="viewer_detail_format">Format</string>
+    <string name="viewer_detail_size">Taille</string>
+    <string name="viewer_detail_uploaded">Importé</string>
+    <string name="viewer_detail_updated">Mis à jour</string>
+    <string name="viewer_detail_uploader">Importé par</string>
+    <string name="viewer_copy_link">Copier le lien Frame.io</string>
+    <string name="viewer_fields_all">Tous les champs</string>
+    <string name="viewer_fields_filled">Remplis</string>
+    <string name="viewer_fields_editable">Modifiables</string>
+    <string name="viewer_search_fields">Rechercher des champs</string>
+    <string name="viewer_no_fields_match">Aucun champ ne correspond.</string>
+    <string name="viewer_summary_codec">Codec</string>
+    <string name="viewer_summary_resolution">Résolution</string>
+    <string name="viewer_summary_bitrate">Débit</string>
+    <string name="viewer_summary_sample_rate">Fréquence d\'échantillonnage</string>
+    <string name="viewer_summary_format">Format</string>
+
+    <!-- Versions panel -->
+    <string name="viewer_pick_two_versions">Choisissez deux versions</string>
+    <plurals name="viewer_versions_count">
+        <item quantity="one">%1$d version</item>
+        <item quantity="many">%1$d versions</item>
+        <item quantity="other">%1$d versions</item>
+    </plurals>
+    <string name="viewer_compare">Comparer</string>
+    <plurals name="viewer_comment_count">
+        <item quantity="one">%1$d commentaire</item>
+        <item quantity="many">%1$d commentaires</item>
+        <item quantity="other">%1$d commentaires</item>
+    </plurals>
+    <string name="viewer_version_current">Actuelle</string>
+    <string name="viewer_version_viewing">Affichée</string>
+    <string name="viewer_version_actions">Actions sur la version</string>
+    <string name="viewer_version_move_up">Monter (plus récente)</string>
+    <string name="viewer_version_move_down">Descendre (plus ancienne)</string>
+    <string name="viewer_version_make_current">Définir comme version actuelle</string>
+    <string name="viewer_new_version">Nouvelle version</string>
+    <string name="viewer_versions_reorder_hint">Depuis le menu ⋯ de chaque version : définissez-la comme actuelle, ou montez-la ou descendez-la.</string>
+
+    <!-- Media stage -->
+    <string name="viewer_pin_comment">Commentaire %1$d</string>
+    <string name="viewer_playback_error">Erreur de lecture : %1$s</string>
+    <string name="viewer_pdf_page">Page %1$d</string>
+    <string name="viewer_pdf_scroll_pages">Défilement des pages</string>
+    <string name="viewer_pdf_single_page">Page unique</string>
+    <string name="viewer_pdf_find">Rechercher dans le document</string>
+    <string name="viewer_pdf_no_matches">Aucun résultat</string>
+    <string name="viewer_pdf_match_position">%1$d sur %2$d</string>
+    <string name="viewer_pdf_previous_match">Résultat précédent</string>
+    <string name="viewer_pdf_next_match">Résultat suivant</string>
+    <string name="viewer_pdf_close_search">Fermer la recherche</string>
+    <string name="viewer_no_preview_title">Aucun aperçu sur l\'appareil</string>
+    <string name="viewer_no_preview_body">Vous pouvez quand même le commenter, le télécharger ou l\'ouvrir avec une autre application.</string>
+    <string name="viewer_open_with">Ouvrir avec…</string>
+    <string name="viewer_open_interactive_preview">Ouvrir l\'aperçu interactif sur frame.io</string>
+    <string name="viewer_zip_contents">CONTENU · %1$d</string>
+    <string name="viewer_seek_back_flash">« 5 s</string>
+    <string name="viewer_seek_forward_flash">5 s »</string>
+
+    <!-- Metadata editors -->
+    <string name="viewer_yes">Oui</string>
+    <string name="viewer_no">Non</string>
+    <string name="viewer_field_assign">Attribuer</string>
+    <string name="viewer_field_choose">Choisir</string>
+    <string name="viewer_field_set_date">Définir la date</string>
+    <string name="viewer_field_add">Ajouter</string>
+    <string name="viewer_unknown_user">Utilisateur inconnu</string>
+    <string name="viewer_clear">Effacer</string>
+    <string name="viewer_loading_people">Chargement des personnes…</string>
+
+    <!-- Playback options / Tools sheet -->
+    <string name="viewer_zoom_fit">Ajuster</string>
+    <string name="viewer_zoom_fill">Remplir</string>
+    <string name="viewer_zoom_actual" formatted="false">100%</string>
+    <string name="viewer_guide_off">Désactivés</string>
+    <string name="viewer_guide_safe">Zones sûres</string>
+    <string name="viewer_quality_original">Original</string>
+    <string name="viewer_quality_auto">Auto</string>
+    <string name="viewer_quality_currently">Actuellement %1$s</string>
+    <string name="viewer_quality_source_file">Fichier source</string>
+    <string name="viewer_opt_comment_markers">Repères de commentaires</string>
+    <string name="viewer_opt_quality">Qualité</string>
+    <string name="viewer_opt_guides">Repères</string>
+    <string name="viewer_opt_zoom">Zoom</string>
+    <string name="viewer_opt_view_on_asset">Afficher sur le média</string>
+    <string name="viewer_opt_download_still">Télécharger l\'image fixe</string>
+    <string name="viewer_opt_loop">Boucle</string>
+    <string name="viewer_opt_mute">Muet</string>
+    <string name="viewer_opt_title_safe_80" formatted="false">Zone titres (80%)</string>
+    <string name="viewer_opt_action_safe_90" formatted="false">Zone action (90%)</string>
+    <string name="viewer_opt_rule_of_thirds">Règle des tiers</string>
+    <string name="viewer_opt_annotations">Annotations</string>
+    <string name="viewer_tools">Outils</string>
+    <string name="viewer_opt_speed">Vitesse</string>
+    <string name="viewer_opt_pip">PiP</string>
+    <string name="viewer_opt_aspect_ratio">Format d\'image</string>
+    <string name="viewer_opt_title_safe">Zone titres</string>
+    <string name="viewer_opt_action_safe">Zone action</string>
+    <string name="viewer_opt_thirds">Tiers</string>
+    <string name="viewer_opt_drawings_on_frames">Dessins sur les images</string>
+    <string name="viewer_opt_comment_pins">Repères de commentaires sur la timeline</string>
+    <string name="viewer_opt_mute_audio">Couper le son</string>
+
+    <!-- Viewer screen -->
+    <string name="viewer_error_open_file">Impossible d\'ouvrir ce fichier</string>
+    <string name="viewer_delete_title">Supprimer « %1$s » ?</string>
+    <string name="viewer_delete_body">Il sera placé dans les éléments récemment supprimés du projet, où les administrateurs peuvent le restaurer.</string>
+    <string name="viewer_project">Projet</string>
+    <string name="viewer_copy">Copier</string>
+    <string name="viewer_move">Déplacer</string>
+    <string name="viewer_zoom_chip">%1$d %% · Ajusté</string>
+    <string name="viewer_fullscreen">Plein écran</string>
+    <string name="viewer_tap_to_place_pin">Appuyez pour placer un repère</string>
+    <string name="viewer_comment_at">Commenter à %1$s</string>
+    <string name="viewer_play_pause">Lecture/pause</string>
+    <plurals name="viewer_page_count">
+        <item quantity="one">%1$d page</item>
+        <item quantity="many">%1$d pages</item>
+        <item quantity="other">%1$d pages</item>
+    </plurals>
+    <string name="viewer_audio_mono">mono</string>
+    <string name="viewer_audio_stereo">stéréo</string>
+    <string name="viewer_hide_comments">Masquer les commentaires</string>
+    <string name="viewer_show_comments">Afficher les commentaires</string>
+    <string name="viewer_no_status">Aucun statut</string>
+    <string name="viewer_time_format">Format du temps</string>
+    <string name="viewer_quality_description">Qualité : %1$s</string>
+    <string name="viewer_player_tools">Outils du lecteur</string>
+    <string name="viewer_change_version">Changer de version</string>
+    <string name="viewer_preparing_audio">Frame.io prépare l\'audio</string>
+    <string name="viewer_preparing_video">Frame.io prépare la vidéo</string>
+    <string name="viewer_preparing_body">La lecture démarrera automatiquement dès que ce sera prêt</string>
+
+    <!-- Viewer messages (snackbars) -->
+    <string name="viewer_msg_offline_comment_queued">Vous êtes hors connexion : le commentaire sera envoyé à la reconnexion</string>
+    <string name="viewer_msg_offline_comment_retry">Vous êtes hors connexion : appuyez sur Réessayer pour envoyer le commentaire avec ses pièces jointes</string>
+    <string name="viewer_msg_upload_failed">Échec de l\'importation (%1$d)</string>
+    <string name="viewer_msg_attach_failed">Impossible de joindre %1$s : %2$s</string>
+    <plurals name="viewer_msg_attachments_uploaded">
+        <item quantity="one">%1$d pièce jointe importée</item>
+        <item quantity="many">%1$d pièces jointes importées</item>
+        <item quantity="other">%1$d pièces jointes importées</item>
+    </plurals>
+    <string name="viewer_msg_version_order_updated">Ordre des versions mis à jour</string>
+    <string name="viewer_msg_comment_deleted">Commentaire supprimé</string>
+    <string name="viewer_msg_no_frame">Aucune image à capturer pour l\'instant</string>
+    <string name="viewer_msg_still_saved">Image fixe enregistrée dans Pictures/Finalish</string>
+    <string name="viewer_msg_still_failed">Impossible d\'enregistrer l\'image fixe</string>
+    <string name="viewer_msg_added_to_share">Ajouté à « %1$s »</string>
+    <string name="viewer_msg_share_fallback">partage</string>
+    <string name="viewer_msg_copied_to">Copié dans « %1$s »</string>
+    <string name="viewer_msg_no_folder_to_copy">Aucun dossier de destination pour la copie</string>
+    <string name="viewer_msg_duplicated">« %1$s » dupliqué</string>
+    <string name="viewer_msg_renamed">Renommé</string>
+    <string name="viewer_msg_moved_to">Déplacé dans « %1$s »</string>
+    <string name="viewer_msg_downloads_disabled">Les téléchargements sont désactivés pour ce fichier.</string>
+    <string name="viewer_msg_downloading">Téléchargement de « %1$s » dans Download/Finalish</string>
+    <string name="viewer_open_file_with">Ouvrir « %1$s » avec</string>
+    <string name="viewer_msg_saving_offline">Enregistrement de « %1$s » hors connexion</string>
+    <string name="viewer_msg_folder_not_found">Impossible de trouver le dossier de ce fichier</string>
+    <string name="viewer_msg_uploading_version">Importation de la nouvelle version · voir Transferts</string>
+    <plurals name="viewer_zip_more">
+        <item quantity="one">+ %1$d autre</item>
+        <item quantity="many">+ %1$d autres</item>
+        <item quantity="other">+ %1$d autres</item>
+    </plurals>
+</resources>

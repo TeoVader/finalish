@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ui/shares: CreateShareSheet -->
+    <string name="shares_expiry_never">Never</string>
+    <string name="shares_expiry_1_day">1 day</string>
+    <string name="shares_expiry_7_days">7 days</string>
+    <string name="shares_expiry_30_days">30 days</string>
+    <plurals name="shares_n_items">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
+    <string name="shares_new_link_title">New share link</string>
+    <string name="shares_name">Name</string>
+    <string name="shares_who_can_open">WHO CAN OPEN IT</string>
+    <string name="shares_anyone_with_link">Anyone with the link</string>
+    <string name="shares_only_invited">Only invited</string>
+    <string name="shares_allow_comments">Allow comments</string>
+    <string name="shares_allow_downloads">Allow downloads</string>
+    <string name="shares_show_all_versions">Show all versions</string>
+    <string name="shares_require_passphrase">Require passphrase</string>
+    <string name="shares_passphrase">Passphrase</string>
+    <string name="shares_expires">EXPIRES</string>
+    <string name="shares_not_on_plan">Not on your Frame.io plan: %1$s.</string>
+    <string name="shares_plan_invite_only_links">invite-only links</string>
+    <string name="shares_plan_passphrases">passphrases</string>
+    <string name="shares_plan_expiry_dates">expiry dates</string>
+    <string name="shares_creating">Creating…</string>
+    <string name="shares_create_and_copy">Create and copy link</string>
+    <string name="shares_link_ready_copied">Link ready and copied</string>
+    <string name="shares_link_ready">Link ready</string>
+    <string name="shares_passphrase_value">Passphrase: %1$s</string>
+    <string name="shares_copied">Copied</string>
+    <string name="shares_copy">Copy</string>
+    <string name="shares_share">Share</string>
+    <plurals name="shares_n_files">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+    <plurals name="shares_n_folders">
+        <item quantity="one">%d folder</item>
+        <item quantity="other">%d folders</item>
+    </plurals>
+    <string name="shares_selected">%1$s selected</string>
+    <string name="shares_change">Change</string>
+
+    <!-- ui/shares: ProjectSharesStrip -->
+    <string name="shares_share_links">Share links</string>
+    <plurals name="shares_n_share_links">
+        <item quantity="one">%d share link</item>
+        <item quantity="other">%d share links</item>
+    </plurals>
+    <string name="shares_see_all">See all</string>
+    <string name="shares_loading">Loading…</string>
+    <string name="shares_none_yet">No share links yet.</string>
+    <string name="shares_untitled">Untitled share</string>
+    <string name="shares_status_off">Off</string>
+    <string name="shares_expires_in">Expires in %1$s</string>
+    <string name="shares_status_expired">Expired</string>
+    <string name="shares_viewed">Viewed %1$s</string>
+    <string name="shares_not_viewed_yet">Not viewed yet</string>
+
+    <!-- ui/shares: ShareEditorSheet -->
+    <string name="shares_share_link">Share link</string>
+    <string name="shares_rename">Rename</string>
+    <string name="shares_status_active">Active</string>
+    <string name="shares_status_turned_off">Turned off</string>
+    <string name="shares_access_public">Public</string>
+    <string name="shares_link_visibility">Link visibility</string>
+    <string name="shares_anyone_can_view">Anyone with the link can view</string>
+    <string name="shares_link_turned_off">Link is turned off</string>
+    <string name="shares_link_copied">Link copied</string>
+    <string name="shares_qr_code">QR code</string>
+    <string name="shares_open">Open</string>
+    <string name="shares_label_access">Access</string>
+    <string name="shares_invite_reviewers">Invite reviewers</string>
+    <string name="shares_remove_reviewer">Remove reviewer</string>
+    <string name="shares_label_permissions">Permissions</string>
+    <string name="shares_show_transcripts">Show transcripts</string>
+    <string name="shares_show_captions">Show captions</string>
+    <string name="shares_label_layout">Layout</string>
+    <string name="shares_layout_grid">Grid</string>
+    <string name="shares_layout_list">List</string>
+    <string name="shares_layout_reel">Reel</string>
+    <string name="shares_theme_dark">Dark</string>
+    <string name="shares_theme_light">Light</string>
+    <string name="shares_theme_neutral">Neutral</string>
+    <string name="shares_accent">Accent</string>
+    <string name="shares_description">Description</string>
+    <string name="shares_add">Add</string>
+    <string name="shares_label_security">Security</string>
+    <string name="shares_not_on_your_plan">Not on your plan</string>
+    <string name="shares_set">Set</string>
+    <string name="shares_expiration">Expiration</string>
+    <string name="shares_watermark">Watermark</string>
+    <string name="shares_watermark_template">Watermark template</string>
+    <string name="shares_watermark_default_summary">The workspace or account default</string>
+    <string name="shares_default">Default</string>
+    <string name="shares_label_activity">Activity</string>
+    <string name="shares_no_activity">No activity yet</string>
+    <string name="shares_activity_someone">Someone</string>
+    <!-- %1$s: who, %2$s: what they did (e.g. "viewed") -->
+    <string name="shares_activity">%1$s %2$s</string>
+    <!-- %1$s: who, %2$s: what they did, %3$s: file name -->
+    <string name="shares_activity_on_asset">%1$s %2$s “%3$s”</string>
+    <string name="shares_activity_opened_link">opened the link</string>
+    <string name="shares_activity_viewed">viewed</string>
+    <string name="shares_activity_downloaded">downloaded</string>
+    <string name="shares_activity_commented_on">commented on</string>
+    <string name="shares_files_in_link">Files in the link</string>
+    <string name="shares_no_assets">No assets in this share</string>
+    <string name="shares_remove">Remove</string>
+    <string name="shares_delete_link">Delete link</string>
+    <string name="shares_delete_link_detail">Anyone with the link loses access</string>
+    <string name="shares_choose_files_to_add">Choose files to add</string>
+    <string name="shares_add_n_to_link">Add %1$d to the link</string>
+    <plurals name="shares_couldnt_add_items">
+        <item quantity="one">Couldn\'t add %d item</item>
+        <item quantity="other">Couldn\'t add %d items</item>
+    </plurals>
+    <string name="shares_added_n_to_link">Added %1$d to the link</string>
+    <plurals name="shares_invited_reviewers">
+        <item quantity="one">Invited %d reviewer</item>
+        <item quantity="other">Invited %d reviewers</item>
+    </plurals>
+    <string name="shares_description_hint">Shown to reviewers</string>
+    <string name="shares_save">Save</string>
+    <string name="shares_rename_title">Rename share</string>
+    <string name="shares_passphrase_hint">Leave empty to remove</string>
+    <string name="shares_watermark_template_intro">What each viewer sees burned over the media. Templates are made on frame.io.</string>
+    <string name="shares_selected_cd">Selected</string>
+    <string name="shares_watermark_default_template">The workspace or account default template</string>
+    <string name="shares_no_templates">This account has no templates yet.</string>
+    <string name="shares_untitled_template">Untitled</string>
+    <string name="shares_qr_code_for">QR code for %1$s</string>
+    <string name="shares_done">Done</string>
+    <string name="shares_stat_views">views</string>
+    <string name="shares_stat_comments">comments</string>
+    <string name="shares_stat_downloads">downloads</string>
+    <string name="shares_emails_label">Emails (comma separated)</string>
+    <string name="shares_message">Message</string>
+    <string name="shares_send_email">Send email</string>
+    <string name="shares_please_review">Please review</string>
+    <string name="shares_invite">Invite</string>
+    <string name="shares_invite_n">Invite %1$d</string>
+    <string name="shares_cancel">Cancel</string>
+
+    <!-- ui/shares: SharesScreen -->
+    <string name="shares_deleted">Share deleted</string>
+    <string name="shares_filter_active">Active · %1$d</string>
+    <string name="shares_filter_off">Off · %1$d</string>
+    <string name="shares_filter_all">All</string>
+    <string name="shares_empty_title">No share links</string>
+    <string name="shares_empty_body">Pick files or folders to share with “New link”.</string>
+    <string name="shares_new_link">New link</string>
+    <string name="shares_choose_what_to_share">Choose what to share</string>
+    <plurals name="shares_share_n_items">
+        <item quantity="one">Share %d item</item>
+        <item quantity="other">Share %d items</item>
+    </plurals>
+    <string name="shares_delete_title">Delete “%1$s”?</string>
+    <string name="shares_share_fallback">share</string>
+    <string name="shares_delete_body">Anyone with this link will lose access.</string>
+    <string name="shares_delete">Delete</string>
+    <string name="shares_created">created %1$s</string>
+    <string name="shares_invited_only">Invited only</string>
+    <string name="shares_pill_comments">Comments</string>
+    <string name="shares_pill_download">Download</string>
+    <string name="shares_pill_view_only">View only</string>
+    <string name="shares_more">More</string>
+    <string name="shares_send">Send…</string>
+    <string name="shares_edit">Edit</string>
+    <string name="shares_back">Back</string>
+    <string name="shares_collections">Collections</string>
+    <string name="shares_collections_empty_title">No collections</string>
+    <string name="shares_collections_empty_body">Collections group assets across folders. Create them on the web.</string>
+    <string name="shares_smart_collection">Smart collection</string>
+    <string name="shares_collection">Collection</string>
+    <string name="shares_private">Private</string>
+    <string name="shares_collections_hint">A collection opens like a folder and can be shared with a link. Collections are created on frame.io.</string>
+
+    <!-- ui/members: GroupsScreen -->
+    <string name="members_group_created">Created %1$s</string>
+    <string name="members_added_person">Added %1$s</string>
+    <string name="members_removed_person">Removed %1$s</string>
+    <string name="members_groups">Groups</string>
+    <string name="members_new_group">New group</string>
+    <string name="members_no_groups_title">No groups yet</string>
+    <string name="members_no_groups_body">Put people in a group, then give the whole group a role on a project.</string>
+    <string name="members_create_group">Create group</string>
+    <string name="members_groups_unavailable_title">Groups aren\'t on your plan</string>
+    <string name="members_groups_unavailable_body">Your Frame.io plan doesn\'t include user groups. Members still work person by person.</string>
+    <plurals name="members_n_groups">
+        <item quantity="one">%d group</item>
+        <item quantity="other">%d groups</item>
+    </plurals>
+    <string name="members_synced_from">Synced from %1$s</string>
+    <string name="members_groups_hint">Give a group a role from a project\'s or workspace\'s Members, and everyone in it gets that access.</string>
+    <string name="members_add">Add</string>
+    <string name="members_more">More</string>
+    <string name="members_rename">Rename</string>
+    <string name="members_delete_group">Delete group</string>
+    <string name="members_add_to">Add to %1$s</string>
+    <string name="members_rename_group">Rename group</string>
+    <string name="members_save">Save</string>
+    <string name="members_delete_group_title">Delete %1$s?</string>
+    <string name="members_delete_group_body">People in it lose the access the group gave them. Their own roles stay.</string>
+    <string name="members_cancel">Cancel</string>
+    <string name="members_remove_title">Remove %1$s?</string>
+    <string name="members_remove_from_group_body">They leave %1$s and lose the access it gave them.</string>
+    <string name="members_remove">Remove</string>
+    <string name="members_synced_from_detail">Synced from %1$s. Add or remove people there.</string>
+    <string name="members_group_empty_title">Nobody in this group</string>
+    <string name="members_group_empty_body">Add people from your account.</string>
+    <string name="members_inactive">Inactive</string>
+    <string name="members_remove_person">Remove %1$s</string>
+    <string name="members_name">Name</string>
+    <string name="members_group_name_placeholder">Editors, Client, Sound team…</string>
+    <string name="members_search_account_people">Search people in this account</string>
+    <string name="members_loading">Loading…</string>
+    <string name="members_everyone_in_group">Everyone in this account is already in the group.</string>
+    <string name="members_no_matches">No matches</string>
+
+    <!-- ui/members: MembersScreen -->
+    <string name="members_role_owner">Owner</string>
+    <string name="members_role_account_admin">Account admin</string>
+    <string name="members_role_workspace_admin">Workspace admin</string>
+    <string name="members_role_full_access">Full access</string>
+    <string name="members_role_editor">Editor</string>
+    <string name="members_role_edit_only">Edit only</string>
+    <string name="members_role_commenter">Commenter</string>
+    <string name="members_role_viewer">Viewer</string>
+    <string name="members_role_member">Member</string>
+    <string name="members_role_reviewer">Reviewer</string>
+    <string name="members_role_workspace_admin_desc">Manage the workspace and all its projects</string>
+    <string name="members_role_full_access_desc">Upload, edit, share and delete</string>
+    <string name="members_role_editor_desc">Upload and edit, can\'t delete others\' work</string>
+    <string name="members_role_edit_only_desc">Edit existing assets only</string>
+    <string name="members_role_commenter_desc">View and comment</string>
+    <string name="members_role_viewer_desc">View only</string>
+    <!-- %1$s: person or group, %2$s: role -->
+    <string name="members_is_now_role">%1$s is now %2$s</string>
+    <string name="members_members">Members</string>
+    <string name="members_no_members_title">No members yet</string>
+    <plurals name="members_n_members">
+        <item quantity="one">%d member</item>
+        <item quantity="other">%d members</item>
+    </plurals>
+    <string name="members_roles_hint">Full access › Editor › Edit only › Commenter › Viewer. Tap a role to change it or remove the person.</string>
+    <string name="members_remove_group_body_workspace">People in it lose the access the group gave them on this workspace.</string>
+    <string name="members_remove_group_body_folder">People in it lose the access the group gave them on this folder.</string>
+    <string name="members_remove_group_body_project">People in it lose the access the group gave them on this project.</string>
+    <string name="members_remove_member_body_workspace">They will lose access to this workspace.</string>
+    <string name="members_remove_member_body_folder">They will lose access to this folder.</string>
+    <string name="members_remove_member_body_project">They will lose access to this project.</string>
+    <string name="members_group_subtitle">Group · %1$s</string>
+    <string name="members_add_member">Add member</string>
+    <string name="members_search_people_groups">Search people and groups</string>
+    <string name="members_role">Role</string>
+    <string name="members_everyone_member">Everyone in this account is already a member.</string>
+    <string name="members_people">People</string>
+
+    <!-- ui/components -->
+    <string name="common_couldnt_load">Couldn\'t load</string>
+    <!-- %1$s: the error message, without its final period -->
+    <string name="common_retrying_shortly">%1$s. Retrying on its own shortly.</string>
+    <string name="common_retry_now">Retry now</string>
+    <string name="common_try_again">Try again</string>
+    <string name="common_offline_title">You\'re offline.</string>
+    <string name="common_offline_body">Showing the last saved copy; comments and uploads go out when you\'re back online.</string>
+</resources>

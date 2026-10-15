@@ -1,0 +1,22 @@
+name: Feature request
+description: An idea or an improvement for Final(ish).
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What would you like
+      description: What you'd like to do, and why it would help.
+    validations:
+      required: true
+  - type: input
+    id: report
+    attributes:
+      label: Screenshots on Frame.io
+      description: Uploaded by the app (filled in automatically).
+  - type: textarea
+    id: device
+    attributes:
+      label: Device and app
+      description: Filled in automatically by the in-app reporter.
+      render: text
