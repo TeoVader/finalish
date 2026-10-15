@@ -102,25 +102,26 @@ fun AppNav(
         val account = state.accountId
         if (!signedIn || account == null) return@LaunchedEffect
         val c = dev.finalish.FinalishApp.container(linkContext)
-        val target = dev.finalish.core.data.FrameLinks.resolve(link, account, c.repository, c.baseHttp)
+        val target = dev.finalish.core.data.FrameLinks.resolve(link, account, c.repository, c.baseHttp, others = state.accounts.map { it.id })
         // Restarted mid-resolve (e.g. the account changed): the new run handles the link; resolve may
         // have swallowed the cancellation and answered "browser".
         kotlinx.coroutines.currentCoroutineContext().ensureActive()
         // Cleared only now: clearing the key earlier would cancel this effect mid-resolve.
         session.consumeLink()
-        when (val t = target) {
+        // A share from another of the user's accounts: switch to it, then open what it holds.
+        val t = when (target) {
+            is dev.finalish.core.data.LinkTarget.InAccount -> { session.selectAccount(target.accountId); target.target }
+            else -> target
+        }
+        when (t) {
+            is dev.finalish.core.data.LinkTarget.InAccount -> Unit
             is dev.finalish.core.data.LinkTarget.File -> nav.navigate(ViewerRoute(t.assetId, type = t.type))
             is dev.finalish.core.data.LinkTarget.Folder -> nav.navigate(FolderRoute(t.projectId, t.rootFolderId, t.folderId, t.title, projectName = t.projectName))
             is dev.finalish.core.data.LinkTarget.Project -> nav.navigate(FolderRoute(t.projectId, t.rootFolderId, t.rootFolderId, t.name, isProjectRoot = true, projectName = t.name))
             is dev.finalish.core.data.LinkTarget.Shares -> nav.navigate(SharesRoute(t.projectId, t.projectName))
-            // Someone else's share (or a page the app has no screen for): the browser, never back to us.
-            is dev.finalish.core.data.LinkTarget.Browser -> runCatching {
-                val browser = android.content.Intent.makeMainSelectorActivity(android.content.Intent.ACTION_MAIN, android.content.Intent.CATEGORY_APP_BROWSER)
-                val view = android.content.Intent(android.content.Intent.ACTION_VIEW, t.url.toUri())
-                    .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                view.selector = browser
-                linkContext.startActivity(view)
-            }
+            // Someone else's share (or a page the app has no screen for): Frame.io's page in a browser
+            // tab over the app, never back to us.
+            is dev.finalish.core.data.LinkTarget.Browser -> dev.finalish.core.data.FrameLinks.openInBrowserTab(linkContext, t.url)
         }
     }
 
