@@ -38,10 +38,6 @@ If yours is still on Legacy, an Owner or Admin can [update it from the account m
 or ask support@frame.io. Accounts created with Google before the move to Adobe may need Frame.io support
 to link them to an Adobe ID.
 
-**Review links from other accounts open in the browser.** The Frame.io API only reads shares in accounts
-you belong to, so a review link someone sends you from their own account opens in a browser tab instead of
-the app. Links to your own accounts open in the app.
-
 > [!NOTE]
 > Final(ish) is not affiliated with, endorsed or sponsored by Adobe or Frame.io. Adobe and Frame.io are
 > either registered trademarks or trademarks of Adobe in the United States and/or other countries.
@@ -95,7 +91,27 @@ the app. Links to your own accounts open in the app.
 - **Report bugs** by shaking the phone: logs are sanitised and the screenshot is only attached if you turn it on.
 - **Try it first** in demo mode, no account needed. Works on every Frame.io plan, Free included.
 
-The full list, area by area, and what the Frame.io API doesn't allow yet: [docs/features.md](docs/features.md).
+The full list, area by area: [docs/features.md](docs/features.md).
+
+## Known limitations
+
+Some things Frame.io offers on the web can't be done in Final(ish) yet, because the public Frame.io V4 API
+doesn't expose them:
+
+- **Review links from other accounts open in the browser.** The API only reads shares in accounts you
+  belong to, so a review link someone sends you from their own account opens in a browser tab instead of
+  the app. Links to your own accounts open in the app.
+- **Replies to comments** are shown but can't be written.
+- **@mentions** are shown and highlighted but can't be created.
+- **Notifications** come from the app itself, built from the files and links you follow: there is no
+  Frame.io inbox in the API.
+- **Guest names**: comments left through a share link show the guest's name only when the account's audit
+  log has it (admins); older ones show as "Guest reviewer".
+- **Not available**: email notification settings, setting a frame as thumbnail, duplicating a project,
+  Camera to Cloud devices.
+
+They'll be added when the API allows them. Found something else that doesn't work? Shake the phone to
+report it, or [open an issue](https://github.com/TeoVader/finalish/issues).
 
 ## Download and build
 
