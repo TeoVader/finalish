@@ -38,6 +38,10 @@ If yours is still on Legacy, an Owner or Admin can [update it from the account m
 or ask support@frame.io. Accounts created with Google before the move to Adobe may need Frame.io support
 to link them to an Adobe ID.
 
+**Review links from other accounts open in the browser.** The Frame.io API only reads shares in accounts
+you belong to, so a review link someone sends you from their own account opens in a browser tab instead of
+the app. Links to your own accounts open in the app.
+
 > [!NOTE]
 > Final(ish) is not affiliated with, endorsed or sponsored by Adobe or Frame.io. Adobe and Frame.io are
 > either registered trademarks or trademarks of Adobe in the United States and/or other countries.
@@ -82,7 +86,7 @@ to link them to an Adobe ID.
 - **Review** with time-coded and range comments, on-frame drawings, mark as done and markers on the timeline.
 - **Open** images (RAW, PSD and more), PDFs, audio and Word / Excel / PowerPoint files.
 - **Approve** with Status, Rating and custom metadata fields, and **compare** versions side by side or with a wipe.
-- **Share** links with every setting, and open `next.frame.io` / `f.io` links straight in the app.
+- **Share** links with every setting, and open `next.frame.io` / `f.io` links straight in the app (links from other accounts open in a browser tab).
 - **Upload** in the background with resumable multi-part transfers, from the picker or the share sheet.
 - **Work offline**: saved files, cached browsing and comments that sync later.
 - **Get notified** of new comments, mentions, processed uploads and opened links, with no server.
