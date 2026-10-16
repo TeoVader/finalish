@@ -11,7 +11,7 @@ Everything Final(ish) does today, area by area. The [README](../README.md) has t
 | **Approvals** | Edit Status, Rating and any custom metadata field from the viewer. Settings → Metadata fields adds, renames and deletes the account's custom fields. |
 | **Versions** | Switch versions, stack files as versions, and compare two versions side by side or with a wipe slider, in sync. |
 | **Share** | Create share links, add assets to existing links, and edit every setting (visibility, comments, downloads, versions, transcripts, captions, layout, passphrase, expiry, watermark and its template, assets). Link cards show a preview of what they share. |
-| **Frame.io links** | `next.frame.io` and `f.io` links opened on the phone can open in Final(ish): a file opens in the viewer, a folder or project in the browser, your own share link on what it shares; anything else goes to the browser. On Android 12+ turn it on once in Settings › Permissions › Frame.io links (Android's "Open by default"). |
+| **Frame.io links** | `next.frame.io` and `f.io` links opened on the phone can open in Final(ish): a file opens in the viewer, a folder or project in the browser, a share link from any account you belong to on what it shares; anything else, such as a review link from someone else's account, opens in a browser tab. On Android 12+ turn it on once in Settings › Permissions › Frame.io links (Android's "Open by default"). |
 | **Plans** | Works on every Frame.io plan, Free included: features the account's plan lacks (passphrase, expiry, watermark, groups, more than 2 projects on Free…) are shown greyed out with "Not on your plan" instead of failing. |
 | **Asset actions** | "…" menu: share, versions, download to device, still, offline, send URL, view in project, move. Status dropdown under the title. |
 | **Upload** | Multi-part, parallel uploads from the photo picker, file picker or the Android share sheet. They run in the background with live speed / time-left notifications, and **resume where they stopped** after a network drop. Imports from a link show in Transfers until Frame.io has the file. |
@@ -32,7 +32,8 @@ The public V4 API does not expose:
 - a notifications inbox: Final(ish) builds its own from the files and links it follows (webhooks would need a public server),
 - the name of a guest who commented through a share link: Final(ish) finds it in the account audit log when it can (admins); older comments, from before the account moved to V4, show as "Guest reviewer",
 - email notification settings, setting a frame as thumbnail, duplicating a project,
-- Camera to Cloud device management.
+- Camera to Cloud device management,
+- share links from accounts you are not a member of: a review link someone sends you from their own account opens in a browser tab.
 
 These will be added if the API exposes them.
 
