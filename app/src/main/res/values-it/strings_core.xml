@@ -164,6 +164,8 @@
     <string name="core_feedback_not_set_up">Le segnalazioni non sono configurate in questa build. Condividi invece la segnalazione.</string>
     <string name="core_feedback_waiting">In attesa di invio</string>
     <string name="core_feedback_paused">Segnalazioni in pausa per oggi</string>
+    <string name="core_feedback_relay_error">Il servizio delle segnalazioni ha risposto con un errore (%1$d). Riprova più tardi o condividi la segnalazione.</string>
+    <string name="core_feedback_unreachable">Il servizio delle segnalazioni non risponde. Controlla la connessione e riprova.</string>
     <string name="core_feedback_too_large">Gli allegati sono troppo grandi</string>
     <string name="core_feedback_refused">Il relay ha rifiutato la segnalazione (%1$d)</string>
     <string name="core_feedback_around">%1$s · verso le %2$s</string>

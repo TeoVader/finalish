@@ -61,6 +61,9 @@ class ReportRelay(context: Context, private val http: OkHttpClient, private val 
         data class Rejected(val reason: String) : Outcome
     }
 
+    /** The relay answered with an error status: it's up, but couldn't take the report (e.g. GitHub refused it). */
+    class RelayException(val code: Int) : IOException("Relay error ($code)")
+
     @Volatile private var prefetched: Ticket? = null
 
     /** Fetches and solves a ticket in the background, ready for the next Send. */
@@ -75,7 +78,7 @@ class ReportRelay(context: Context, private val http: OkHttpClient, private val 
     suspend fun challenge(): Ticket = withContext(Dispatchers.IO) {
         val body = buildJsonObject { put("installId", installId) }.toString().toRequestBody(JSON)
         http.newCall(Request.Builder().url("$baseUrl/challenge").post(body).build()).execute().use { res ->
-            if (!res.isSuccessful) throw IOException(if (res.code == 503) "Reporting is paused for today" else "Relay error (${res.code})")
+            if (!res.isSuccessful) throw RelayException(res.code)
             val o = AppJson.parseToJsonElement(res.body.string()).jsonObject
             Ticket(
                 ticket = o.getValue("ticket").jsonPrimitive.content,
@@ -115,7 +118,7 @@ class ReportRelay(context: Context, private val http: OkHttpClient, private val 
                 429 -> Outcome.Later(retryAfter ?: 60_000, appContext.getString(R.string.core_feedback_waiting))
                 503 -> Outcome.Later(retryAfter ?: 6 * 3_600_000L, appContext.getString(R.string.core_feedback_paused))
                 413 -> Outcome.Rejected(appContext.getString(R.string.core_feedback_too_large))
-                in 500..599 -> throw IOException("Relay error (${res.code})")
+                in 500..599 -> throw RelayException(res.code)
                 else -> Outcome.Rejected(appContext.getString(R.string.core_feedback_refused, res.code))
             }
         }
