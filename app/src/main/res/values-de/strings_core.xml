@@ -158,6 +158,8 @@
     <string name="core_feedback_not_set_up">Berichte sind in diesem Build nicht eingerichtet. Teile den Bericht stattdessen.</string>
     <string name="core_feedback_waiting">Wartet auf Senden</string>
     <string name="core_feedback_paused">Berichte sind für heute pausiert</string>
+    <string name="core_feedback_relay_error">Der Meldedienst hat einen Fehler gemeldet (%1$d). Versuche es später erneut oder teile die Meldung.</string>
+    <string name="core_feedback_unreachable">Der Meldedienst ist nicht erreichbar. Prüfe die Verbindung und versuche es erneut.</string>
     <string name="core_feedback_too_large">Anhänge sind zu groß</string>
     <string name="core_feedback_refused">Der Relay-Server hat den Bericht abgelehnt (%1$d)</string>
     <!-- "Waiting to send · around 09:47" -->

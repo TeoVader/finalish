@@ -34,6 +34,7 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -264,7 +265,16 @@ class FeedbackStore(context: Context) {
         return r
     }
 
-    /** Sends (again) a report that failed or was only shared. */
+    /**
+     * Queues again the reports left waiting or sending whose work is gone (e.g. the app was force-stopped
+     * mid-send); KEEP leaves the ones WorkManager still holds alone.
+     */
+    fun resumePending(context: Context) {
+        _reports.value.filter { it.status == FeedbackStatus.Queued || it.status == FeedbackStatus.Sending }
+            .forEach { FeedbackWorker.enqueue(context, it.id) }
+    }
+
+    /** Sends (again) a report that failed, was only shared or is stuck. */
     fun retry(context: Context, id: String) {
         update(id) { it.copy(status = FeedbackStatus.Queued, error = null) }
         FeedbackWorker.enqueue(context, id, replace = true)
@@ -387,10 +397,22 @@ class FeedbackWorker(context: Context, params: WorkerParameters) : CoroutineWork
                     Result.failure()
                 }
             }
+        } catch (e: CancellationException) {
+            // WorkManager stopped this run (constraints lost, Retry tapped, app killed): it runs it again
+            // later, so the report goes back to the queue instead of showing "Sending" forever.
+            store.update(id) { if (it.status == FeedbackStatus.Sending) it.copy(status = FeedbackStatus.Queued, error = null) else it }
+            throw e
         } catch (t: Throwable) {
             // The relay may have used up the ticket before failing: a retry starts from a fresh one,
             // else it would answer "duplicate" and the report would pass for sent.
-            store.update(id) { it.copy(status = FeedbackStatus.Failed, error = t.userMessage(applicationContext), ticket = null) }
+            val message = when (t) {
+                is ReportRelay.RelayException ->
+                    if (t.code == 503) applicationContext.getString(R.string.core_feedback_paused)
+                    else applicationContext.getString(R.string.core_feedback_relay_error, t.code)
+                is IOException -> applicationContext.getString(R.string.core_feedback_unreachable)
+                else -> t.userMessage(applicationContext)
+            }
+            store.update(id) { it.copy(status = FeedbackStatus.Failed, error = message, ticket = null) }
             if (runAttemptCount < 5 && t is IOException) Result.retry() else Result.failure()
         }
     }
