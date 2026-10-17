@@ -38,10 +38,6 @@ If yours is still on Legacy, an Owner or Admin can [update it from the account m
 or ask support@frame.io. Accounts created with Google before the move to Adobe may need Frame.io support
 to link them to an Adobe ID.
 
-**Review links from other accounts open in the browser.** The Frame.io API only reads shares in accounts
-you belong to, so a review link someone sends you from their own account opens in a browser tab instead of
-the app. Links to your own accounts open in the app.
-
 > [!NOTE]
 > Final(ish) is not affiliated with, endorsed or sponsored by Adobe or Frame.io. Adobe and Frame.io are
 > either registered trademarks or trademarks of Adobe in the United States and/or other countries.
