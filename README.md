@@ -104,7 +104,9 @@ doesn't expose them:
 - **Replies to comments** are shown but can't be written.
 - **@mentions** are shown and highlighted but can't be created.
 - **Notifications** come from the app itself, built from the files and links you follow: there is no
-  Frame.io inbox in the API.
+  Frame.io inbox in the API. They rely on Android running a background check about every 15 minutes:
+  phones that stop background apps (Xiaomi and others without Autostart) only show new comments when the
+  app is opened, and the notification settings say so with a shortcut to the right setting.
 - **Guest names**: comments left through a share link show the guest's name only when the account's audit
   log has it (admins); older ones show as "Guest reviewer".
 - **Not available**: email notification settings, setting a frame as thumbnail, duplicating a project,
