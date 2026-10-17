@@ -342,6 +342,9 @@
     <string name="notifications_uploads_ready">Importations prêtes</string>
     <string name="notifications_share_views">Consultations des liens de partage</string>
     <string name="notifications_settings_footer">Désactivez les notifications d\'un projet sur l\'appareil depuis son menu ⋯. Les notifications par e-mail se règlent sur frame.io.</string>
+    <string name="notifications_background_title">Les notifications risquent de ne pas arriver</string>
+    <string name="notifications_background_body">Ce téléphone limite Final(ish) en arrière-plan : les nouveaux commentaires n\'apparaissent qu\'à l\'ouverture de l\'app. Autorisez l\'activité en arrière-plan (sur Xiaomi et d\'autres téléphones, activez aussi le Démarrage automatique).</string>
+    <string name="notifications_background_action">Ouvrir les réglages</string>
     <plurals name="notifications_unread">
         <item quantity="one">%1$d non lu</item>
         <item quantity="many">%1$d non lus</item>

@@ -154,7 +154,10 @@ fun FeedbackScreen(initialKind: FeedbackKind, accountId: String?, onBack: () -> 
 
     val relay = container.reportRelay
     // Fetch and solve the relay's ticket while the user writes, so Send goes straight out.
-    LaunchedEffect(Unit) { relay.prefetch() }
+    LaunchedEffect(Unit) {
+        store.resumePending(context)
+        relay.prefetch()
+    }
     fun openIssue(r: FeedbackReport) {
         r.issueUrl?.let { url -> runCatching { context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, url.toUri())) } }
     }
@@ -536,9 +539,9 @@ private fun ReportRow(
                 androidx.compose.material3.DropdownMenuItem(text = { Text(stringResource(R.string.feedback_open_issue, "${r.issueNumber}")) }, onClick = { menu = false; onOpenIssue() })
             }
             androidx.compose.material3.DropdownMenuItem(text = { Text(stringResource(R.string.feedback_share)) }, onClick = { menu = false; onShare() })
-            if (canSend && (r.status == FeedbackStatus.Failed || r.status == FeedbackStatus.Shared)) {
+            if (canSend && r.status != FeedbackStatus.Sent) {
                 androidx.compose.material3.DropdownMenuItem(
-                    text = { Text(if (r.status == FeedbackStatus.Failed) stringResource(R.string.feedback_try_again) else stringResource(R.string.feedback_send)) },
+                    text = { Text(if (r.status == FeedbackStatus.Shared) stringResource(R.string.feedback_send) else stringResource(R.string.feedback_try_again)) },
                     onClick = { menu = false; onRetry() },
                 )
             }

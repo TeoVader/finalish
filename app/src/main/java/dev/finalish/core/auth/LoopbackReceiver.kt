@@ -38,7 +38,18 @@ object LoopbackReceiver {
                             // don't let one block the real redirect.
                             s.soTimeout = 5_000
                             val requestLine = try {
-                                s.getInputStream().bufferedReader().readLine().orEmpty()
+                                val reader = s.getInputStream().bufferedReader()
+                                val line = reader.readLine().orEmpty()
+                                // Read the headers up to the blank line before answering: closing with
+                                // unread input makes some stacks reset the connection, losing the page.
+                                if (line.isNotEmpty()) {
+                                    try {
+                                        while (reader.readLine()?.isNotEmpty() == true) Unit
+                                    } catch (_: java.net.SocketTimeoutException) {
+                                        // Headers cut short: the request line is still enough.
+                                    }
+                                }
+                                line
                             } catch (_: java.net.SocketTimeoutException) {
                                 ""
                             }

@@ -92,7 +92,8 @@ class SessionViewModel(app: Application, val container: AppContainer) : AndroidV
     fun signOut() {
         container.auth.signOut()
         container.transferManager.signOut()
-        container.clearCaches()
+        // Disk work: off the main thread, and on the app scope so it finishes after this screen goes.
+        container.appScope.launch(kotlinx.coroutines.Dispatchers.IO) { container.clearCaches() }
         // Reports, the log ring and the last crash belong to this user too.
         container.feedback.clearAll()
         dev.finalish.core.feedback.Breadcrumbs.clear()

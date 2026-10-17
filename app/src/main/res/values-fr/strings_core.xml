@@ -164,6 +164,8 @@
     <string name="core_feedback_not_set_up">Les signalements ne sont pas configurés dans cette version. Partagez plutôt le rapport.</string>
     <string name="core_feedback_waiting">En attente d\'envoi</string>
     <string name="core_feedback_paused">Les signalements sont suspendus pour aujourd\'hui</string>
+    <string name="core_feedback_relay_error">Le service de signalement a renvoyé une erreur (%1$d). Réessaie plus tard ou partage le signalement.</string>
+    <string name="core_feedback_unreachable">Impossible de joindre le service de signalement. Vérifie la connexion et réessaie.</string>
     <string name="core_feedback_too_large">Les pièces jointes sont trop volumineuses</string>
     <string name="core_feedback_refused">Le relais a refusé le rapport (%1$d)</string>
     <string name="core_feedback_around">%1$s · vers %2$s</string>

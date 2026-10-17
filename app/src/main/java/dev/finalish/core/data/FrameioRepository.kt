@@ -401,6 +401,9 @@ class FrameioRepository(
                 if (it is kotlinx.coroutines.CancellationException) throw it
                 // Only the account lacking the audit log stops asking; being offline once doesn't.
                 if (it is retrofit2.HttpException && it.code() in setOf(400, 403, 404)) auditUnavailable += account
+                // The log refuses this lookup (e.g. dates outside what the plan keeps): don't ask again for
+                // these comments on every refresh; newer comments still get their own lookup.
+                if (it is retrofit2.HttpException && it.code() == 422) authorsNotLogged += wanted
                 dev.finalish.core.util.AppLog.w("Audit log lookup for comment authors failed: ${it.message}")
             }
         }

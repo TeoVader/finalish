@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AlternateEmail
+import androidx.compose.material.icons.rounded.BatteryAlert
 import androidx.compose.material.icons.rounded.ChatBubbleOutline
 import androidx.compose.material.icons.rounded.CloudDone
 import androidx.compose.material.icons.rounded.DoneAll
@@ -57,6 +58,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.content.res.Resources
 import dev.finalish.FinalishApp
@@ -144,7 +146,14 @@ fun NotificationsScreen(
                     container.activityWatch.markRead(e.id)
                     when {
                         e.fileId != null -> onOpenFile(e.fileId)
-                        e.shareId != null -> onOpenShares(e.projectId, projects[e.projectId].orEmpty())
+                        e.shareId != null && e.projectId.isNotBlank() -> onOpenShares(e.projectId, projects[e.projectId].orEmpty())
+                        // Project unknown (links watched before it was recorded): the app resolves the link itself.
+                        e.shareId != null -> runCatching {
+                            context.startActivity(
+                                android.content.Intent(android.content.Intent.ACTION_VIEW, "https://next.frame.io/share/${e.shareId}".toUri())
+                                    .setPackage(context.packageName),
+                            )
+                        }
                     }
                 }
             }
@@ -300,6 +309,17 @@ private fun NotificationSettingsSheet(onDismiss: () -> Unit) {
                 if (v) dev.finalish.core.notify.ActivityWatch.checkSoon(context)
             }
             if (s.notifications) {
+                // Re-read when the sheet comes back from system settings.
+                val (perms, request) = dev.finalish.ui.onboarding.rememberPermissionStates()
+                val batteryLimited = perms[dev.finalish.ui.onboarding.AppPermission.Background] == false
+                val stalled = remember(perms) { dev.finalish.core.notify.ActivityWatch.backgroundStalled(context) }
+                if (batteryLimited || stalled) {
+                    BackgroundLimitHint(Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
+                        // Battery list first; once that's allowed, the app page holds Autostart on Xiaomi and others.
+                        if (batteryLimited) request(dev.finalish.ui.onboarding.AppPermission.Background)
+                        else dev.finalish.ui.onboarding.openAppSettings(context)
+                    }
+                }
                 SettingSwitch(Icons.Rounded.ChatBubbleOutline, stringResource(R.string.notifications_comments), null, s.notifyComments) { v -> container.settings.update { it.copy(notifyComments = v) } }
                 SettingSwitch(Icons.Rounded.CloudDone, stringResource(R.string.notifications_uploads_ready), null, s.notifyUploads) { v -> container.settings.update { it.copy(notifyUploads = v) } }
                 SettingSwitch(Icons.Rounded.Visibility, stringResource(R.string.notifications_share_views), null, s.notifyShareViews) { v -> container.settings.update { it.copy(notifyShareViews = v) } }
@@ -311,6 +331,24 @@ private fun NotificationSettingsSheet(onDismiss: () -> Unit) {
                 modifier = Modifier.padding(horizontal = 24.dp),
             )
         }
+    }
+}
+
+/** Device notifications need background checks, which the phone may be holding back. */
+@Composable
+internal fun BackgroundLimitHint(modifier: Modifier = Modifier, onOpenSettings: () -> Unit) {
+    Column(
+        modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Palette.Amber.copy(alpha = 0.16f)).padding(14.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(Icons.Rounded.BatteryAlert, null, tint = Palette.Amber, modifier = Modifier.size(20.dp))
+            Column {
+                Text(stringResource(R.string.notifications_background_title), style = MaterialTheme.typography.bodyMedium, color = Palette.Amber)
+                Text(stringResource(R.string.notifications_background_body), style = MaterialTheme.typography.bodySmall, color = Palette.TextSecondary)
+            }
+        }
+        dev.finalish.ui.components.SecondaryButton(stringResource(R.string.notifications_background_action), onOpenSettings, Modifier.align(Alignment.End))
     }
 }
 

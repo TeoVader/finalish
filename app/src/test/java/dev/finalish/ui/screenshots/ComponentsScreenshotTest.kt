@@ -284,6 +284,10 @@ class ComponentsScreenshotTest {
         ) {}
     }
 
+    @Test fun backgroundLimitHint() = snap("background_limit_hint") {
+        dev.finalish.ui.notifications.BackgroundLimitHint(onOpenSettings = {})
+    }
+
     @Test fun officePreviews() {
         fun read(name: String, ext: String) =
             dev.finalish.core.media.OfficePreview.read(java.io.File(javaClass.classLoader!!.getResource("office/$name")!!.toURI()), ext)!!

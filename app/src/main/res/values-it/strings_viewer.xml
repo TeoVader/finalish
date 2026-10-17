@@ -267,6 +267,7 @@
     <string name="viewer_msg_offline_comment_retry">Sei offline: tocca Riprova per inviare il commento con i suoi allegati</string>
     <string name="viewer_msg_upload_failed">Caricamento non riuscito (%1$d)</string>
     <string name="viewer_msg_attach_failed">Impossibile allegare %1$s: %2$s</string>
+    <string name="viewer_msg_attach_no_size">impossibile leggerne la dimensione</string>
     <plurals name="viewer_msg_attachments_uploaded">
         <item quantity="one">%1$d allegato caricato</item>
         <item quantity="many">%1$d allegati caricati</item>

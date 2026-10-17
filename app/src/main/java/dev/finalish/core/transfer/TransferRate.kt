@@ -28,11 +28,16 @@ class RateMeter {
     }
 }
 
-/** "25.1 MB of 79.0 MB · 4.1 MB/s · 13s left" (speed and ETA once a rate is known). */
+/**
+ * "25.1 MB of 79.0 MB · 4.1 MB/s · 13s left" (speed and ETA once a rate is known).
+ * With no known size (a download without Content-Length reports -1) only "25.1 MB · 4.1 MB/s".
+ */
 fun transferLabel(done: Long, total: Long, rate: Double?): String {
-    val base = "${Format.bytes(done)} of ${Format.bytes(total)}"
-    if (rate == null || rate < 1 || total <= 0) return base
-    return "$base · ${Format.bytes(rate.toLong())}/s · ${eta(((total - done) / rate).toLong().coerceAtLeast(0))}"
+    val base = if (total > 0) "${Format.bytes(done)} of ${Format.bytes(total)}" else Format.bytes(done)
+    if (rate == null || rate < 1) return base
+    val speed = "$base · ${Format.bytes(rate.toLong())}/s"
+    if (total <= 0) return speed
+    return "$speed · ${eta(((total - done) / rate).toLong().coerceAtLeast(0))}"
 }
 
 private fun eta(s: Long) = when {
@@ -43,13 +48,15 @@ private fun eta(s: Long) = when {
 
 /** [transferLabel] in the app's language. */
 fun transferLabel(context: Context, done: Long, total: Long, rate: Double?): String {
-    val base = context.getString(R.string.core_transfer_progress, Format.bytes(done), Format.bytes(total))
-    if (rate == null || rate < 1 || total <= 0) return base
+    val base = if (total > 0) context.getString(R.string.core_transfer_progress, Format.bytes(done), Format.bytes(total)) else Format.bytes(done)
+    if (rate == null || rate < 1) return base
+    val speed = "$base · ${context.getString(R.string.core_transfer_speed, Format.bytes(rate.toLong()))}"
+    if (total <= 0) return speed
     val s = ((total - done) / rate).toLong().coerceAtLeast(0)
     val eta = when {
         s < 60 -> context.getString(R.string.core_transfer_eta_seconds, s)
         s < 3600 -> context.getString(R.string.core_transfer_eta_minutes, s / 60, s % 60)
         else -> context.getString(R.string.core_transfer_eta_hours, s / 3600, s % 3600 / 60)
     }
-    return "$base · ${context.getString(R.string.core_transfer_speed, Format.bytes(rate.toLong()))} · $eta"
+    return "$speed · $eta"
 }

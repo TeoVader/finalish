@@ -455,7 +455,9 @@ class UploadWorker(context: Context, params: WorkerParameters) : CoroutineWorker
                     ?.let { t -> store.updateOwn(uploadId) { it.copy(thumbnailPath = t.absolutePath) } }
                 store.dropStaged(uploadId, keepThumb = true)
             }
-            c.activityWatch.watchUpload(item.accountId, "", remoteId, item.name)
+            // Its project, so comments count on the right card (the check fills it in otherwise).
+            val projectId = dev.finalish.core.util.runCatchingCancellable { c.repository.folder(item.accountId, item.folderId).projectId }.getOrDefault("")
+            c.activityWatch.watchUpload(item.accountId, projectId, remoteId, item.name)
             dev.finalish.core.notify.ActivityWatch.checkAfterUpload(applicationContext)
             item.stackOntoId?.let { target -> stackAsNewVersion(item, target, remoteId) }
             Result.success()
@@ -637,6 +639,8 @@ class CommentSyncWorker(context: Context, params: WorkerParameters) : CoroutineW
     override suspend fun doWork(): Result {
         var failed = false
         for (p in c.transfers.pendingComments.value) {
+            // Deleted from the viewer since this run started: don't send it.
+            if (c.transfers.pendingComments.value.none { it.localId == p.localId }) continue
             runCatching {
                 // Idempotence: a send whose answer was lost (connection dropped, process killed) may
                 // still have created the comment. Each send is recorded first (attemptedAt, saved to
@@ -704,7 +708,8 @@ class ImportWatchWorker(context: Context, params: WorkerParameters) : CoroutineW
                 status?.uploadComplete == true -> {
                     c.repository.invalidateFolder(item.accountId, item.folderId)
                     c.transfers.updateUpload(uploadId) { it.copy(state = TransferState.Done, error = null) }
-                    c.activityWatch.watchUpload(item.accountId, "", fileId, item.name)
+                    val projectId = dev.finalish.core.util.runCatchingCancellable { c.repository.folder(item.accountId, item.folderId).projectId }.getOrDefault("")
+                    c.activityWatch.watchUpload(item.accountId, projectId, fileId, item.name)
                     dev.finalish.core.notify.ActivityWatch.checkAfterUpload(applicationContext)
                     return Result.success()
                 }

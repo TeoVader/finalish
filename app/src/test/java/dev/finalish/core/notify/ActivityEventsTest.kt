@@ -24,6 +24,12 @@ class ActivityEventsTest {
         assertEquals(null, events[2].text)
     }
 
+    @Test fun viewLinkNeedsProject() {
+        assertEquals("https://next.frame.io/project/p1/view/f1", Notifier.viewLink("p1", "f1"))
+        // `project//view/f1` would parse as a project called "view" and open the browser.
+        assertEquals(null, Notifier.viewLink("", "f1"))
+    }
+
     @Test fun headlines() {
         fun e(kind: ActivityEvent.Kind, actors: List<String>, count: Int) = ActivityEvent("x", kind, "a", "p", "Cut.mp4", actors = actors, count = count, at = "2026-10-01T10:00:00Z")
         assertEquals("Tomás left 2 comments on Cut.mp4", headline(e(ActivityEvent.Kind.Comments, listOf("Tomás"), 2)))

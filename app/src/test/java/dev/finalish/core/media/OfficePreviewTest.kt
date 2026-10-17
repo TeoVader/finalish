@@ -47,4 +47,25 @@ class OfficePreviewTest {
         assertEquals(listOf("A002", "says \"cut\"\nhere"), s.rows[2])
         assertEquals(3, s.rows.size)
     }
+
+    @Test fun firstSheetFollowsWorkbookRels() {
+        val workbook = """<workbook xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>""" +
+            """<sheet name="Budget" sheetId="3" r:id="rId3"/><sheet name="Old" sheetId="1" r:id="rId1"/></sheets></workbook>"""
+        val sheets = OfficePreview.workbookSheets(workbook)
+        assertEquals(listOf("Budget" to "rId3", "Old" to "rId1"), sheets)
+        val entries = listOf("xl/workbook.xml", "xl/worksheets/sheet1.xml", "xl/worksheets/sheet2.xml")
+        val rels = { target: String ->
+            """<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/>""" +
+                """<Relationship Id="rId3" Target="$target"/></Relationships>"""
+        }
+        assertEquals("xl/worksheets/sheet2.xml", OfficePreview.firstSheetPath("rId3", rels("worksheets/sheet2.xml"), entries))
+        assertEquals("xl/worksheets/sheet2.xml", OfficePreview.firstSheetPath("rId3", rels("/xl/worksheets/sheet2.xml"), entries))
+    }
+
+    @Test fun firstSheetFallsBackToLowestNumber() {
+        val entries = listOf("xl/worksheets/sheet10.xml", "xl/worksheets/sheet2.xml", "xl/worksheets/_rels/sheet2.xml.rels")
+        assertEquals("xl/worksheets/sheet2.xml", OfficePreview.firstSheetPath(null, null, entries))
+        val rels = """<Relationships><Relationship Id="rId1" Target="worksheets/missing.xml"/></Relationships>"""
+        assertEquals("xl/worksheets/sheet2.xml", OfficePreview.firstSheetPath("rId1", rels, entries))
+    }
 }

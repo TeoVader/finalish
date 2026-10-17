@@ -195,13 +195,13 @@ class FolderViewModel(
         }
         refresh()
         viewModelScope.launch {
-            // Refresh after uploads into this folder complete.
-            var running = 0
+            // Refresh after an upload into this folder completes: only a new Done counts, so a
+            // failed or cancelled one next to an older finished upload doesn't reload the folder.
+            var done = -1
             transfers.uploads.collect { list ->
-                val now = list.count { it.folderId == folder && it.state == TransferState.Running }
-                val justFinished = list.any { it.folderId == folder && it.state == TransferState.Done }
-                if (now < running && justFinished) refresh()
-                running = now
+                val now = list.count { it.folderId == folder && it.state == TransferState.Done }
+                if (done in 0 until now) refresh()
+                done = now
             }
         }
     }

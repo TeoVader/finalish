@@ -274,7 +274,6 @@ fun SettingsTab(
                     scope.launch {
                         cacheSize = withContext(Dispatchers.IO) {
                             container.clearCaches()
-                            runCatching { container.mediaCache.keys.toList().forEach { container.mediaCache.removeResource(it) } }
                             dirBytes(context.cacheDir)
                         }
                     }

@@ -261,6 +261,7 @@
     <string name="viewer_msg_offline_comment_retry">Du bist offline – tippe auf „Wiederholen“, um den Kommentar mit seinen Anhängen zu senden</string>
     <string name="viewer_msg_upload_failed">Upload fehlgeschlagen (%1$d)</string>
     <string name="viewer_msg_attach_failed">%1$s konnte nicht angehängt werden: %2$s</string>
+    <string name="viewer_msg_attach_no_size">Dateigröße nicht lesbar</string>
     <plurals name="viewer_msg_attachments_uploaded">
         <item quantity="one">%1$d Anhang hochgeladen</item>
         <item quantity="other">%1$d Anhänge hochgeladen</item>

@@ -324,6 +324,9 @@
     <string name="notifications_uploads_ready">Uploads ready</string>
     <string name="notifications_share_views">Share link views</string>
     <string name="notifications_settings_footer">Turn a project\'s device notifications off from its ⋯ menu. Email notifications are set on frame.io.</string>
+    <string name="notifications_background_title">Notifications may not arrive</string>
+    <string name="notifications_background_body">This phone is limiting Final(ish) in the background, so new comments only show up when you open the app. Allow it to run in the background (on Xiaomi and some other phones, also turn on Autostart).</string>
+    <string name="notifications_background_action">Open settings</string>
     <plurals name="notifications_unread">
         <item quantity="one">%1$d unread</item>
         <item quantity="other">%1$d unread</item>

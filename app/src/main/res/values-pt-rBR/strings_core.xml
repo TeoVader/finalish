@@ -167,6 +167,8 @@
     <string name="core_feedback_not_set_up">O envio de relatórios não está configurado nesta versão. Compartilhe o relatório.</string>
     <string name="core_feedback_waiting">Aguardando envio</string>
     <string name="core_feedback_paused">O envio de relatórios está pausado por hoje</string>
+    <string name="core_feedback_relay_error">O serviço de relatórios retornou um erro (%1$d). Tente de novo mais tarde ou compartilhe o relatório.</string>
+    <string name="core_feedback_unreachable">Não foi possível acessar o serviço de relatórios. Verifique a conexão e tente de novo.</string>
     <string name="core_feedback_too_large">Os anexos são grandes demais</string>
     <string name="core_feedback_refused">O relay recusou o relatório (%1$d)</string>
     <!-- "Waiting to send · around 09:47" -->

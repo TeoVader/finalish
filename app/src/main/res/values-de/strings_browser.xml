@@ -324,6 +324,9 @@
     <string name="notifications_uploads_ready">Uploads bereit</string>
     <string name="notifications_share_views">Aufrufe von Freigabelinks</string>
     <string name="notifications_settings_footer">Schalte die Push-Benachrichtigungen eines Projekts über sein ⋯-Menü aus. E-Mail-Benachrichtigungen werden auf frame.io eingestellt.</string>
+    <string name="notifications_background_title">Benachrichtigungen kommen evtl. nicht an</string>
+    <string name="notifications_background_body">Dieses Telefon schränkt Final(ish) im Hintergrund ein, daher erscheinen neue Kommentare erst beim Öffnen der App. Erlaube die Hintergrundaktivität (auf Xiaomi und einigen anderen Telefonen auch Autostart einschalten).</string>
+    <string name="notifications_background_action">Einstellungen öffnen</string>
     <plurals name="notifications_unread">
         <item quantity="one">%1$d ungelesen</item>
         <item quantity="other">%1$d ungelesen</item>
