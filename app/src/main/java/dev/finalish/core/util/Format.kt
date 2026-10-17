@@ -13,8 +13,12 @@ import kotlin.math.roundToLong
 
 object Format {
 
-    /** Decimal units (1 GB = 1000³ bytes), like Frame.io and Android: a Free plan reads "2.0 GB". */
+    /**
+     * Decimal units (1 GB = 1000³ bytes), like Frame.io and Android: a Free plan reads "2.0 GB".
+     * A negative size (an unknown length, -1) reads "0 B".
+     */
     fun bytes(size: Long): String {
+        if (size < 0) return "0 B"
         if (size < 1000) return "$size B"
         val units = arrayOf("KB", "MB", "GB", "TB")
         val exp = (ln(size.toDouble()) / ln(1000.0)).toInt().coerceIn(1, units.size)

@@ -15,6 +15,11 @@ class FormatTest {
         assertEquals("535 MB", Format.bytes(534_773_760))
     }
 
+    @Test fun bytesClampsUnknownSize() {
+        assertEquals("0 B", Format.bytes(-1))
+        assertEquals("0 B", Format.bytes(Long.MIN_VALUE))
+    }
+
     @Test fun timecodeAt24fps() {
         assertEquals("00:00:00:00", Format.timecode(0, 24.0))
         assertEquals("00:00:01:12", Format.timecode(1_500, 24.0))

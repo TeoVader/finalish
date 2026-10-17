@@ -261,6 +261,7 @@
     <string name="viewer_msg_offline_comment_retry">You\'re offline — tap Retry to send the comment with its attachments</string>
     <string name="viewer_msg_upload_failed">Upload failed (%1$d)</string>
     <string name="viewer_msg_attach_failed">Couldn\'t attach %1$s: %2$s</string>
+    <string name="viewer_msg_attach_no_size">its size can\'t be read</string>
     <plurals name="viewer_msg_attachments_uploaded">
         <item quantity="one">%1$d attachment uploaded</item>
         <item quantity="other">%1$d attachments uploaded</item>

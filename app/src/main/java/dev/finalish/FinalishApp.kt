@@ -62,12 +62,20 @@ class AppContainer(val context: Context) {
         )
     }
 
+    /**
+     * Empties everything the app keeps in cacheDir: API responses, images, streamed media and the
+     * viewer's downloads (PDF, Office, scrub proxies, waveforms). Blocking: call it off the main thread,
+     * with no viewer open (Settings, sign out); a file deleted under an open reader stays readable anyway.
+     */
     fun clearCaches() {
         repository.clearCache()
         SingletonImageLoader.get(context).let { loader ->
             loader.memoryCache?.clear()
             loader.diskCache?.clear()
         }
+        // Through SimpleCache, not by deleting its folder: it keeps an index and holds a lock on it.
+        runCatching { mediaCache.keys.toList().forEach { mediaCache.removeResource(it) } }
+        for (dir in listOf("pdf", "office", "scrub", "waveforms")) runCatching { File(context.cacheDir, dir).deleteRecursively() }
     }
 }
 

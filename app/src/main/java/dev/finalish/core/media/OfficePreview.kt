@@ -51,7 +51,7 @@ object OfficePreview {
             }
             when (ext.lowercase()) {
                 "docx" -> xml("word/document.xml")?.let(::document)
-                "xlsx" -> sheet(::xml)
+                "xlsx" -> sheet(::xml, zip.entries().asSequence().map { it.name }.toList())
                 "pptx" -> {
                     val names = zip.entries().asSequence().map { it.name }
                         .filter { it.matches(Regex("ppt/slides/slide\\d+\\.xml")) }
@@ -161,15 +161,47 @@ object OfficePreview {
     }
 
     /** Excel: the first sheet as rows of cell texts (shared strings resolved). */
-    private fun sheet(xml: (String) -> String?): OfficeDoc.Sheet? {
+    private fun sheet(xml: (String) -> String?, entries: List<String>): OfficeDoc.Sheet? {
         val shared = xml("xl/sharedStrings.xml")?.let(::sharedStrings).orEmpty()
-        val names = xml("xl/workbook.xml")?.let { w ->
-            val p = parser(w)
-            buildList { while (p.next() != XmlPullParser.END_DOCUMENT) if (p.eventType == XmlPullParser.START_TAG && p.name == "sheet") add(p.getAttributeValue(null, "name").orEmpty()) }
-        }.orEmpty()
-        val body = xml("xl/worksheets/sheet1.xml") ?: return null
+        val sheets = xml("xl/workbook.xml")?.let(::workbookSheets).orEmpty()
+        val path = firstSheetPath(sheets.firstOrNull()?.second, xml("xl/_rels/workbook.xml.rels"), entries) ?: return null
+        val body = xml(path) ?: return null
         val (rows, truncated) = cells(body, shared)
-        return OfficeDoc.Sheet(names.firstOrNull() ?: "Sheet1", rows, truncated, (names.size - 1).coerceAtLeast(0))
+        return OfficeDoc.Sheet(sheets.firstOrNull()?.first ?: "Sheet1", rows, truncated, (sheets.size - 1).coerceAtLeast(0))
+    }
+
+    /** The workbook's sheets in tab order, as (name, relationship id). */
+    internal fun workbookSheets(xml: String): List<Pair<String, String?>> {
+        val p = parser(xml)
+        return buildList {
+            while (p.next() != XmlPullParser.END_DOCUMENT) {
+                if (p.eventType != XmlPullParser.START_TAG || p.name != "sheet") continue
+                // The parser isn't namespace aware: the relationship id is "r:id" (any prefix).
+                val rid = (0 until p.attributeCount).firstOrNull { p.getAttributeName(it).endsWith(":id") }?.let(p::getAttributeValue)
+                add(p.getAttributeValue(null, "name").orEmpty() to rid)
+            }
+        }
+    }
+
+    /**
+     * The zip path of the first sheet: its relationship target in workbook.xml.rels (relative to
+     * xl/, or absolute from the package root), else the lowest-numbered xl/worksheets/sheetN.xml.
+     * The first tab isn't always sheet1.xml once sheets have been reordered or deleted.
+     */
+    internal fun firstSheetPath(rid: String?, rels: String?, entries: List<String>): String? {
+        val target = if (rid != null && rels != null) {
+            val p = parser(rels)
+            var found: String? = null
+            while (found == null && p.next() != XmlPullParser.END_DOCUMENT) {
+                if (p.eventType == XmlPullParser.START_TAG && p.name == "Relationship" && p.getAttributeValue(null, "Id") == rid) {
+                    found = p.getAttributeValue(null, "Target")
+                }
+            }
+            found?.let { if (it.startsWith("/")) it.removePrefix("/") else "xl/$it" }
+        } else null
+        if (target != null && target in entries) return target
+        return entries.filter { it.matches(Regex("xl/worksheets/sheet\\d+\\.xml")) }
+            .minByOrNull { it.filter(Char::isDigit).toIntOrNull() ?: Int.MAX_VALUE }
     }
 
     internal fun sharedStrings(xml: String): List<String> {

@@ -44,4 +44,12 @@ class TransferRateTest {
         assertEquals("30.0 MB of 80.0 MB · 5.0 MB/s · 10s left", transferLabel(30 * mb, 80 * mb, 5.0 * mb))
         assertEquals("0 B of 600 MB · 1.0 MB/s · 10m 0s left", transferLabel(0, 600 * mb, 1.0 * mb))
     }
+
+    @Test fun labelWithoutTotal() {
+        // A download without Content-Length reports a total of -1: show only what arrived.
+        val mb = 1_000_000L
+        assertEquals("12.3 MB", transferLabel(12_300_000, -1, null))
+        assertEquals("12.3 MB · 5.0 MB/s", transferLabel(12_300_000, -1, 5.0 * mb))
+        assertEquals("0 B", transferLabel(0, 0, null))
+    }
 }

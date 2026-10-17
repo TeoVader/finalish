@@ -299,7 +299,7 @@ class FeedbackStore(context: Context) {
             android.content.Intent(android.content.Intent.ACTION_SEND_MULTIPLE).putParcelableArrayListExtra(android.content.Intent.EXTRA_STREAM, uris).setType("*/*")
         } else {
             android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                if (uris.isNotEmpty()) { putExtra(android.content.Intent.EXTRA_STREAM, uris[0]); type = "image/png" } else type = "text/plain"
+                if (uris.isNotEmpty()) { putExtra(android.content.Intent.EXTRA_STREAM, uris[0]); type = context.contentResolver.getType(uris[0]) ?: "*/*" } else type = "text/plain"
             }
         }
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Final(ish) ${r.kind.label}: ${r.title}")

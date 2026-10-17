@@ -11,6 +11,7 @@ import dev.finalish.core.model.Comment
 import dev.finalish.core.model.MediaKind
 import dev.finalish.core.network.userMessage
 import dev.finalish.core.notify.ActivityWatch
+import dev.finalish.core.transfer.PartSource
 import dev.finalish.core.transfer.TransferManager
 import dev.finalish.core.transfer.TransferStore
 import dev.finalish.core.util.Format
@@ -29,7 +30,6 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody.Companion.toRequestBody
 
 private const val DRAFT_KEY = "draft"
 
@@ -355,32 +355,31 @@ internal class ViewerComments(
 
     fun removeAttachment(a: PendingAttachment) = _composer.update { it.copy(attachments = it.attachments - a) }
 
-    /** Creates attachment records then PUTs the bytes to the presigned URLs. */
+    /** Creates attachment records then streams the bytes to the presigned URLs. */
     private fun uploadAttachments(commentId: String, list: List<PendingAttachment>) {
         scope.launch(kotlinx.coroutines.Dispatchers.IO) {
             val resolver = app.contentResolver
             var ok = 0
             for (a in list) {
                 runCatching {
-                    val created = repo.createAttachment(account, commentId, a.name, a.size, a.mediaType)
+                    // Some providers leave SIZE out: ask the file itself. Unknown would create an empty attachment.
+                    val size = a.size.takeIf { it > 0 } ?: statSize(a.uri)
+                    if (size <= 0) error(session.str(R.string.viewer_msg_attach_no_size))
+                    val created = repo.createAttachment(account, commentId, a.name, size, a.mediaType)
                     val urls = created.uploadUrls.orEmpty()
-                    val part = if (urls.isEmpty()) 0L else (a.size + urls.size - 1) / urls.size
-                    urls.forEachIndexed { i, url ->
-                        val start = i * part
-                        val len = minOf(part, a.size - start)
-                        val bytes = resolver.openInputStream(a.uri.toUri())!!.use { input ->
-                            input.skip(start)
-                            val buf = ByteArray(len.toInt())
-                            var read = 0
-                            while (read < buf.size) { val n = input.read(buf, read, buf.size - read); if (n < 0) break; read += n }
-                            buf
+                    if (urls.isEmpty()) error(session.str(R.string.core_error_generic))
+                    val part = (size + urls.size - 1) / urls.size
+                    PartSource(resolver, a.uri.toUri()).use { source ->
+                        urls.forEachIndexed { i, url ->
+                            val start = i * part
+                            val len = minOf(part, size - start)
+                            val req = okhttp3.Request.Builder().url(url)
+                                .put(partBody(source, start, len))
+                                .header("x-amz-acl", "private")
+                                .header("Content-Type", a.mediaType)
+                                .build()
+                            http.newCall(req).execute().use { if (!it.isSuccessful) error(session.str(R.string.viewer_msg_upload_failed, it.code)) }
                         }
-                        val req = okhttp3.Request.Builder().url(url)
-                            .put(bytes.toRequestBody(null))
-                            .header("x-amz-acl", "private")
-                            .header("Content-Type", a.mediaType)
-                            .build()
-                        http.newCall(req).execute().use { if (!it.isSuccessful) error(session.str(R.string.viewer_msg_upload_failed, it.code)) }
                     }
                     ok++
                 }.onFailure { messages.emit(session.str(R.string.viewer_msg_attach_failed, a.name, it.userMessage())) }
@@ -388,6 +387,29 @@ internal class ViewerComments(
             if (ok > 0) {
                 messages.emit(app.resources.getQuantityString(R.plurals.viewer_msg_attachments_uploaded, ok, ok))
                 refresh()
+            }
+        }
+    }
+
+    private fun statSize(uri: String): Long = runCatching {
+        app.contentResolver.openFileDescriptor(uri.toUri(), "r")?.use { it.statSize } ?: -1L
+    }.getOrDefault(-1L)
+
+    /** Sends exactly [len] bytes from [start] without holding the part in memory; a short file fails the part. */
+    private fun partBody(source: PartSource, start: Long, len: Long) = object : okhttp3.RequestBody() {
+        override fun contentType(): okhttp3.MediaType? = null
+        override fun contentLength() = len
+        override fun writeTo(sink: okio.BufferedSink) {
+            source.read(start) { stream ->
+                val buf = ByteArray(128 * 1024)
+                var remaining = len
+                while (remaining > 0) {
+                    val n = stream.read(buf, 0, minOf(buf.size.toLong(), remaining).toInt())
+                    // The file got shorter since it was picked: don't pad the part.
+                    if (n < 0) throw java.io.FileNotFoundException("Attachment ended early")
+                    sink.write(buf, 0, n)
+                    remaining -= n
+                }
             }
         }
     }

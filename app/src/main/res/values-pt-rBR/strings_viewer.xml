@@ -268,6 +268,7 @@
     <string name="viewer_msg_offline_comment_retry">Você está off-line — toque em Tentar novamente para enviar o comentário com os anexos</string>
     <string name="viewer_msg_upload_failed">Falha no upload (%1$d)</string>
     <string name="viewer_msg_attach_failed">Não foi possível anexar %1$s: %2$s</string>
+    <string name="viewer_msg_attach_no_size">não foi possível ler o tamanho</string>
     <plurals name="viewer_msg_attachments_uploaded">
         <item quantity="one">%1$d anexo enviado</item>
         <item quantity="many">%1$d anexos enviados</item>

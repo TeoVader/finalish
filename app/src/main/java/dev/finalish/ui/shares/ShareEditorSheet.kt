@@ -125,7 +125,7 @@ fun ShareEditorSheet(
         }.onSuccess { share = it.copy(shortUrl = it.shortUrl ?: initial.shortUrl); onChanged(share) }
         loaded = true
         // Opening a link's settings means you care about it: notify when it's viewed.
-        container.activityWatch.watchShare(accountId, "", share.id, share.name ?: res.getString(R.string.shares_share_link))
+        container.activityWatch.watchShare(accountId, projectId.orEmpty(), share.id, share.name ?: res.getString(R.string.shares_share_link))
         assets = runCatching { repo.shareAssets(accountId, initial.id) }.getOrDefault(emptyList())
         // Only secure (invite-only) shares have reviewers; public ones answer 400.
         reviewers = if (share.access == "secure") runCatching { repo.shareReviewers(accountId, initial.id) }.getOrDefault(emptyList()) else emptyList()

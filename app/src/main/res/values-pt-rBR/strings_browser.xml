@@ -342,6 +342,9 @@
     <string name="notifications_uploads_ready">Uploads prontos</string>
     <string name="notifications_share_views">Visualizações de links de compartilhamento</string>
     <string name="notifications_settings_footer">Desative as notificações de um projeto no dispositivo pelo menu ⋯ dele. As notificações por e-mail são configuradas em frame.io.</string>
+    <string name="notifications_background_title">As notificações podem não chegar</string>
+    <string name="notifications_background_body">Este celular limita o Final(ish) em segundo plano, então novos comentários só aparecem quando você abre o app. Permita a atividade em segundo plano (em Xiaomi e alguns outros celulares, ative também a Inicialização automática).</string>
+    <string name="notifications_background_action">Abrir configurações</string>
     <plurals name="notifications_unread">
         <item quantity="one">%1$d não lida</item>
         <item quantity="many">%1$d não lidas</item>

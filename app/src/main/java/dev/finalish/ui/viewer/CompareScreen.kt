@@ -129,9 +129,14 @@ class CompareViewModel(app: Application, private val repo: FrameioRepository, ne
             is CompareEvent.Listen -> listen(e.side)
             is CompareEvent.Nudge -> nudge(e.ms)
             is CompareEvent.Seek -> { left.scrubTo(e.ms, e.exact); right.scrubTo(e.ms, e.exact) }
-            is CompareEvent.Step -> { left.stepFrames(e.frames, 24.0); right.seekTo(left.player.currentPosition) }
+            is CompareEvent.Step -> { left.stepFrames(e.frames, fallbackFps()); right.seekTo(left.player.currentPosition) }
         }
     }
+
+    /** Frames per second of the left side: decoder info first, then the file's metadata, then 24 (as the viewer). */
+    fun fps(): Double = left.fps(fallbackFps())
+
+    private fun fallbackFps(): Double = _state.value.left?.metadataFps() ?: 24.0
 
     private fun bind(account: String, leftId: String, rightId: String) {
         if (bound) return
@@ -347,13 +352,13 @@ fun CompareScreen(accountId: String, leftId: String, rightId: String, onBack: ()
                     markers = emptyList(),
                     selectedMarker = null,
                     scrubSheet = a.mediaLinks?.scrubSheet,
-                    timeLabel = { formatTime(it, vm.left.fps(), dev.finalish.core.data.TimeFormat.Standard) },
+                    timeLabel = { formatTime(it, vm.fps(), dev.finalish.core.data.TimeFormat.Standard) },
                     onScrubStart = { vm.left.pause(); vm.right.pause() },
                     onScrub = { ms, exact -> vm.onEvent(CompareEvent.Seek(ms, exact)) },
                     onMarkerTap = {},
                 )
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                    LiveText({ formatTime(vm.left.positionMs, vm.left.fps(), dev.finalish.core.data.TimeFormat.Timecode) }, style = TimecodeStyle, color = Palette.TextSecondary, modifier = Modifier.weight(1f))
+                    LiveText({ formatTime(vm.left.positionMs, vm.fps(), dev.finalish.core.data.TimeFormat.Timecode) }, style = TimecodeStyle, color = Palette.TextSecondary, modifier = Modifier.weight(1f))
                     IconButton(onClick = { vm.onEvent(CompareEvent.Step(-1)) }) { Icon(Icons.Rounded.ChevronLeft, stringResource(R.string.viewer_previous_frame)) }
                     Box(
                         Modifier.size(48.dp).clip(CircleShape).background(Color.White).pressable({ vm.onEvent(CompareEvent.TogglePlay) }, scaleTo = 0.88f),

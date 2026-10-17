@@ -571,6 +571,7 @@ fun FolderScreen(
             onChanged = vm::replaceShare,
             onMessage = { snackbarMessage -> vm.toast(snackbarMessage) },
             onDismiss = { editingShare = null },
+            projectId = projectId,
         )
     }
 

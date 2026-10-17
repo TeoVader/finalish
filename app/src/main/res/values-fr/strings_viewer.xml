@@ -267,6 +267,7 @@
     <string name="viewer_msg_offline_comment_retry">Vous êtes hors connexion : appuyez sur Réessayer pour envoyer le commentaire avec ses pièces jointes</string>
     <string name="viewer_msg_upload_failed">Échec de l\'importation (%1$d)</string>
     <string name="viewer_msg_attach_failed">Impossible de joindre %1$s : %2$s</string>
+    <string name="viewer_msg_attach_no_size">impossible de lire sa taille</string>
     <plurals name="viewer_msg_attachments_uploaded">
         <item quantity="one">%1$d pièce jointe importée</item>
         <item quantity="many">%1$d pièces jointes importées</item>

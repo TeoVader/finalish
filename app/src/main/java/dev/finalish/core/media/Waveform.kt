@@ -1,6 +1,7 @@
 package dev.finalish.core.media
 
 import android.content.Context
+import android.media.AudioFormat
 import android.media.MediaCodec
 import android.media.MediaExtractor
 import android.media.MediaFormat
@@ -10,6 +11,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.security.MessageDigest
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -20,7 +22,7 @@ import kotlin.math.max
 object Waveform {
 
     suspend fun peaks(context: Context, source: String, cacheKey: String, bins: Int = 160): FloatArray? = withContext(Dispatchers.IO) {
-        val cache = File(context.cacheDir, "waveforms/${cacheKey.hashCode()}_$bins.bin")
+        val cache = File(context.cacheDir, "waveforms/${hash(cacheKey)}_$bins.bin")
         if (cache.length() == bins * 4L) {
             return@withContext runCatching {
                 val buf = ByteBuffer.wrap(cache.readBytes()).order(ByteOrder.LITTLE_ENDIAN)
@@ -36,6 +38,15 @@ object Waveform {
         }
         result
     }
+
+    /** SHA-1 of the key, like JsonCache: hashCode() collides too easily for a cache file name. */
+    private fun hash(key: String): String =
+        MessageDigest.getInstance("SHA-1").digest(key.toByteArray()).joinToString("") { "%02x".format(it) }
+
+    /** PCM sample encoding of the decoder's output; 16-bit unless the format says otherwise. */
+    private fun pcmEncoding(format: MediaFormat): Int =
+        if (format.containsKey(MediaFormat.KEY_PCM_ENCODING)) format.getInteger(MediaFormat.KEY_PCM_ENCODING)
+        else AudioFormat.ENCODING_PCM_16BIT
 
     private suspend fun decode(source: String, bins: Int): FloatArray? {
         val extractor = MediaExtractor()
@@ -56,6 +67,7 @@ object Waveform {
             val info = MediaCodec.BufferInfo()
             var inputDone = false
             var outputDone = false
+            var encoding: Int? = null
             while (!outputDone) {
                 kotlin.coroutines.coroutineContext.ensureActive()
                 if (!inputDone) {
@@ -73,18 +85,28 @@ object Waveform {
                     }
                 }
                 val outIndex = codec.dequeueOutputBuffer(info, 10_000)
-                if (outIndex >= 0) {
+                if (outIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                    encoding = pcmEncoding(codec.outputFormat)
+                } else if (outIndex >= 0) {
+                    if (encoding == null) encoding = pcmEncoding(codec.outputFormat)
+                    // 24/32-bit integer PCM isn't read here: no waveform beats a wrong one.
+                    if (encoding != AudioFormat.ENCODING_PCM_16BIT && encoding != AudioFormat.ENCODING_PCM_FLOAT) {
+                        codec.releaseOutputBuffer(outIndex, false)
+                        return null
+                    }
                     if (info.size > 0) {
                         val out = codec.getOutputBuffer(outIndex)!!.order(ByteOrder.LITTLE_ENDIAN)
                         out.position(info.offset)
-                        val shorts = out.asShortBuffer()
-                        val n = info.size / 2
+                        val float = encoding == AudioFormat.ENCODING_PCM_FLOAT
+                        val floats = if (float) out.asFloatBuffer() else null
+                        val shorts = if (float) null else out.asShortBuffer()
+                        val n = if (float) info.size / 4 else info.size / 2
                         // Which slice this output buffer belongs to, by its presentation time.
                         val bin = ((info.presentationTimeUs.toDouble() / durationUs) * bins).toInt().coerceIn(0, bins - 1)
                         var peak = peaks[bin]
                         var i = 0
                         while (i < n) {
-                            val v = abs(shorts.get(i).toInt()) / 32768f
+                            val v = if (floats != null) abs(floats.get(i)).coerceAtMost(1f) else abs(shorts!!.get(i).toInt()) / 32768f
                             if (v > peak) peak = v
                             i += 4 // every 4th sample is plenty for a peak meter
                         }

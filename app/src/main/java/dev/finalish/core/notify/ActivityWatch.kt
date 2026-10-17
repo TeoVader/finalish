@@ -1,5 +1,6 @@
 package dev.finalish.core.notify
 
+import androidx.core.content.edit
 import dev.finalish.core.util.runCatchingCancellable
 import android.Manifest
 import android.app.NotificationChannel
@@ -165,7 +166,10 @@ class ActivityWatch(private val context: Context) {
     }
 
     fun watchShare(accountId: String, projectId: String, shareId: String, name: String) = update { s ->
-        if (s.shares.any { it.shareId == shareId }) s
+        val old = s.shares.firstOrNull { it.shareId == shareId }
+        // Links once watched without their project get it now (Notifications opens the project's links).
+        if (old != null && old.projectId.isBlank() && projectId.isNotBlank()) s.copy(shares = s.shares.map { if (it.shareId == shareId) it.copy(projectId = projectId) else it })
+        else if (old != null) s
         else s.copy(shares = listOf(WatchedShare(shareId, accountId, projectId, name, Instant.now().toString())) + s.shares)
     }
 
@@ -186,10 +190,13 @@ class ActivityWatch(private val context: Context) {
 
         fun schedule(context: Context, enabled: Boolean) {
             val wm = WorkManager.getInstance(context)
+            val prefs = prefs(context)
             if (!enabled) {
                 wm.cancelUniqueWork(WORK)
+                prefs.edit { clear() }
                 return
             }
+            if (!prefs.contains(KEY_SINCE)) prefs.edit { putLong(KEY_SINCE, System.currentTimeMillis()) }
             val req = PeriodicWorkRequestBuilder<ActivityCheckWorker>(15, TimeUnit.MINUTES)
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .build()
@@ -223,6 +230,26 @@ class ActivityWatch(private val context: Context) {
                 .enqueue()
         }
 
+        /** Called by every background run, so a stalled schedule can be spotted (see [backgroundStalled]). */
+        internal fun markBackgroundRun(context: Context) =
+            prefs(context).edit { putLong(KEY_LAST_RUN, System.currentTimeMillis()) }
+
+        /**
+         * True when checks are switched on but none has run in the background for a while: some phones
+         * (Xiaomi, Oppo, ...) stop background work for apps without autostart, so device notifications
+         * never come even though the Notifications screen fills up when the app is opened.
+         */
+        fun backgroundStalled(context: Context, now: Long = System.currentTimeMillis()): Boolean {
+            val prefs = prefs(context)
+            val since = prefs.getLong(KEY_SINCE, 0L)
+            if (since == 0L) return false
+            return now - maxOf(since, prefs.getLong(KEY_LAST_RUN, 0L)) > STALLED_MS
+        }
+
+        private fun prefs(context: Context) = context.getSharedPreferences(WORK, Context.MODE_PRIVATE)
+        private const val KEY_SINCE = "scheduled-since"
+        private const val KEY_LAST_RUN = "last-background-run"
+        private const val STALLED_MS = 2L * 60 * 60 * 1000
         private const val WORK = "activity-check"
     }
 }
@@ -230,6 +257,7 @@ class ActivityWatch(private val context: Context) {
 /** The periodic check. Sequential and capped to stay well inside API rate limits. */
 class ActivityCheckWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
+        ActivityWatch.markBackgroundRun(applicationContext)
         ActivityCheck(applicationContext).run()
         return Result.success()
     }
@@ -273,7 +301,7 @@ class ActivityCheck(private val context: Context) {
         backfill = state.events.isEmpty()
 
         for (w in state.files) {
-            if (settings.notifyComments || w.awaitingReady) runCatchingCancellable { checkFile(w, me, quiet(w.projectId), settings.notifyComments, settings.notifyUploads) }
+            if (settings.notifyComments || w.awaitingReady) runCatchingCancellable { checkFile(w, me, quiet, settings.notifyComments, settings.notifyUploads) }
         }
         if (settings.notifyShareViews) {
             for (s in state.shares) runCatchingCancellable { checkShare(s, me?.id, quiet(s.projectId)) }
@@ -287,9 +315,10 @@ class ActivityCheck(private val context: Context) {
         c.activityWatch.update { s -> s.copy(events = events + s.events.filterNot { e -> events.any { it.id == e.id } }) }
     }
 
-    private suspend fun checkFile(watched: WatchedFile, me: dev.finalish.core.model.User?, quiet: Boolean, comments: Boolean, uploads: Boolean) {
+    /** [quietFor] is asked per project, after an upload's project is known (so muting it applies). */
+    private suspend fun checkFile(watched: WatchedFile, me: dev.finalish.core.model.User?, quietFor: (String) -> Boolean, comments: Boolean, uploads: Boolean) {
         var w = watched
-        if (w.awaitingReady) {
+        if (w.awaitingReady || w.projectId.isBlank()) {
             val f = try {
                 c.api.file(w.accountId, w.fileId).data
             } catch (e: retrofit2.HttpException) {
@@ -297,27 +326,34 @@ class ActivityCheck(private val context: Context) {
                 if (e.code() == 404) c.activityWatch.update { s -> s.copy(files = s.files.filterNot { it.fileId == w.fileId }) }
                 throw e
             }
+            // Uploads are watched before their project is known: keep it as soon as Frame.io reports it,
+            // ready or not, so comments on a file still processing count for (and link to) its project.
+            if (f.projectId.isNotBlank() && f.projectId != w.projectId) {
+                c.activityWatch.update { s -> s.copy(files = s.files.map { if (it.fileId == w.fileId) it.copy(projectId = f.projectId) else it }) }
+                w = w.copy(projectId = f.projectId)
+            }
             val ready = f.media.status == null || f.media.status == "transcoded"
-            if (ready) {
+            if (w.awaitingReady && ready) {
                 if (uploads) {
-                    record(listOf(ActivityEvent("ready:${w.fileId}", ActivityEvent.Kind.UploadReady, w.accountId, f.projectId, w.name, fileId = w.fileId, at = Instant.now().toString())))
-                    if (!quiet) {
+                    record(listOf(ActivityEvent("ready:${w.fileId}", ActivityEvent.Kind.UploadReady, w.accountId, w.projectId, w.name, fileId = w.fileId, at = Instant.now().toString())))
+                    if (!quietFor(w.projectId)) {
+                        val link = Notifier.viewLink(w.projectId, w.fileId)
                         Notifier.post(
                             context, "ready:${w.fileId}",
                             title = w.name, text = context.getString(R.string.core_notify_upload_ready),
-                            link = Notifier.viewLink(f.projectId, w.fileId),
-                            actions = listOf(
-                                Notifier.openAction(context, "ready:${w.fileId}", Notifier.viewLink(f.projectId, w.fileId)),
-                                Notifier.shareAction(context, "ready:${w.fileId}", w.name, Notifier.viewLink(f.projectId, w.fileId)),
+                            link = link,
+                            actions = if (link == null) emptyList() else listOf(
+                                Notifier.openAction(context, "ready:${w.fileId}", link),
+                                Notifier.shareAction(context, "ready:${w.fileId}", w.name, link),
                             ),
                         )
                     }
                 }
-                c.activityWatch.update { s -> s.copy(files = s.files.map { if (it.fileId == w.fileId) it.copy(awaitingReady = false, projectId = f.projectId) else it }) }
-                // Uploads are watched before their project is known: link this pass's comments to it too.
-                w = w.copy(awaitingReady = false, projectId = f.projectId)
+                c.activityWatch.update { s -> s.copy(files = s.files.map { if (it.fileId == w.fileId) it.copy(awaitingReady = false) else it }) }
+                w = w.copy(awaitingReady = false)
             }
         }
+        val quiet = quietFor(w.projectId)
         if (!comments) return
         val page = allPages(
             first = { c.api.comments(w.accountId, w.fileId) },
@@ -411,7 +447,9 @@ class ActivityCheck(private val context: Context) {
 internal object Notifier {
     private const val CHANNEL = "activity"
 
-    fun viewLink(projectId: String, fileId: String) = "https://next.frame.io/project/$projectId/view/$fileId"
+    /** Null while the project isn't known: `project//view/…` wouldn't parse and would open the browser. */
+    fun viewLink(projectId: String, fileId: String): String? =
+        if (projectId.isBlank()) null else "https://next.frame.io/project/$projectId/view/$fileId"
 
     fun comments(context: Context, w: WatchedFile, fresh: List<Comment>) {
         val sorted = fresh.sortedBy { ActivityWatch.parse(it.createdAt) }
@@ -423,14 +461,15 @@ internal object Notifier {
         }
         val style = NotificationCompat.InboxStyle().setBigContentTitle("$title · ${w.name}")
         sorted.takeLast(5).forEach { style.addLine("${it.author.displayName(context)}: ${it.text}") }
+        val link = viewLink(w.projectId, w.fileId)
         post(
             context, "comments:${w.fileId}",
             title = "$title · ${w.name}",
             text = sorted.last().let { "${it.author.displayName(context)}: ${it.text}" },
-            link = viewLink(w.projectId, w.fileId),
+            link = link,
             style = if (sorted.size > 1) style else NotificationCompat.BigTextStyle().bigText(sorted.last().text),
-            actions = listOf(
-                openAction(context, "comments:${w.fileId}", viewLink(w.projectId, w.fileId)),
+            actions = listOfNotNull(
+                link?.let { openAction(context, "comments:${w.fileId}", it) },
                 markReadAction(context, "comments:${w.fileId}", w.fileId),
             ),
         )
