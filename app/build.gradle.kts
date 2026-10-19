@@ -40,6 +40,8 @@ android {
     compileSdk {
         version = release(37) { minorApiLevel = 2 }
     }
+    // Only strips native libraries and extracts their symbols for release; CI installs this version.
+    ndkVersion = "28.2.13676358"
 
     defaultConfig {
         applicationId = "dev.finalish"
@@ -87,6 +89,9 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Symbol tables of the native libraries (Media3 and others) go into the bundle, so Play
+            // can show readable native crashes and ANRs.
+            ndk { debugSymbolLevel = "SYMBOL_TABLE" }
             // No release key: refuse to package (see below) unless debug signing is asked for
             // explicitly (-Pfinalish.allowDebugSignedRelease=true), for a local test of the minified build.
             // A release signed with the public debug key could be "updated" by anyone holding that key.
