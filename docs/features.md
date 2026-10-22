@@ -6,10 +6,10 @@ Everything Final(ish) does today, area by area. The [README](../README.md) has t
 |---|---|
 | **Browse** | Accounts, workspaces, projects, folders, version stacks and collections. Project cards show the latest file with the next two stacked behind it as frosted glass, and the name, item count, date and size on a glass bar. Grid or list, sorting by any field, filters, folder cover images, collapsible folder/asset sections, Sort & view options (card size, 16:9 / 1:1 / 4:5 / 9:16, fill/fit, title lines, fields on cards). Live refresh. |
 | **Player** | Media3/ExoPlayer with frame-accurate stepping, Timecode / Standard / Frames display, 0.25–2× speed, loop, real resolution list (2160p 4K, 360p SD… + Auto), scrub preview thumbnail while dragging, pinch-zoom, aspect-ratio masks (2.39, 1.85, 16:9, 4:3, 1:1, 4:5, 9:16) and guides (title safe, action safe, thirds), Zoom Fit/Fill/100%, Download still (full-res PNG), immersive fullscreen, landscape split view (player beside the comments), picture-in-picture. |
-| **Review** | Time-coded comments, range comments, on-frame drawings (pen, arrow, line, rectangle, 6 colors, undo), pin anchors, emoji, links, replies (read-only), mark as done, edit and delete. Comment markers on the timeline with haptic detents. |
+| **Review** | Time-coded comments, range comments, on-frame drawings (pen, arrow, line, rectangle, 6 colors, undo), pin anchors, emoji, links, replies (shown; "Reply" opens Frame.io), mark as done, edit and delete. Comment markers on the timeline with haptic detents. |
 | **Images / PDF / audio / Office** | Zoomable full-res images (camera RAW, PSD, AI, EPS through Frame.io's previews), paged PDF viewer (with page comments), audio player with a waveform visual, and Word / Excel / PowerPoint read on the phone. |
 | **Approvals** | Edit Status, Rating and any custom metadata field from the viewer. Settings → Metadata fields adds, renames and deletes the account's custom fields. |
-| **Versions** | Switch versions, stack files as versions, and compare two versions side by side or with a wipe slider, in sync. |
+| **Versions** | Switch versions, stack files as versions or add them to an existing stack, and compare two versions side by side or with a wipe slider, in sync. |
 | **Share** | Create share links, add assets to existing links, and edit every setting (visibility, comments, downloads, versions, transcripts, captions, layout, passphrase, expiry, watermark and its template, assets). Link cards show a preview of what they share. |
 | **Frame.io links** | `next.frame.io` and `f.io` links opened on the phone can open in Final(ish): a file opens in the viewer, a folder or project in the browser, a share link from any account you belong to on what it shares; anything else, such as a review link from someone else's account, opens in a browser tab. On Android 12+ turn it on once in Settings › Permissions › Frame.io links (Android's "Open by default"). |
 | **Plans** | Works on every Frame.io plan, Free included: features the account's plan lacks (passphrase, expiry, watermark, groups, more than 2 projects on Free…) are shown greyed out with "Not on your plan" instead of failing. |
@@ -27,7 +27,7 @@ Everything Final(ish) does today, area by area. The [README](../README.md) has t
 ## Known limitations
 
 The public V4 API does not expose:
-- replying to comments (replies are shown read-only),
+- replying to comments (replies are shown; "Reply" opens the file on Frame.io in the browser),
 - creating @mentions (existing ones are shown and highlighted),
 - a notifications inbox: Final(ish) builds its own from the files and links it follows (webhooks would need a public server),
 - the name of a guest who commented through a share link: Final(ish) finds it in the account audit log when it can (admins); older comments, from before the account moved to V4, show as "Guest reviewer",

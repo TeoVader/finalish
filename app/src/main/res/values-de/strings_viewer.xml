@@ -67,6 +67,8 @@
     <string name="viewer_comment_range_with">Bereich · %1$s</string>
     <string name="viewer_comment_queued">In Warteschlange</string>
     <string name="viewer_more">Mehr</string>
+    <string name="viewer_reply">Antworten</string>
+    <string name="viewer_reply_in_frameio">In Frame.io antworten</string>
     <string name="viewer_mark_open">Als offen markieren</string>
     <string name="viewer_mark_done">Als erledigt markieren</string>
     <string name="viewer_retry_sending">Erneut senden</string>

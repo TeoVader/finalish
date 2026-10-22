@@ -810,9 +810,22 @@ private fun SelectionActions(
                     enabled = selected.isNotEmpty(), onClick = { more = false; onCopy() },
                 )
                 HorizontalDivider(color = Palette.Hairline)
+                // Files make a new stack; files plus one existing stack go into that stack.
+                val stacks = selected.filter { it.isVersionStack }
+                val stackable = files.size + stacks.size == selected.size && when (stacks.size) {
+                    0 -> files.size in 2..10
+                    1 -> files.size in 1..10
+                    else -> false
+                }
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.browser_stack_as_versions)) }, leadingIcon = { Icon(Icons.Rounded.Layers, null) },
-                    enabled = files.size in 2..10 && files.size == selected.size,
+                    text = {
+                        Column {
+                            Text(stringResource(if (stacks.size == 1) R.string.browser_add_to_stack else R.string.browser_stack_as_versions))
+                            if (!stackable) Text(stringResource(R.string.browser_stack_hint), style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary)
+                        }
+                    },
+                    leadingIcon = { Icon(Icons.Rounded.Layers, null) },
+                    enabled = stackable,
                     onClick = { more = false; onStack() },
                 )
             }

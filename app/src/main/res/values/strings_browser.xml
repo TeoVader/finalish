@@ -161,6 +161,8 @@
     <string name="browser_share">Share</string>
     <string name="browser_more">More</string>
     <string name="browser_stack_as_versions">Stack as versions</string>
+    <string name="browser_add_to_stack">Add to the stack</string>
+    <string name="browser_stack_hint">Select 2–10 files, or files and one version stack</string>
     <string name="browser_done">Done</string>
     <string name="browser_filter_this_folder">Filter this folder</string>
     <string name="browser_open_transfers">Open Transfers</string>
@@ -196,6 +198,7 @@
     </plurals>
     <string name="browser_msg_importing">Importing — follow it in Transfers</string>
     <string name="browser_msg_stack_created">Version stack created</string>
+    <string name="browser_msg_added_to_stack">Added to the version stack</string>
     <plurals name="browser_msg_saving_offline">
         <item quantity="one">Saving %1$d item for offline</item>
         <item quantity="other">Saving %1$d items for offline</item>

@@ -68,6 +68,8 @@
     <string name="viewer_comment_range_with">Plage · %1$s</string>
     <string name="viewer_comment_queued">En file d\'attente</string>
     <string name="viewer_more">Plus</string>
+    <string name="viewer_reply">Répondre</string>
+    <string name="viewer_reply_in_frameio">Répondre sur Frame.io</string>
     <string name="viewer_mark_open">Marquer comme ouvert</string>
     <string name="viewer_mark_done">Marquer comme terminé</string>
     <string name="viewer_retry_sending">Réessayer l\'envoi</string>

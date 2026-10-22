@@ -111,12 +111,16 @@ class FinalishApp : Application(), SingletonImageLoader.Factory {
                 dev.finalish.core.notify.ActivityWatch.schedule(this@FinalishApp, on)
             }
         }
-        // "Matching app icon": switch the launcher alias when the setting or the accent changes.
-        container.appScope.launch {
-            container.settings.settings.map { Triple(it.matchIcon, it.accent, it.dynamicAccent) }.distinctUntilChanged().collect { (match, accent, dynamic) ->
-                dev.finalish.ui.theme.AppIcon.apply(this@FinalishApp, match, accent, dynamic)
+        // "Matching app icon": the launcher alias is switched only once the app leaves the screen.
+        // Disabling the alias that started the open task closes the app (seen on Xiaomi, Android 15).
+        androidx.lifecycle.ProcessLifecycleOwner.get().lifecycle.addObserver(object : androidx.lifecycle.DefaultLifecycleObserver {
+            override fun onStop(owner: androidx.lifecycle.LifecycleOwner) {
+                container.appScope.launch {
+                    val s = container.settings.current()
+                    dev.finalish.ui.theme.AppIcon.apply(this@FinalishApp, s.matchIcon, s.accent, s.dynamicAccent)
+                }
             }
-        }
+        })
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader =

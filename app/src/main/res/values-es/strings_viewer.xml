@@ -68,6 +68,8 @@
     <string name="viewer_comment_range_with">Intervalo · %1$s</string>
     <string name="viewer_comment_queued">En cola</string>
     <string name="viewer_more">Más</string>
+    <string name="viewer_reply">Responder</string>
+    <string name="viewer_reply_in_frameio">Responder en Frame.io</string>
     <string name="viewer_mark_open">Marcar como abierto</string>
     <string name="viewer_mark_done">Marcar como hecho</string>
     <string name="viewer_retry_sending">Reintentar envío</string>

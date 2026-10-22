@@ -432,6 +432,26 @@ class ComponentsScreenshotTest {
         }
     }
 
+    /** A comment with replies: "Reply" opens the file on Frame.io (the public API can't post replies). */
+    @Test fun commentReplies() = snap("comment_replies") {
+        val noa = User(id = "1", name = "Noa Lindqvist")
+        val mira = User(id = "2", name = "Mira Solberg")
+        val comment = dev.finalish.core.model.Comment(
+            id = "c1", text = "Can we hold the wide shot a beat longer?", owner = noa,
+            timestamp = kotlinx.serialization.json.JsonPrimitive(290),
+            replies = listOf(dev.finalish.core.model.Comment(id = "r1", text = "Sure, adding 12 frames.", owner = mira)),
+        )
+        dev.finalish.ui.viewer.CommentsList(
+            state = dev.finalish.ui.viewer.ViewerState(
+                file = dev.finalish.core.model.Asset("f1", name = "Saltmarsh_cut_v3.mp4", viewUrl = "https://next.frame.io/project/p1/view/f1"),
+                loading = false, comments = listOf(comment), commentsLoading = false, me = mira,
+            ),
+            listState = androidx.compose.foundation.lazy.rememberLazyListState(),
+            timeOf = { "00:00:12:02" },
+            onSelect = {}, onToggleComplete = {}, onEdit = {}, onDelete = {}, onFilter = {},
+        )
+    }
+
     @Test fun appIcons() = snap("app_icons") {
         val icons = listOf(
             "Wisteria" to dev.finalish.R.drawable.ic_launcher_foreground,

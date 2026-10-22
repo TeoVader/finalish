@@ -68,7 +68,7 @@
     <string name="settings_theme_wallpaper_colors">Colores del fondo de pantalla</string>
     <string name="settings_theme_wallpaper_colors_desc">Material You: el color de énfasis sigue tu fondo de pantalla</string>
     <string name="settings_theme_matching_icon">Icono a juego</string>
-    <string name="settings_theme_matching_icon_desc">El icono de la pantalla de inicio adopta tu color de énfasis. Algunos launchers lo devuelven al cajón de aplicaciones cuando cambia.</string>
+    <string name="settings_theme_matching_icon_desc">El icono de la pantalla de inicio adopta tu color de énfasis. Algunos launchers lo devuelven al cajón de aplicaciones cuando cambia. El icono se actualiza cuando sales de la app.</string>
     <string name="settings_theme_pure_black">Negro puro</string>
     <string name="settings_theme_pure_black_desc">Fondo #000 real para pantallas OLED</string>
     <plurals name="settings_theme_preview_new_comments">
