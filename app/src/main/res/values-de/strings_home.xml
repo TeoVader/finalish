@@ -68,7 +68,7 @@
     <string name="settings_theme_wallpaper_colors">Farben vom Hintergrund</string>
     <string name="settings_theme_wallpaper_colors_desc">Material You: Die Akzentfarbe folgt deinem Hintergrundbild</string>
     <string name="settings_theme_matching_icon">Passendes App-Symbol</string>
-    <string name="settings_theme_matching_icon_desc">Das Symbol auf dem Startbildschirm übernimmt deine Akzentfarbe. Manche Launcher verschieben es bei einer Änderung zurück in die App-Übersicht.</string>
+    <string name="settings_theme_matching_icon_desc">Das Symbol auf dem Startbildschirm übernimmt deine Akzentfarbe. Manche Launcher verschieben es bei einer Änderung zurück in die App-Übersicht. Das Symbol wird aktualisiert, wenn du die App verlässt.</string>
     <string name="settings_theme_pure_black">Reines Schwarz</string>
     <string name="settings_theme_pure_black_desc">Echter #000-Hintergrund für OLED-Displays</string>
     <plurals name="settings_theme_preview_new_comments">

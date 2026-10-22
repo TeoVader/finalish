@@ -346,6 +346,12 @@ class FrameioRepository(
             putJsonObject("data") { putJsonArray("file_ids") { fileIds.forEach { add(JsonPrimitive(it)) } } }
         }).data.also { invalidateFolder(account, folder) }
 
+    /** Moves [files] into an existing stack, oldest first, so the newest ends up as the current version. */
+    suspend fun addToStack(account: String, stackId: String, files: List<Asset>) {
+        files.forEach { move(account, it, stackId) }
+        cache.invalidate("versions:$account:$stackId")
+    }
+
     // ---- Comments ----------------------------------------------------------
 
     fun comments(account: String, fileId: String): Flow<Remote<List<Comment>>> =

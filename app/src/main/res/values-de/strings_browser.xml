@@ -161,6 +161,8 @@
     <string name="browser_share">Teilen</string>
     <string name="browser_more">Mehr</string>
     <string name="browser_stack_as_versions">Als Versionen stapeln</string>
+    <string name="browser_add_to_stack">Zum Stapel hinzufügen</string>
+    <string name="browser_stack_hint">Wähle 2–10 Dateien oder Dateien und einen Versionsstapel</string>
     <string name="browser_done">Fertig</string>
     <string name="browser_filter_this_folder">Diesen Ordner filtern</string>
     <string name="browser_open_transfers">Übertragungen öffnen</string>
@@ -196,6 +198,7 @@
     </plurals>
     <string name="browser_msg_importing">Import läuft – Fortschritt unter „Übertragungen“</string>
     <string name="browser_msg_stack_created">Versionsstapel erstellt</string>
+    <string name="browser_msg_added_to_stack">Zum Versionsstapel hinzugefügt</string>
     <plurals name="browser_msg_saving_offline">
         <item quantity="one">%1$d Element wird offline gespeichert</item>
         <item quantity="other">%1$d Elemente werden offline gespeichert</item>

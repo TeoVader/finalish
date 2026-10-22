@@ -384,8 +384,14 @@ class FolderViewModel(
         transferManager.trackImport(account, folderId, folderName, file.id, file.name.ifBlank { name }, url)
     }
 
-    fun stackAsVersions(assets: List<Asset>) = op(str(R.string.browser_msg_stack_created)) {
-        repo.stackVersions(account, folderId, assets.filter { it.isFile }.sortedBy { it.createdAt }.map { it.id })
+    fun stackAsVersions(assets: List<Asset>) {
+        val files = assets.filter { it.isFile }.sortedBy { it.createdAt }
+        val stack = assets.singleOrNull { it.isVersionStack }
+        if (stack != null) {
+            op(str(R.string.browser_msg_added_to_stack)) { repo.addToStack(account, stack.id, files) }
+        } else {
+            op(str(R.string.browser_msg_stack_created)) { repo.stackVersions(account, folderId, files.map { it.id }) }
+        }
     }
 
     fun download(assets: List<Asset>) {

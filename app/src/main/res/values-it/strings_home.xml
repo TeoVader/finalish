@@ -68,7 +68,7 @@
     <string name="settings_theme_wallpaper_colors">Colori dello sfondo</string>
     <string name="settings_theme_wallpaper_colors_desc">Material You: il colore principale segue lo sfondo</string>
     <string name="settings_theme_matching_icon">Icona app abbinata</string>
-    <string name="settings_theme_matching_icon_desc">L\'icona nella schermata Home prende il colore principale. Alcuni launcher la riportano nel drawer delle app quando cambia.</string>
+    <string name="settings_theme_matching_icon_desc">L\'icona nella schermata Home prende il colore principale. Alcuni launcher la riportano nel drawer delle app quando cambia. L\'icona si aggiorna quando esci dall\'app.</string>
     <string name="settings_theme_pure_black">Nero puro</string>
     <string name="settings_theme_pure_black_desc">Sfondo #000 puro per schermi OLED</string>
     <plurals name="settings_theme_preview_new_comments">

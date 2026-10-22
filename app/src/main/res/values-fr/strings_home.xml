@@ -68,7 +68,7 @@
     <string name="settings_theme_wallpaper_colors">Couleurs du fond d\'écran</string>
     <string name="settings_theme_wallpaper_colors_desc">Material You : l\'accent suit votre fond d\'écran</string>
     <string name="settings_theme_matching_icon">Icône assortie</string>
-    <string name="settings_theme_matching_icon_desc">L\'icône de l\'écran d\'accueil prend votre couleur d\'accent. Certains lanceurs la renvoient dans le panneau des applications lorsqu\'elle change.</string>
+    <string name="settings_theme_matching_icon_desc">L\'icône de l\'écran d\'accueil prend votre couleur d\'accent. Certains lanceurs la renvoient dans le panneau des applications lorsqu\'elle change. L\'icône se met à jour quand vous quittez l\'app.</string>
     <string name="settings_theme_pure_black">Noir pur</string>
     <string name="settings_theme_pure_black_desc">Véritable fond #000 pour les écrans OLED</string>
     <plurals name="settings_theme_preview_new_comments">

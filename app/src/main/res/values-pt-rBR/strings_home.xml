@@ -68,7 +68,7 @@
     <string name="settings_theme_wallpaper_colors">Cores do plano de fundo</string>
     <string name="settings_theme_wallpaper_colors_desc">Material You: a cor de destaque acompanha seu plano de fundo</string>
     <string name="settings_theme_matching_icon">Ícone do app combinando</string>
-    <string name="settings_theme_matching_icon_desc">O ícone da tela inicial adota sua cor de destaque. Alguns launchers o devolvem à gaveta de apps quando ele muda.</string>
+    <string name="settings_theme_matching_icon_desc">O ícone da tela inicial adota sua cor de destaque. Alguns launchers o devolvem à gaveta de apps quando ele muda. O ícone é atualizado quando você sai do app.</string>
     <string name="settings_theme_pure_black">Preto puro</string>
     <string name="settings_theme_pure_black_desc">Fundo #000 real para telas OLED</string>
     <plurals name="settings_theme_preview_new_comments">

@@ -169,6 +169,8 @@
     <string name="browser_share">Condividi</string>
     <string name="browser_more">Altro</string>
     <string name="browser_stack_as_versions">Impila come versioni</string>
+    <string name="browser_add_to_stack">Aggiungi alla pila</string>
+    <string name="browser_stack_hint">Seleziona da 2 a 10 file, oppure file e una pila di versioni</string>
     <string name="browser_done">Fine</string>
     <string name="browser_filter_this_folder">Filtra questa cartella</string>
     <string name="browser_open_transfers">Apri Trasferimenti</string>
@@ -207,6 +209,7 @@
     </plurals>
     <string name="browser_msg_importing">Importazione in corso: seguila in Trasferimenti</string>
     <string name="browser_msg_stack_created">Pila di versioni creata</string>
+    <string name="browser_msg_added_to_stack">Aggiunti alla pila di versioni</string>
     <plurals name="browser_msg_saving_offline">
         <item quantity="one">Salvataggio offline di %1$d elemento</item>
         <item quantity="many">Salvataggio offline di %1$d elementi</item>

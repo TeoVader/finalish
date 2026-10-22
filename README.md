@@ -101,7 +101,8 @@ doesn't expose them:
 - **Review links from other accounts open in the browser.** The API only reads shares in accounts you
   belong to, so a review link someone sends you from their own account opens in a browser tab instead of
   the app. Links to your own accounts open in the app.
-- **Replies to comments** are shown but can't be written.
+- **Replies to comments** are shown but can't be written in the app: "Reply" opens the file on Frame.io
+  in the browser.
 - **@mentions** are shown and highlighted but can't be created.
 - **Notifications** come from the app itself, built from the files and links you follow: there is no
   Frame.io inbox in the API. They rely on Android running a background check about every 15 minutes:

@@ -58,6 +58,7 @@ import androidx.compose.material.icons.rounded.Gesture
 import androidx.compose.material.icons.rounded.HorizontalRule
 import androidx.compose.material.icons.rounded.NorthEast
 import androidx.compose.material.icons.rounded.Place
+import androidx.compose.material.icons.automirrored.rounded.Reply
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.SpaceBar
@@ -174,6 +175,7 @@ fun CommentsList(
                     onDelete = { onDelete(c) },
                     onRetry = { onRetry(c) },
                     pinNumber = pinNumberOf(c),
+                    replyUrl = state.file?.viewUrl,
                     modifier = Modifier.animateItem(),
                     onDeleteAttachment = { onDeleteAttachment(c, it) },
                 )
@@ -197,8 +199,13 @@ private fun CommentCard(
     onRetry: () -> Unit = {},
     onDeleteAttachment: (String) -> Unit = {},
     pinNumber: Int? = null,
+    replyUrl: String? = null,
 ) {
     val context = LocalContext.current
+    // The public API can read replies but not write them: "Reply" opens the file on Frame.io.
+    val onReply: (() -> Unit)? = replyUrl?.takeIf { !comment.pending && !comment.failed }?.let { url ->
+        { dev.finalish.core.data.FrameLinks.openInBrowserTab(context, url) }
+    }
     var menu by remember { mutableStateOf(false) }
     val bg by animateColorAsState(if (selected) Palette.Surface2 else Color.Transparent, label = "bg")
     val mine = me?.id != null && comment.owner?.id == me.id
@@ -315,6 +322,16 @@ private fun CommentCard(
                         Text(label, style = MaterialTheme.typography.labelSmall, color = Palette.TextTertiary)
                     }
                 }
+                onReply?.let {
+                    Row(
+                        Modifier.clip(RoundedCornerShape(8.dp)).pressable(it).padding(horizontal = 4.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(Icons.AutoMirrored.Rounded.Reply, null, tint = Palette.TextSecondary, modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(3.dp))
+                        Text(stringResource(R.string.viewer_reply), style = MaterialTheme.typography.labelMedium, color = Palette.TextSecondary)
+                    }
+                }
                 Text(
                     stringResource(R.string.viewer_more),
                     style = MaterialTheme.typography.labelMedium,
@@ -394,6 +411,7 @@ private fun CommentCard(
                 onDismiss = { menu = false },
                 onGoTo = if (time != null || comment.page != null) ({ menu = false; onClick() }) else null,
                 onToggleComplete = if (!comment.pending && !comment.failed) ({ menu = false; onToggleComplete() }) else null,
+                onReply = onReply?.let { r -> { menu = false; r() } },
                 onCopy = { menu = false; copyToClipboard(context, comment.text) },
                 onEdit = { menu = false; onEdit() },
                 onDelete = { menu = false; onDelete() },
@@ -414,6 +432,7 @@ private fun CommentActionsSheet(
     onDismiss: () -> Unit,
     onGoTo: (() -> Unit)?,
     onToggleComplete: (() -> Unit)?,
+    onReply: (() -> Unit)?,
     onCopy: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
@@ -448,6 +467,7 @@ private fun CommentActionsSheet(
                     if (comment.isCompleted) stringResource(R.string.viewer_mark_open) else stringResource(R.string.viewer_mark_done), it,
                 )
             }
+            onReply?.let { SheetAction(Icons.AutoMirrored.Rounded.Reply, stringResource(R.string.viewer_reply_in_frameio), it) }
             SheetAction(Icons.Rounded.ContentCopy, stringResource(R.string.viewer_copy_text), onCopy)
             if (canEdit) SheetAction(Icons.Rounded.Edit, stringResource(R.string.viewer_edit), onEdit)
             if (canDelete) SheetAction(Icons.Rounded.Delete, stringResource(R.string.viewer_action_delete), onDelete, tint = Palette.Red)

@@ -68,7 +68,7 @@
     <string name="settings_theme_wallpaper_colors">Colors from your wallpaper</string>
     <string name="settings_theme_wallpaper_colors_desc">Material You: the accent follows your wallpaper</string>
     <string name="settings_theme_matching_icon">Matching app icon</string>
-    <string name="settings_theme_matching_icon_desc">The home screen icon takes your accent. Some launchers move it back to the app drawer when it changes.</string>
+    <string name="settings_theme_matching_icon_desc">The home screen icon takes your accent. Some launchers move it back to the app drawer when it changes. The icon updates when you leave the app.</string>
     <string name="settings_theme_pure_black">Pure black</string>
     <string name="settings_theme_pure_black_desc">True #000 background for OLED screens</string>
     <plurals name="settings_theme_preview_new_comments">
