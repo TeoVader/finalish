@@ -124,7 +124,11 @@ class CompareViewModel(app: Application, private val repo: FrameioRepository, ne
                 _state.update { it.copy(error = null) }
                 bind(e.accountId, e.leftId, e.rightId)
             }
-            CompareEvent.Pause -> { left.pause(); right.pause() }
+            CompareEvent.Pause -> {
+                left.pause()
+                right.pause()
+                right.setPlaybackSpeed(1f)
+            }
             CompareEvent.TogglePlay -> toggle()
             is CompareEvent.Listen -> listen(e.side)
             is CompareEvent.Nudge -> nudge(e.ms)
@@ -170,9 +174,31 @@ class CompareViewModel(app: Application, private val repo: FrameioRepository, ne
     /** Keeps the follower within a frame or two of the leader; runs only while playing. */
     suspend fun followWhilePlaying() {
         while (left.isPlaying) {
-            if (abs(left.player.currentPosition - right.player.currentPosition) > 90) right.seekTo(left.player.currentPosition)
-            delay(400)
+            if (right.player.playbackState == androidx.media3.common.Player.STATE_ENDED) {
+                left.pause()
+                break
+            }
+            if (!right.isBuffering) {
+                val diff = left.player.currentPosition - right.player.currentPosition
+                if (abs(diff) > 800) {
+                    right.seekTo(left.player.currentPosition)
+                    right.setPlaybackSpeed(1f)
+                } else if (diff > 35) {
+                    // Right is lagging behind left: nudge right slightly faster to catch up smoothly without seeking
+                    right.setPlaybackSpeed(1.1f)
+                } else if (diff < -35) {
+                    // Right is ahead of left: nudge right slightly slower
+                    right.setPlaybackSpeed(0.9f)
+                } else {
+                    // Within one frame: in sync
+                    if (right.speed != 1f) right.setPlaybackSpeed(1f)
+                }
+            }
+            delay(250)
         }
+        // Left only buffering: keep right going so both resume together.
+        if (!left.player.playWhenReady || left.player.playbackState == androidx.media3.common.Player.STATE_ENDED) right.pause()
+        if (right.speed != 1f) right.setPlaybackSpeed(1f)
     }
 
     private fun listen(side: Int) {
@@ -188,11 +214,20 @@ class CompareViewModel(app: Application, private val repo: FrameioRepository, ne
     }
 
     private fun toggle() {
-        if (left.isPlaying) { left.pause(); right.pause() } else {
+        if (left.isPlaying || right.isPlaying) {
+            left.pause()
+            right.pause()
+            right.setPlaybackSpeed(1f)
+        } else {
             // At the end, play starts both again from the top.
-            if (left.player.playbackState == androidx.media3.common.Player.STATE_ENDED) left.seekTo(0)
-            right.seekTo(left.player.currentPosition)
-            left.play(); right.play()
+            if (left.player.playbackState == androidx.media3.common.Player.STATE_ENDED ||
+                right.player.playbackState == androidx.media3.common.Player.STATE_ENDED
+            ) {
+                left.seekTo(0)
+                right.seekTo(0)
+            }
+            left.play()
+            right.play()
         }
     }
 
