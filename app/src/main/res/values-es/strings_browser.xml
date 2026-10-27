@@ -410,10 +410,12 @@
     <string name="transfers_downloads_empty_message">Los archivos y carpetas que guardas con «Descargar» van a la carpeta Download del teléfono y aparecen aquí.</string>
     <plurals name="transfers_saved_count">
         <item quantity="one">%1$d guardado</item>
+        <item quantity="many">%1$d guardados</item>
         <item quantity="other">%1$d guardados</item>
     </plurals>
     <plurals name="transfers_skipped_count">
         <item quantity="one">%1$d omitido</item>
+        <item quantity="many">%1$d omitidos</item>
         <item quantity="other">%1$d omitidos</item>
     </plurals>
 </resources>

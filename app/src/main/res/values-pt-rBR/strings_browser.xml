@@ -410,10 +410,12 @@
     <string name="transfers_downloads_empty_message">Arquivos e pastas que você salva com “Baixar” vão para a pasta Download do telefone e aparecem aqui.</string>
     <plurals name="transfers_saved_count">
         <item quantity="one">%1$d salvo</item>
+        <item quantity="many">%1$d salvos</item>
         <item quantity="other">%1$d salvos</item>
     </plurals>
     <plurals name="transfers_skipped_count">
         <item quantity="one">%1$d ignorado</item>
+        <item quantity="many">%1$d ignorados</item>
         <item quantity="other">%1$d ignorados</item>
     </plurals>
 </resources>
