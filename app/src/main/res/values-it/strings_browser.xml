@@ -347,4 +347,36 @@
         <item quantity="many">%1$d non lette</item>
         <item quantity="other">%1$d non lette</item>
     </plurals>
+    <string name="browser_folder_download_scanning">Analisi di “%1$s”…</string>
+    <plurals name="browser_folder_download_found">
+        <item quantity="one">%d file trovato</item>
+        <item quantity="many">%d file trovati</item>
+        <item quantity="other">%d file trovati</item>
+    </plurals>
+    <string name="browser_folder_download_title">Scaricare “%1$s”?</string>
+    <string name="browser_folder_download_destination">In Download/Finalish/%1$s, con le sue sottocartelle.</string>
+    <plurals name="browser_folder_download_files">
+        <item quantity="one">%d file</item>
+        <item quantity="many">%d file</item>
+        <item quantity="other">%d file</item>
+    </plurals>
+    <plurals name="browser_folder_download_subfolders">
+        <item quantity="one">%d sottocartella</item>
+        <item quantity="many">%d sottocartelle</item>
+        <item quantity="other">%d sottocartelle</item>
+    </plurals>
+    <plurals name="browser_folder_download_stacks">
+        <item quantity="one">%d pila di versioni</item>
+        <item quantity="many">%d pile di versioni</item>
+        <item quantity="other">%d pile di versioni</item>
+    </plurals>
+    <string name="browser_folder_download_latest">Solo l\'ultima versione</string>
+    <string name="browser_folder_download_all">Tutte le versioni</string>
+    <string name="browser_folder_download_all_hint">Ogni pila diventa una cartella con v1, v2… (v1 è la più vecchia)</string>
+    <string name="browser_folder_download_empty">“%1$s” non contiene file da scaricare</string>
+    <plurals name="browser_folder_download_started">
+        <item quantity="one">Download di %d file in Download/Finalish</item>
+        <item quantity="many">Download di %d file in Download/Finalish</item>
+        <item quantity="other">Download di %d file in Download/Finalish</item>
+    </plurals>
 </resources>

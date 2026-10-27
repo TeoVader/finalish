@@ -353,4 +353,36 @@
         <item quantity="many">%1$d non lus</item>
         <item quantity="other">%1$d non lus</item>
     </plurals>
+    <string name="browser_folder_download_scanning">Analyse de « %1$s »…</string>
+    <plurals name="browser_folder_download_found">
+        <item quantity="one">%d fichier trouvé</item>
+        <item quantity="many">%d fichiers trouvés</item>
+        <item quantity="other">%d fichiers trouvés</item>
+    </plurals>
+    <string name="browser_folder_download_title">Télécharger « %1$s » ?</string>
+    <string name="browser_folder_download_destination">Dans Download/Finalish/%1$s, avec ses sous-dossiers.</string>
+    <plurals name="browser_folder_download_files">
+        <item quantity="one">%d fichier</item>
+        <item quantity="many">%d fichiers</item>
+        <item quantity="other">%d fichiers</item>
+    </plurals>
+    <plurals name="browser_folder_download_subfolders">
+        <item quantity="one">%d sous-dossier</item>
+        <item quantity="many">%d sous-dossiers</item>
+        <item quantity="other">%d sous-dossiers</item>
+    </plurals>
+    <plurals name="browser_folder_download_stacks">
+        <item quantity="one">%d pile de versions</item>
+        <item quantity="many">%d piles de versions</item>
+        <item quantity="other">%d piles de versions</item>
+    </plurals>
+    <string name="browser_folder_download_latest">Dernière version uniquement</string>
+    <string name="browser_folder_download_all">Toutes les versions</string>
+    <string name="browser_folder_download_all_hint">Chaque pile devient un dossier avec v1, v2… (v1 est la plus ancienne)</string>
+    <string name="browser_folder_download_empty">« %1$s » ne contient aucun fichier à télécharger</string>
+    <plurals name="browser_folder_download_started">
+        <item quantity="one">Téléchargement de %d fichier dans Download/Finalish</item>
+        <item quantity="many">Téléchargement de %d fichiers dans Download/Finalish</item>
+        <item quantity="other">Téléchargement de %d fichiers dans Download/Finalish</item>
+    </plurals>
 </resources>

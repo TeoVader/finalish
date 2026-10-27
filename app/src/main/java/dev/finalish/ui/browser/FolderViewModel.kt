@@ -409,6 +409,50 @@ class FolderViewModel(
         }
     }
 
+    private val _folderDownload = MutableStateFlow<FolderDownloadUi?>(null)
+    /** "Download" on a folder: walking it, then waiting for the confirmation. */
+    val folderDownload = _folderDownload.asStateFlow()
+    private var folderScan: Job? = null
+
+    fun downloadFolder(folder: Asset) {
+        folderScan?.cancel()
+        _folderDownload.value = FolderDownloadUi.Scanning(folder.name)
+        folderScan = viewModelScope.launch {
+            dev.finalish.core.util.runCatchingCancellable {
+                dev.finalish.core.transfer.scanFolder(repo, account, folder) { n ->
+                    _folderDownload.update { (it as? FolderDownloadUi.Scanning)?.copy(found = n) ?: it }
+                }
+            }.onSuccess { tree ->
+                val ready = FolderDownloadUi.Ready(folder.name, tree)
+                if (ready.summary.files == 0) {
+                    _folderDownload.value = null
+                    _messages.emit(res.getString(R.string.browser_folder_download_empty, folder.name))
+                } else {
+                    _folderDownload.value = ready
+                }
+            }.onFailure {
+                _folderDownload.value = null
+                _messages.emit(it.userMessage())
+            }
+        }
+    }
+
+    fun setFolderDownloadAllVersions(all: Boolean) =
+        _folderDownload.update { (it as? FolderDownloadUi.Ready)?.copy(allVersions = all) ?: it }
+
+    fun cancelFolderDownload() {
+        folderScan?.cancel()
+        _folderDownload.value = null
+    }
+
+    fun confirmFolderDownload() {
+        val ready = _folderDownload.value as? FolderDownloadUi.Ready ?: return
+        _folderDownload.value = null
+        val items = dev.finalish.core.transfer.FolderDownloadPlan.plan(ready.tree, ready.allVersions)
+        transferManager.downloadFolder(account, ready.folderName, items)
+        _messages.tryEmit(plural(R.plurals.browser_folder_download_started, items.size))
+    }
+
     fun upload(uris: List<Uri>, folderName: String) {
         if (uris.isEmpty()) return
         transferManager.upload(account, folderId, folderName, uris)

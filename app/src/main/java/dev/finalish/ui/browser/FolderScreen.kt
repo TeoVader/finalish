@@ -228,7 +228,7 @@ fun FolderScreen(
             when (action) {
                 FileAction.Share -> shareTargets = listOf(a)
                 FileAction.Download -> vm.download(listOf(a))
-                FileAction.SaveToDevice -> vm.saveToDevice(a)
+                FileAction.SaveToDevice -> if (a.isFolder) vm.downloadFolder(a) else vm.saveToDevice(a)
                 FileAction.Members -> currentOpenFolderMembers(a.id, a.name)
                 FileAction.Rename -> renameTarget = a
                 FileAction.Move -> moveTargets = listOf(a) to false
@@ -601,6 +601,10 @@ fun FolderScreen(
             renameTarget = null
             vm.rename(target, it)
         }
+    }
+    val folderDownload by vm.folderDownload.collectAsStateWithLifecycle()
+    folderDownload?.let {
+        FolderDownloadSheet(it, vm::setFolderDownloadAllVersions, vm::confirmFolderDownload, vm::cancelFolderDownload)
     }
     confirmDelete?.let { list ->
         AlertDialog(

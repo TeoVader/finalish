@@ -334,4 +334,31 @@
         <item quantity="one">%1$d ungelesen</item>
         <item quantity="other">%1$d ungelesen</item>
     </plurals>
+    <string name="browser_folder_download_scanning">„%1$s“ wird durchsucht…</string>
+    <plurals name="browser_folder_download_found">
+        <item quantity="one">%d Datei gefunden</item>
+        <item quantity="other">%d Dateien gefunden</item>
+    </plurals>
+    <string name="browser_folder_download_title">„%1$s“ herunterladen?</string>
+    <string name="browser_folder_download_destination">Nach Download/Finalish/%1$s, mit allen Unterordnern.</string>
+    <plurals name="browser_folder_download_files">
+        <item quantity="one">%d Datei</item>
+        <item quantity="other">%d Dateien</item>
+    </plurals>
+    <plurals name="browser_folder_download_subfolders">
+        <item quantity="one">%d Unterordner</item>
+        <item quantity="other">%d Unterordner</item>
+    </plurals>
+    <plurals name="browser_folder_download_stacks">
+        <item quantity="one">%d Versionsstapel</item>
+        <item quantity="other">%d Versionsstapel</item>
+    </plurals>
+    <string name="browser_folder_download_latest">Nur die neueste Version</string>
+    <string name="browser_folder_download_all">Alle Versionen</string>
+    <string name="browser_folder_download_all_hint">Jeder Stapel wird ein Ordner mit v1, v2… (v1 ist die älteste)</string>
+    <string name="browser_folder_download_empty">„%1$s“ enthält keine Dateien zum Herunterladen</string>
+    <plurals name="browser_folder_download_started">
+        <item quantity="one">%d Datei wird in Download/Finalish heruntergeladen</item>
+        <item quantity="other">%d Dateien werden in Download/Finalish heruntergeladen</item>
+    </plurals>
 </resources>

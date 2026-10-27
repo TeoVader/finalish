@@ -179,4 +179,25 @@
     <string name="core_time_minutes_ago">%1$d min fa</string>
     <string name="core_time_hours_ago">%1$d h fa</string>
     <string name="core_time_days_ago">%1$d g fa</string>
+    <plurals name="core_folder_download_progress">
+        <item quantity="one">%1$d di %2$d file</item>
+        <item quantity="many">%1$d di %2$d file</item>
+        <item quantity="other">%1$d di %2$d file</item>
+    </plurals>
+    <string name="core_folder_download_done">“%1$s” scaricata</string>
+    <plurals name="core_folder_download_saved">
+        <item quantity="one">%1$d file in Download/Finalish/%2$s</item>
+        <item quantity="many">%1$d file in Download/Finalish/%2$s</item>
+        <item quantity="other">%1$d file in Download/Finalish/%2$s</item>
+    </plurals>
+    <plurals name="core_folder_download_skipped">
+        <item quantity="one">%d saltato: download disattivati o file non più presente</item>
+        <item quantity="many">%d saltati: download disattivati o file non più presenti</item>
+        <item quantity="other">%d saltati: download disattivati o file non più presenti</item>
+    </plurals>
+    <plurals name="core_folder_download_failed">
+        <item quantity="one">%d non riuscito</item>
+        <item quantity="many">%d non riusciti</item>
+        <item quantity="other">%d non riusciti</item>
+    </plurals>
 </resources>

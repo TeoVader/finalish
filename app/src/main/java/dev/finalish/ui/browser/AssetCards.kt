@@ -285,7 +285,7 @@ fun FileMenuButton(asset: Asset, onAction: (FileAction) -> Unit, compact: Boolea
                     onClick = { open = false; onAction(action) },
                 )
             item(FileAction.Share, stringResource(R.string.browser_action_share_link), Icons.Rounded.Link)
-            if (!asset.isFolder) item(FileAction.SaveToDevice, stringResource(R.string.viewer_action_download), Icons.Rounded.FileDownload)
+            item(FileAction.SaveToDevice, stringResource(R.string.viewer_action_download), Icons.Rounded.FileDownload)
             if (!asset.isFolder) item(FileAction.Download, stringResource(R.string.browser_action_save_offline), Icons.Rounded.DownloadForOffline)
             // Who can open this folder (restricted folders have their own members).
             if (asset.isFolder) item(FileAction.Members, stringResource(R.string.browser_action_members), Icons.Rounded.Group)

@@ -179,4 +179,25 @@
     <string name="core_time_minutes_ago">il y a %1$d min</string>
     <string name="core_time_hours_ago">il y a %1$d h</string>
     <string name="core_time_days_ago">il y a %1$d j</string>
+    <plurals name="core_folder_download_progress">
+        <item quantity="one">%1$d fichier sur %2$d</item>
+        <item quantity="many">%1$d fichiers sur %2$d</item>
+        <item quantity="other">%1$d fichiers sur %2$d</item>
+    </plurals>
+    <string name="core_folder_download_done">« %1$s » téléchargé</string>
+    <plurals name="core_folder_download_saved">
+        <item quantity="one">%1$d fichier dans Download/Finalish/%2$s</item>
+        <item quantity="many">%1$d fichiers dans Download/Finalish/%2$s</item>
+        <item quantity="other">%1$d fichiers dans Download/Finalish/%2$s</item>
+    </plurals>
+    <plurals name="core_folder_download_skipped">
+        <item quantity="one">%d ignoré : téléchargements désactivés ou fichier supprimé</item>
+        <item quantity="many">%d ignorés : téléchargements désactivés ou fichiers supprimés</item>
+        <item quantity="other">%d ignorés : téléchargements désactivés ou fichiers supprimés</item>
+    </plurals>
+    <plurals name="core_folder_download_failed">
+        <item quantity="one">%d en échec</item>
+        <item quantity="many">%d en échec</item>
+        <item quantity="other">%d en échec</item>
+    </plurals>
 </resources>

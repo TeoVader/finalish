@@ -173,4 +173,21 @@
     <string name="core_time_minutes_ago">%1$dm ago</string>
     <string name="core_time_hours_ago">%1$dh ago</string>
     <string name="core_time_days_ago">%1$dd ago</string>
+    <plurals name="core_folder_download_progress">
+        <item quantity="one">%1$d of %2$d file</item>
+        <item quantity="other">%1$d of %2$d files</item>
+    </plurals>
+    <string name="core_folder_download_done">“%1$s” downloaded</string>
+    <plurals name="core_folder_download_saved">
+        <item quantity="one">%1$d file in Download/Finalish/%2$s</item>
+        <item quantity="other">%1$d files in Download/Finalish/%2$s</item>
+    </plurals>
+    <plurals name="core_folder_download_skipped">
+        <item quantity="one">%d skipped: downloads are off or the file is gone</item>
+        <item quantity="other">%d skipped: downloads are off or the files are gone</item>
+    </plurals>
+    <plurals name="core_folder_download_failed">
+        <item quantity="one">%d failed</item>
+        <item quantity="other">%d failed</item>
+    </plurals>
 </resources>
