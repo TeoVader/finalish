@@ -390,4 +390,19 @@
     <string name="browser_folder_upload_title">Importer « %1$s » ?</string>
     <string name="browser_folder_upload_destination">Dans « %2$s », comme nouveau dossier « %1$s », avec ses sous-dossiers.</string>
     <string name="browser_folder_upload_empty">« %1$s » ne contient aucun fichier à importer</string>
+    <string name="browser_folder_upload_merge_destination">Dans le dossier « %1$s » déjà présent dans « %2$s », avec ses sous-dossiers.</string>
+    <string name="browser_folder_upload_exists">« %1$s » existe déjà ici</string>
+    <string name="browser_folder_upload_merge">Fusionner avec le dossier existant</string>
+    <string name="browser_folder_upload_merge_hint">Seuls les sous-dossiers manquants sont créés</string>
+    <string name="browser_folder_upload_new">Créer un nouveau dossier « %1$s »</string>
+    <plurals name="browser_folder_upload_present">
+        <item quantity="one">%1$d fichier déjà présent (même nom et même taille)</item>
+        <item quantity="many">%1$d fichiers déjà présents (même nom et même taille)</item>
+        <item quantity="other">%1$d fichiers déjà présents (même nom et même taille)</item>
+    </plurals>
+    <string name="browser_folder_upload_skip">Ignorer les fichiers déjà présents</string>
+    <string name="browser_folder_upload_version">Les ajouter comme nouvelle version</string>
+    <string name="browser_folder_upload_anyway">Les importer quand même</string>
+    <string name="browser_folder_upload_anyway_hint">Vous aurez deux fichiers portant le même nom</string>
+    <string name="browser_folder_upload_nothing_new">Tous les fichiers de « %1$s » sont déjà présents</string>
 </resources>

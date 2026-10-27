@@ -366,4 +366,18 @@
     <string name="browser_folder_upload_title">Upload “%1$s”?</string>
     <string name="browser_folder_upload_destination">Into “%2$s” as a new folder “%1$s”, with its subfolders.</string>
     <string name="browser_folder_upload_empty">“%1$s” has no files to upload</string>
+    <string name="browser_folder_upload_merge_destination">Into the existing “%1$s” in “%2$s”, with its subfolders.</string>
+    <string name="browser_folder_upload_exists">“%1$s” already exists here</string>
+    <string name="browser_folder_upload_merge">Merge with the existing folder</string>
+    <string name="browser_folder_upload_merge_hint">Only the missing subfolders are created</string>
+    <string name="browser_folder_upload_new">Create a new folder “%1$s”</string>
+    <plurals name="browser_folder_upload_present">
+        <item quantity="one">%1$d file already there (same name and size)</item>
+        <item quantity="other">%1$d files already there (same name and size)</item>
+    </plurals>
+    <string name="browser_folder_upload_skip">Skip the files already there</string>
+    <string name="browser_folder_upload_version">Add them as a new version</string>
+    <string name="browser_folder_upload_anyway">Upload them anyway</string>
+    <string name="browser_folder_upload_anyway_hint">You’ll have two files with the same name</string>
+    <string name="browser_folder_upload_nothing_new">Every file in “%1$s” is already there</string>
 </resources>

@@ -612,7 +612,7 @@ fun FolderScreen(
         FolderDownloadSheet(it, vm::setFolderDownloadAllVersions, vm::confirmFolderDownload, vm::cancelFolderDownload)
     }
     val folderUpload by vm.folderUpload.collectAsStateWithLifecycle()
-    folderUpload?.let { FolderUploadSheet(it, title, vm::confirmFolderUpload, vm::cancelFolderUpload) }
+    folderUpload?.let { FolderUploadSheet(it, title, vm::setFolderUploadMerge, vm::setFolderUploadFiles, vm::confirmFolderUpload, vm::cancelFolderUpload) }
     confirmDelete?.let { list ->
         AlertDialog(
             onDismissRequest = { confirmDelete = null },

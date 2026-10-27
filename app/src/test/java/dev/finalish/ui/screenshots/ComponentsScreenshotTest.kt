@@ -491,11 +491,17 @@ class ComponentsScreenshotTest {
         )
         val uri = android.net.Uri.parse("content://x/tree")
         androidx.compose.foundation.layout.Box(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(top = 20.dp)) {
-            dev.finalish.ui.browser.FolderUploadContent(dev.finalish.ui.browser.FolderUploadUi.Ready(uri, root), "Brand film", {}, {})
+            dev.finalish.ui.browser.FolderUploadContent(
+                dev.finalish.ui.browser.FolderUploadUi.Ready(
+                    uri, root, newName = "Day 2 rushes (2)",
+                    existing = dev.finalish.core.transfer.FolderTree("Day 2 rushes", files = listOf(dev.finalish.core.transfer.RemoteFile("r", "A001.mov", 2_100_000_000)), id = "R"),
+                ),
+                "Brand film", {}, {}, {}, {},
+            )
         }
         androidx.compose.foundation.layout.Spacer(Modifier.height(16.dp))
         androidx.compose.foundation.layout.Box(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(top = 20.dp)) {
-            dev.finalish.ui.browser.FolderUploadContent(dev.finalish.ui.browser.FolderUploadUi.Scanning(uri, 12), "Brand film", {}, {})
+            dev.finalish.ui.browser.FolderUploadContent(dev.finalish.ui.browser.FolderUploadUi.Scanning(uri, 12), "Brand film", {}, {}, {}, {})
         }
     }
 

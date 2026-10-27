@@ -366,4 +366,18 @@
     <string name="browser_folder_upload_title">„%1$s“ hochladen?</string>
     <string name="browser_folder_upload_destination">In „%2$s“ als neuer Ordner „%1$s“, mit seinen Unterordnern.</string>
     <string name="browser_folder_upload_empty">„%1$s“ enthält keine Dateien zum Hochladen</string>
+    <string name="browser_folder_upload_merge_destination">In den vorhandenen Ordner „%1$s“ in „%2$s“, mit seinen Unterordnern.</string>
+    <string name="browser_folder_upload_exists">„%1$s“ gibt es hier schon</string>
+    <string name="browser_folder_upload_merge">Mit dem vorhandenen Ordner zusammenführen</string>
+    <string name="browser_folder_upload_merge_hint">Nur fehlende Unterordner werden erstellt</string>
+    <string name="browser_folder_upload_new">Neuen Ordner „%1$s“ erstellen</string>
+    <plurals name="browser_folder_upload_present">
+        <item quantity="one">%1$d Datei schon vorhanden (gleicher Name und gleiche Größe)</item>
+        <item quantity="other">%1$d Dateien schon vorhanden (gleicher Name und gleiche Größe)</item>
+    </plurals>
+    <string name="browser_folder_upload_skip">Vorhandene Dateien überspringen</string>
+    <string name="browser_folder_upload_version">Als neue Version hinzufügen</string>
+    <string name="browser_folder_upload_anyway">Trotzdem hochladen</string>
+    <string name="browser_folder_upload_anyway_hint">Dann gibt es zwei Dateien mit demselben Namen</string>
+    <string name="browser_folder_upload_nothing_new">Alle Dateien aus „%1$s“ sind schon vorhanden</string>
 </resources>
