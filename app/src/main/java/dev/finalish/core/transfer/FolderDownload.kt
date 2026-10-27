@@ -139,6 +139,8 @@ internal data class FolderDownloadJob(
     val next: Int = 0,
     val skipped: Int = 0,
     val failed: Int = 0,
+    /** Its [DeviceDownload] in Transfers. */
+    val entryId: String = "",
 )
 
 internal val folderJobJson = Json { ignoreUnknownKeys = true }
@@ -162,7 +164,12 @@ class FolderDownloadWorker(context: Context, params: WorkerParameters) : Corouti
         val file = File(folderJobDir(applicationContext), inputData.getString(KEY_JOB) ?: return Result.failure())
         var job = runCatching { folderJobJson.decodeFromString(FolderDownloadJob.serializer(), file.readText()) }.getOrNull()
             ?: return Result.failure()
-        val inFlight = mutableListOf<Long>()
+        entryId = job.entryId.takeIf { it.isNotEmpty() && c.transfers.deviceDownload(it) != null }
+        c.transfers.deviceDownload(entryId.orEmpty())?.let { e ->
+            saved = e.saved; failedItems = e.failedItems.toMutableList(); savedBytes = e.savedBytes
+        }
+        val inFlight = mutableMapOf<Long, PlannedDownload>()
+        track { it.copy(state = TransferState.Running, error = null) }
         suspend fun progress() = runCatchingCancellable {
             setForeground(
                 TransferNotifications.foreground(
@@ -182,14 +189,16 @@ class FolderDownloadWorker(context: Context, params: WorkerParameters) : Corouti
                         // Offline: save where we are and let WorkManager try again later.
                         if (err is IOException) {
                             file.writeText(folderJobJson.encodeToString(FolderDownloadJob.serializer(), job))
+                            track { it.copy(state = TransferState.Queued) }
                             return Result.retry()
                         }
                         null
                     }
                 job = if (url == null) {
+                    skippedNow++
                     job.copy(next = job.next + 1, skipped = job.skipped + 1)
                 } else {
-                    inFlight += dm.enqueue(
+                    val dmId = dm.enqueue(
                         DownloadManager.Request(url.toUri())
                             .setTitle(item.path.substringAfterLast('/'))
                             .setDescription(job.folderName)
@@ -197,6 +206,7 @@ class FolderDownloadWorker(context: Context, params: WorkerParameters) : Corouti
                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Finalish/${item.path}"),
                     )
+                    inFlight[dmId] = item
                     job.copy(next = job.next + 1)
                 }
                 if (job.next % 10 == 0) file.writeText(folderJobJson.encodeToString(FolderDownloadJob.serializer(), job))
@@ -205,37 +215,59 @@ class FolderDownloadWorker(context: Context, params: WorkerParameters) : Corouti
             // Wait for the last ones too, to count failures in the summary.
             while (inFlight.isNotEmpty()) waitForRoom(inFlight, room = 1)
         } catch (e: CancellationException) {
-            // Cancelled from the notification: stop the files already handed over as well.
-            if (inFlight.isNotEmpty()) runCatching { dm.remove(*inFlight.toLongArray()) }
+            // Cancelled from the notification or Transfers: stop the files already handed over as well.
+            if (inFlight.isNotEmpty()) runCatching { dm.remove(*inFlight.keys.toLongArray()) }
             file.delete()
+            track { it.copy(state = TransferState.Cancelled, doneBytes = savedBytes) }
             throw e
         }
         file.delete()
+        track { it.copy(state = TransferState.Done, doneBytes = savedBytes) }
         notifyDone(job.copy(failed = job.failed + failedCount))
         return Result.success()
     }
 
     private var failedCount = 0
+    private var entryId: String? = null
+    private var saved = 0
+    private var skippedNow = 0
+    private var savedBytes = 0L
+    private var failedItems = mutableListOf<PlannedDownload>()
+
+    /** Mirrors this run's counts into the folder's entry in Transfers. */
+    private fun track(block: (DeviceDownload) -> DeviceDownload) {
+        val id = entryId ?: return
+        c.transfers.updateDeviceDownload(id) {
+            block(it.copy(saved = saved, skipped = it.skipped + skippedNow, failed = failedItems.size, failedItems = failedItems.toList(), savedBytes = savedBytes))
+        }
+        skippedNow = 0
+    }
 
     /** Waits until fewer than [room] of this run's downloads are still pending or running. */
-    private suspend fun waitForRoom(inFlight: MutableList<Long>, room: Int = MAX_IN_FLIGHT) {
+    private suspend fun waitForRoom(inFlight: MutableMap<Long, PlannedDownload>, room: Int = MAX_IN_FLIGHT) {
         while (true) {
+            var moving = 0L
             if (inFlight.isNotEmpty()) {
-                dm.query(DownloadManager.Query().setFilterById(*inFlight.toLongArray()))?.use { cur ->
+                dm.query(DownloadManager.Query().setFilterById(*inFlight.keys.toLongArray()))?.use { cur ->
                     val idCol = cur.getColumnIndexOrThrow(DownloadManager.COLUMN_ID)
                     val statusCol = cur.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS)
-                    val alive = HashSet<Long>()
+                    val soFarCol = cur.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
+                    val listed = HashSet<Long>()
                     while (cur.moveToNext()) {
+                        val dmId = cur.getLong(idCol)
+                        listed += dmId
+                        val item = inFlight[dmId] ?: continue
                         when (cur.getInt(statusCol)) {
-                            DownloadManager.STATUS_SUCCESSFUL -> Unit
-                            DownloadManager.STATUS_FAILED -> failedCount++
-                            else -> alive += cur.getLong(idCol)
+                            DownloadManager.STATUS_SUCCESSFUL -> { saved++; savedBytes += item.size; inFlight -= dmId }
+                            DownloadManager.STATUS_FAILED -> { failedCount++; failedItems += item; inFlight -= dmId }
+                            else -> moving += cur.getLong(soFarCol).coerceAtLeast(0)
                         }
                     }
-                    // Removed by the user from the system's download list: no longer ours to wait for.
-                    inFlight.retainAll(alive)
+                    // Removed by the user from the system's download list: counted as failed, so it can be retried.
+                    (inFlight.keys - listed).forEach { gone -> failedCount++; failedItems += inFlight.getValue(gone); inFlight -= gone }
                 }
             }
+            track { it.copy(doneBytes = savedBytes + moving) }
             if (inFlight.size < room) return
             delay(1_500)
         }

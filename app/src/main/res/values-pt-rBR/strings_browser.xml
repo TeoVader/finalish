@@ -405,4 +405,15 @@
     <string name="browser_folder_upload_anyway">Enviar mesmo assim</string>
     <string name="browser_folder_upload_anyway_hint">Você terá dois arquivos com o mesmo nome</string>
     <string name="browser_folder_upload_nothing_new">Todos os arquivos de “%1$s” já estão lá</string>
+    <string name="transfers_tab_downloads">Downloads · %1$d</string>
+    <string name="transfers_downloads_empty_title">Nenhum download ainda</string>
+    <string name="transfers_downloads_empty_message">Arquivos e pastas que você salva com “Baixar” vão para a pasta Download do telefone e aparecem aqui.</string>
+    <plurals name="transfers_saved_count">
+        <item quantity="one">%1$d salvo</item>
+        <item quantity="other">%1$d salvos</item>
+    </plurals>
+    <plurals name="transfers_skipped_count">
+        <item quantity="one">%1$d ignorado</item>
+        <item quantity="other">%1$d ignorados</item>
+    </plurals>
 </resources>

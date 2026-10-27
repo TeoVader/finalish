@@ -77,6 +77,44 @@ data class UploadItem(
     val resumable: Boolean get() = partUrls != null && doneParts.isNotEmpty()
 }
 
+/**
+ * A "Download" into the phone's Download folder (one file, or a folder through
+ * [FolderDownloadWorker]), listed in Transfers › Downloads. The files themselves belong to the
+ * system DownloadManager: clearing an entry leaves them in place.
+ */
+@Immutable
+@Serializable
+data class DeviceDownload(
+    val id: String,
+    val accountId: String,
+    val name: String,
+    val folder: Boolean,
+    val kind: MediaKind = MediaKind.Other,
+    /** Where it lands, under the phone's Download folder (e.g. "Finalish/Brand film"). */
+    val path: String,
+    /** The file on Frame.io (one file only), to fetch a fresh link for a retry. */
+    val fileId: String? = null,
+    /** DownloadManager ids: the file's, or a folder's files now in flight. */
+    val systemIds: List<Long> = emptyList(),
+    val files: Int = 1,
+    val saved: Int = 0,
+    val skipped: Int = 0,
+    val failed: Int = 0,
+    /** A folder's files that didn't make it, for "Retry". */
+    val failedItems: List<PlannedDownload> = emptyList(),
+    val totalBytes: Long = 0,
+    val doneBytes: Long = 0,
+    /** Bytes of a folder's files already saved (doneBytes adds the ones in flight). */
+    val savedBytes: Long = 0,
+    val state: TransferState = TransferState.Queued,
+    val error: String? = null,
+    val createdAt: Long = System.currentTimeMillis(),
+) {
+    val progress: Float get() = if (totalBytes > 0) (doneBytes.toFloat() / totalBytes).coerceIn(0f, 1f) else 0f
+    /** Files finished one way or another, for "12 of 40 files". */
+    val finished: Int get() = saved + skipped + failed
+}
+
 @Immutable
 @Serializable
 data class PendingComment(
@@ -95,6 +133,7 @@ class TransferStore(root: File) {
     private val downloadsFile = File(offlineDir, "downloads.json")
     private val uploadsFile = File(root, "uploads.json")
     private val pendingFile = File(root, "pending_comments.json")
+    private val deviceFile = File(root, "device_downloads.json")
     private val stagingDir = File(root, "upload-staging")
 
     /** Private copy of a shared file an upload reads from (see TransferManager.stage). */
@@ -151,6 +190,29 @@ class TransferStore(root: File) {
         write(downloadsFile, DownloadItem.serializer(), _downloads)
     }
 
+    // ---- Downloads to the phone's Download folder -----------------------------
+
+    private val _device = MutableStateFlow(read(deviceFile, DeviceDownload.serializer()))
+    val deviceDownloads: StateFlow<List<DeviceDownload>> = _device.asStateFlow()
+
+    fun deviceDownload(id: String): DeviceDownload? = _device.value.firstOrNull { it.id == id }
+
+    fun upsertDeviceDownload(item: DeviceDownload) {
+        _device.update { list -> list.filterNot { it.id == item.id } + item }
+        write(deviceFile, DeviceDownload.serializer(), _device)
+    }
+
+    fun updateDeviceDownload(id: String, persist: Boolean = true, block: (DeviceDownload) -> DeviceDownload) {
+        _device.update { list -> list.map { if (it.id == id) block(it) else it } }
+        if (persist) write(deviceFile, DeviceDownload.serializer(), _device)
+    }
+
+    /** Forgets these finished, failed or cancelled entries (the files stay); active ones are kept. */
+    fun clearDeviceDownloads(ids: Set<String>) {
+        _device.update { list -> list.filterNot { it.id in ids && it.state != TransferState.Running && it.state != TransferState.Queued } }
+        write(deviceFile, DeviceDownload.serializer(), _device)
+    }
+
     // ---- Uploads -------------------------------------------------------------
 
     fun addUpload(item: UploadItem) {
@@ -198,6 +260,8 @@ class TransferStore(root: File) {
         _downloads.value = emptyList()
         _uploads.value = emptyList()
         _pending.value = emptyList()
+        _device.value = emptyList()
+        write(deviceFile, DeviceDownload.serializer(), _device)
         offlineDir.listFiles()?.forEach { it.deleteRecursively() }
         stagingDir.deleteRecursively()
         write(downloadsFile, DownloadItem.serializer(), _downloads)

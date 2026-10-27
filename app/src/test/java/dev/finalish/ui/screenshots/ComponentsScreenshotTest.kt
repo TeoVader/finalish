@@ -118,6 +118,24 @@ class ComponentsScreenshotTest {
         }
     }
 
+    /** Transfers › Downloads: a folder on its way, a file, a folder with a failed file, and a finished file. */
+    @Test fun downloadsInTransfers() = snap("downloads_transfers") {
+        val s = dev.finalish.core.transfer.TransferState.Running
+        fun d(name: String, state: dev.finalish.core.transfer.TransferState, folder: Boolean, saved: Int = 0, failed: Int = 0, skipped: Int = 0, done: Long = 0, total: Long = 4_300_000_000, kind: dev.finalish.core.model.MediaKind = dev.finalish.core.model.MediaKind.Video) =
+            dev.finalish.core.transfer.DeviceDownload(
+                id = name, accountId = "a", name = name, folder = folder, path = if (folder) "Finalish/$name" else "Finalish",
+                kind = kind, files = if (folder) 40 else 1, saved = saved, failed = failed, skipped = skipped,
+                failedItems = List(failed) { dev.finalish.core.transfer.PlannedDownload("x$it", "x", 1) },
+                totalBytes = total, doneBytes = done, state = state,
+            )
+        Column(Modifier.padding(12.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
+            dev.finalish.ui.transfers.DeviceDownloadRow(d("Day 2 rushes", s, true, saved = 12, done = 1_300_000_000), {}, {}, {}, Modifier)
+            dev.finalish.ui.transfers.DeviceDownloadRow(d("Edit_v3.mov", s, false, done = 820_000_000, total = 1_900_000_000), {}, {}, {}, Modifier)
+            dev.finalish.ui.transfers.DeviceDownloadRow(d("Brand film", dev.finalish.core.transfer.TransferState.Done, true, saved = 38, skipped = 1, failed = 1), {}, {}, {}, Modifier)
+            dev.finalish.ui.transfers.DeviceDownloadRow(d("Moodboard.png", dev.finalish.core.transfer.TransferState.Done, false, saved = 1, total = 8_100_000, kind = dev.finalish.core.model.MediaKind.Image), {}, {}, {}, Modifier)
+        }
+    }
+
     /** "Import from link" in Transfers: Frame.io fetching it, done, and failed. */
     @Test fun importsInTransfers() = snap("imports_transfers") {
         fun item(name: String, state: dev.finalish.core.transfer.TransferState, error: String? = null) = dev.finalish.core.transfer.UploadItem(

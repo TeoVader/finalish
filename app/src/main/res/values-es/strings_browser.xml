@@ -405,4 +405,15 @@
     <string name="browser_folder_upload_anyway">Subirlos de todos modos</string>
     <string name="browser_folder_upload_anyway_hint">Tendrás dos archivos con el mismo nombre</string>
     <string name="browser_folder_upload_nothing_new">Todos los archivos de «%1$s» ya están</string>
+    <string name="transfers_tab_downloads">Descargas · %1$d</string>
+    <string name="transfers_downloads_empty_title">Aún no hay descargas</string>
+    <string name="transfers_downloads_empty_message">Los archivos y carpetas que guardas con «Descargar» van a la carpeta Download del teléfono y aparecen aquí.</string>
+    <plurals name="transfers_saved_count">
+        <item quantity="one">%1$d guardado</item>
+        <item quantity="other">%1$d guardados</item>
+    </plurals>
+    <plurals name="transfers_skipped_count">
+        <item quantity="one">%1$d omitido</item>
+        <item quantity="other">%1$d omitidos</item>
+    </plurals>
 </resources>
