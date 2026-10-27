@@ -385,4 +385,9 @@
         <item quantity="many">Descargando %d archivos en Download/Finalish</item>
         <item quantity="other">Descargando %d archivos en Download/Finalish</item>
     </plurals>
+    <string name="browser_upload_folder">Subir una carpeta</string>
+    <string name="browser_folder_upload_scanning">Leyendo la carpeta…</string>
+    <string name="browser_folder_upload_title">¿Subir «%1$s»?</string>
+    <string name="browser_folder_upload_destination">En «%2$s» como nueva carpeta «%1$s», con sus subcarpetas.</string>
+    <string name="browser_folder_upload_empty">«%1$s» no tiene archivos para subir</string>
 </resources>

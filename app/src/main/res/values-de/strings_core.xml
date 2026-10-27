@@ -190,4 +190,6 @@
         <item quantity="one">%d fehlgeschlagen</item>
         <item quantity="other">%d fehlgeschlagen</item>
     </plurals>
+    <string name="core_folder_upload_creating">Ordner werden auf Frame.io erstellt…</string>
+    <string name="core_folder_upload_failed">„%1$s“ konnte nicht hochgeladen werden</string>
 </resources>

@@ -453,6 +453,53 @@ class FolderViewModel(
         _messages.tryEmit(plural(R.plurals.browser_folder_download_started, items.size))
     }
 
+    private val _folderUpload = MutableStateFlow<FolderUploadUi?>(null)
+    /** "Upload folder": reading the picked folder, then waiting for the confirmation. */
+    val folderUpload = _folderUpload.asStateFlow()
+    private var localScan: Job? = null
+
+    fun pickUploadFolder(treeUri: Uri) {
+        if (!transferManager.holdFolder(treeUri)) {
+            _messages.tryEmit(str(R.string.core_transfer_read_failed))
+            return
+        }
+        localScan?.cancel()
+        _folderUpload.value = FolderUploadUi.Scanning(treeUri)
+        localScan = viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            dev.finalish.core.util.runCatchingCancellable {
+                dev.finalish.core.transfer.scanLocalFolder(getApplication(), treeUri) { n ->
+                    _folderUpload.update { (it as? FolderUploadUi.Scanning)?.copy(found = n) ?: it }
+                }
+            }.onSuccess { root ->
+                val ready = FolderUploadUi.Ready(treeUri, root)
+                if (ready.summary.files == 0) {
+                    _folderUpload.value = null
+                    transferManager.releaseFolder(treeUri)
+                    _messages.emit(res.getString(R.string.browser_folder_upload_empty, root.name))
+                } else {
+                    _folderUpload.value = ready
+                }
+            }.onFailure {
+                _folderUpload.value = null
+                transferManager.releaseFolder(treeUri)
+                _messages.emit(it.userMessage())
+            }
+        }
+    }
+
+    fun cancelFolderUpload() {
+        localScan?.cancel()
+        _folderUpload.value?.let { transferManager.releaseFolder(it.treeUri) }
+        _folderUpload.value = null
+    }
+
+    fun confirmFolderUpload() {
+        val ready = _folderUpload.value as? FolderUploadUi.Ready ?: return
+        _folderUpload.value = null
+        transferManager.uploadFolder(account, folderId, ready.treeUri, dev.finalish.core.transfer.FolderUploadPlan.plan(ready.root))
+        _messages.tryEmit(plural(R.plurals.browser_uploading_files, ready.summary.files))
+    }
+
     fun upload(uris: List<Uri>, folderName: String) {
         if (uris.isEmpty()) return
         transferManager.upload(account, folderId, folderName, uris)

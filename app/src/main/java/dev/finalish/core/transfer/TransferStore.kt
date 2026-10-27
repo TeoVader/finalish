@@ -70,6 +70,8 @@ data class UploadItem(
     val thumbnailPath: String? = null,
     /** The WorkManager request now in charge of it; only that run may write its state. */
     val workId: String? = null,
+    /** "Upload folder": the picked folder, whose read grant covers [uri] (no grant of its own). */
+    val grantUri: String? = null,
 ) {
     val progress: Float get() = if (totalBytes > 0) (doneBytes.toFloat() / totalBytes).coerceIn(0f, 1f) else 0f
     val resumable: Boolean get() = partUrls != null && doneParts.isNotEmpty()

@@ -379,4 +379,9 @@
         <item quantity="many">Download di %d file in Download/Finalish</item>
         <item quantity="other">Download di %d file in Download/Finalish</item>
     </plurals>
+    <string name="browser_upload_folder">Carica una cartella</string>
+    <string name="browser_folder_upload_scanning">Lettura della cartella…</string>
+    <string name="browser_folder_upload_title">Caricare “%1$s”?</string>
+    <string name="browser_folder_upload_destination">In “%2$s” come nuova cartella “%1$s”, con le sue sottocartelle.</string>
+    <string name="browser_folder_upload_empty">“%1$s” non contiene file da caricare</string>
 </resources>

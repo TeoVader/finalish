@@ -361,4 +361,9 @@
         <item quantity="one">Downloading %d file to Download/Finalish</item>
         <item quantity="other">Downloading %d files to Download/Finalish</item>
     </plurals>
+    <string name="browser_upload_folder">Upload a folder</string>
+    <string name="browser_folder_upload_scanning">Reading the folder…</string>
+    <string name="browser_folder_upload_title">Upload “%1$s”?</string>
+    <string name="browser_folder_upload_destination">Into “%2$s” as a new folder “%1$s”, with its subfolders.</string>
+    <string name="browser_folder_upload_empty">“%1$s” has no files to upload</string>
 </resources>

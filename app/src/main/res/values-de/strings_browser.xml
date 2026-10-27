@@ -361,4 +361,9 @@
         <item quantity="one">%d Datei wird in Download/Finalish heruntergeladen</item>
         <item quantity="other">%d Dateien werden in Download/Finalish heruntergeladen</item>
     </plurals>
+    <string name="browser_upload_folder">Ordner hochladen</string>
+    <string name="browser_folder_upload_scanning">Ordner wird gelesen…</string>
+    <string name="browser_folder_upload_title">„%1$s“ hochladen?</string>
+    <string name="browser_folder_upload_destination">In „%2$s“ als neuer Ordner „%1$s“, mit seinen Unterordnern.</string>
+    <string name="browser_folder_upload_empty">„%1$s“ enthält keine Dateien zum Hochladen</string>
 </resources>

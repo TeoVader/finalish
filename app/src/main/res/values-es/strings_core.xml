@@ -204,4 +204,6 @@
         <item quantity="many">%d fallaron</item>
         <item quantity="other">%d fallaron</item>
     </plurals>
+    <string name="core_folder_upload_creating">Creando carpetas en Frame.io…</string>
+    <string name="core_folder_upload_failed">No se pudo subir «%1$s»</string>
 </resources>
