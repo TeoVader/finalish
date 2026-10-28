@@ -15,6 +15,7 @@ import dev.finalish.R
 import dev.finalish.core.data.CommentDraft
 import dev.finalish.core.data.SettingsStore
 import dev.finalish.core.model.Asset
+import dev.finalish.core.network.userMessage
 import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -222,7 +223,27 @@ class TransferManager(
         }
     }
 
-    fun retryUpload(id: String) = enqueueUpload(id)
+    /** Sends it again; an upload that only missed "as new version" just retries the stacking. */
+    fun retryUpload(id: String) {
+        val u = store.upload(id) ?: return
+        if (u.state == TransferState.Done && u.remoteFileId != null && u.stackOntoId != null) retryStack(u) else enqueueUpload(id)
+    }
+
+    private val restacking = java.util.concurrent.ConcurrentHashMap.newKeySet<String>()
+
+    private fun retryStack(u: UploadItem) {
+        if (!restacking.add(u.id)) return
+        scope.launch {
+            try {
+                val e = stackUpload(context, u, u.stackOntoId!!, u.remoteFileId!!)
+                store.updateUpload(u.id) {
+                    it.copy(error = e?.let { err -> context.getString(R.string.core_transfer_not_stacked, err.userMessage(context)) })
+                }
+            } finally {
+                restacking -= u.id
+            }
+        }
+    }
 
     /**
      * Shows an "Import from link" in Transfers and follows it: Frame.io already accepted

@@ -326,6 +326,11 @@ internal fun UploadRow(u: UploadItem, onRetry: () -> Unit, onCancel: () -> Unit,
             }
         }
         when (u.state) {
+            // Uploaded, but "as new version" didn't go through: retry just that.
+            TransferState.Done -> if (u.error != null && u.stackOntoId != null && u.remoteFileId != null) Icon(
+                Icons.Rounded.Refresh, stringResource(R.string.transfers_retry), tint = Palette.AccentBright,
+                modifier = Modifier.padding(start = 8.dp).size(24.dp).pressable(onRetry, scaleTo = 0.85f),
+            )
             // An import can't be resent from here (the link may need checking): no retry.
             TransferState.Failed, TransferState.Cancelled -> if (u.remoteSource == null) Icon(
                 Icons.Rounded.Refresh, stringResource(if (u.resumable) R.string.transfers_resume else R.string.transfers_retry), tint = Palette.AccentBright,
