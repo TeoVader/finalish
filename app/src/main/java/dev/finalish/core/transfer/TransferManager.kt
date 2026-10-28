@@ -15,6 +15,7 @@ import dev.finalish.R
 import dev.finalish.core.data.CommentDraft
 import dev.finalish.core.data.SettingsStore
 import dev.finalish.core.model.Asset
+import dev.finalish.core.network.userMessage
 import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -29,6 +30,9 @@ class TransferManager(
     private val scope: kotlinx.coroutines.CoroutineScope,
 ) {
     private val wm get() = WorkManager.getInstance(context)
+
+    /** Picked folders waiting for the "Upload folder" confirmation: their grants stay until then. Before init, which reads it. */
+    private val heldFolders = java.util.concurrent.ConcurrentHashMap.newKeySet<String>()
 
     // The saved settings, not the defaults [SettingsStore.settings] starts from right after launch.
     private suspend fun constraints() = Constraints.Builder()
@@ -58,7 +62,7 @@ class TransferManager(
         // Failed and cancelled ones keep theirs while listed, as they can be retried.
         scope.launch(kotlinx.coroutines.Dispatchers.IO) {
             store.uploads
-                .map { list -> list.filter { it.state != TransferState.Done }.map { it.uri }.toSet() }
+                .map { list -> list.filter { it.state != TransferState.Done }.flatMap { listOfNotNull(it.uri, it.grantUri) }.toSet() }
                 .distinctUntilChanged()
                 .collect { releaseUnusedGrants() }
         }
@@ -68,10 +72,43 @@ class TransferManager(
         val resolver = context.contentResolver
         val held = runCatching { resolver.persistedUriPermissions }.getOrDefault(emptyList())
         // The list as it is now, read after the grants: an upload added meanwhile keeps its grant.
-        val needed = store.uploads.value.filter { it.state != TransferState.Done }.map { it.uri }.toSet()
+        val needed = store.uploads.value.filter { it.state != TransferState.Done }.flatMap { listOfNotNull(it.uri, it.grantUri) }.toSet() +
+            heldFolders + pendingFolderUploadGrants(context)
         held
             .filter { it.uri.toString() !in needed }
             .forEach { runCatching { resolver.releasePersistableUriPermission(it.uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION) } }
+    }
+
+    /** Keeps read access to a folder picked for "Upload folder"; false if the picker gave none. */
+    fun holdFolder(treeUri: Uri): Boolean = runCatching {
+        context.contentResolver.takePersistableUriPermission(treeUri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        heldFolders += treeUri.toString()
+    }.isSuccess
+
+    /** The picked folder won't be uploaded after all (confirmation dismissed). */
+    fun releaseFolder(treeUri: Uri) {
+        heldFolders -= treeUri.toString()
+        scope.launch(kotlinx.coroutines.Dispatchers.IO) { releaseUnusedGrants() }
+    }
+
+    /** "Upload folder": recreates [folders] (see FolderUploadPlan) inside [destinationId], then uploads their files. */
+    fun uploadFolder(accountId: String, destinationId: String, treeUri: Uri, folders: List<PlannedFolder>) {
+        if (folders.isEmpty()) return
+        askForNotificationsIfNeeded()
+        scope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val name = "${UUID.randomUUID()}.json"
+            val job = FolderUploadJob(accountId, destinationId, treeUri.toString(), folders)
+            File(folderUploadJobDir(context).apply { mkdirs() }, name).writeText(folderJobJson.encodeToString(FolderUploadJob.serializer(), job))
+            // The saved job keeps the grant from here on.
+            heldFolders -= treeUri.toString()
+            val req = OneTimeWorkRequestBuilder<FolderUploadWorker>()
+                .setInputData(workDataOf(FolderUploadWorker.KEY_JOB to name, FolderUploadWorker.KEY_TITLE to folders.first().name))
+                .setConstraints(constraints())
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+                .addTag(TAG_UPLOAD)
+                .build()
+            wm.enqueueUniqueWork("fup:$name", ExistingWorkPolicy.KEEP, req)
+        }
     }
 
     fun download(accountId: String, asset: Asset) {
@@ -135,8 +172,9 @@ class TransferManager(
     /**
      * Uploads [uris] into [folderId]. With [stackOnto] (a single file only), the upload
      * becomes the newest version of that file or version stack once it's on Frame.io.
+     * [grantUri]: the picked folder whose read grant already covers [uris] ("Upload folder").
      */
-    fun upload(accountId: String, folderId: String, folderName: String, uris: List<Uri>, stackOnto: Asset? = null) {
+    fun upload(accountId: String, folderId: String, folderName: String, uris: List<Uri>, stackOnto: Asset? = null, grantUri: Uri? = null) {
         askForNotificationsIfNeeded()
         uris.forEach { uri ->
             val (name, size) = describe(uri)
@@ -149,9 +187,10 @@ class TransferManager(
                     uri = uri.toString(), name = name, mimeType = mime, totalBytes = size,
                     stackOntoId = stackOnto?.takeIf { uris.size == 1 }?.id,
                     stackOntoType = stackOnto?.takeIf { uris.size == 1 }?.type,
+                    grantUri = grantUri?.toString(),
                 ),
             )
-            val persisted = uri.scheme == "file" || runCatching {
+            val persisted = uri.scheme == "file" || grantUri != null || runCatching {
                 context.contentResolver.takePersistableUriPermission(uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }.isSuccess
             if (persisted) enqueueUpload(id) else stage(id, uri)
@@ -184,7 +223,27 @@ class TransferManager(
         }
     }
 
-    fun retryUpload(id: String) = enqueueUpload(id)
+    /** Sends it again; an upload that only missed "as new version" just retries the stacking. */
+    fun retryUpload(id: String) {
+        val u = store.upload(id) ?: return
+        if (u.state == TransferState.Done && u.remoteFileId != null && u.stackOntoId != null) retryStack(u) else enqueueUpload(id)
+    }
+
+    private val restacking = java.util.concurrent.ConcurrentHashMap.newKeySet<String>()
+
+    private fun retryStack(u: UploadItem) {
+        if (!restacking.add(u.id)) return
+        scope.launch {
+            try {
+                val e = stackUpload(context, u, u.stackOntoId!!, u.remoteFileId!!)
+                store.updateUpload(u.id) {
+                    it.copy(error = e?.let { err -> context.getString(R.string.core_transfer_not_stacked, err.userMessage(context)) })
+                }
+            } finally {
+                restacking -= u.id
+            }
+        }
+    }
 
     /**
      * Shows an "Import from link" in Transfers and follows it: Frame.io already accepted

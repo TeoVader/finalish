@@ -51,6 +51,7 @@ import androidx.compose.material.icons.rounded.AddLink
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.CreateNewFolder
+import androidx.compose.material.icons.rounded.DriveFolderUpload
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.DownloadForOffline
@@ -213,6 +214,9 @@ fun FolderScreen(
     val pickFiles = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris: List<Uri> ->
         vm.upload(uris, title)
     }
+    val pickFolder = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri: Uri? ->
+        uri?.let(vm::pickUploadFolder)
+    }
 
     val gridState = rememberLazyGridState()
     // "Show in project": once the item is listed, scroll it into view and flash it (once per visit).
@@ -311,6 +315,7 @@ fun FolderScreen(
                         onCellular = { v -> vm.updateSettings { it.copy(cellularTransfers = v) } },
                         onMedia = { addMenu = false; pickMedia.launch(arrayOf("image/*", "video/*")) },
                         onFiles = { addMenu = false; pickFiles.launch(arrayOf("*/*")) },
+                        onFolder = { addMenu = false; pickFolder.launch(null) },
                         onImport = { addMenu = false; importing = true },
                         onNewFolder = { addMenu = false; newFolder = true },
                         onDismiss = { addMenu = false },
@@ -606,6 +611,8 @@ fun FolderScreen(
     folderDownload?.let {
         FolderDownloadSheet(it, vm::setFolderDownloadAllVersions, vm::confirmFolderDownload, vm::cancelFolderDownload)
     }
+    val folderUpload by vm.folderUpload.collectAsStateWithLifecycle()
+    folderUpload?.let { FolderUploadSheet(it, title, vm::setFolderUploadMerge, vm::setFolderUploadFiles, vm::confirmFolderUpload, vm::cancelFolderUpload) }
     confirmDelete?.let { list ->
         AlertDialog(
             onDismissRequest = { confirmDelete = null },
@@ -1016,6 +1023,7 @@ private fun AddSheet(
     onCellular: (Boolean) -> Unit,
     onMedia: () -> Unit,
     onFiles: () -> Unit,
+    onFolder: () -> Unit,
     onImport: () -> Unit,
     onNewFolder: () -> Unit,
     onDismiss: () -> Unit,
@@ -1041,7 +1049,11 @@ private fun AddSheet(
                 }
             }
             Column(Modifier.padding(top = 8.dp).clip(RoundedCornerShape(20.dp)).background(Palette.Surface2)) {
-                listOf(Triple(stringResource(R.string.browser_import_from_link), Icons.Rounded.AddLink, onImport), Triple(stringResource(R.string.browser_new_folder), Icons.Rounded.CreateNewFolder, onNewFolder)).forEachIndexed { i, (label, icon, go) ->
+                listOf(
+                    Triple(stringResource(R.string.browser_upload_folder), Icons.Rounded.DriveFolderUpload, onFolder),
+                    Triple(stringResource(R.string.browser_import_from_link), Icons.Rounded.AddLink, onImport),
+                    Triple(stringResource(R.string.browser_new_folder), Icons.Rounded.CreateNewFolder, onNewFolder),
+                ).forEachIndexed { i, (label, icon, go) ->
                     if (i > 0) androidx.compose.material3.HorizontalDivider(color = Palette.Surface3)
                     Row(
                         Modifier.fillMaxWidth().height(54.dp).pressable(go, scaleTo = 0.98f).padding(horizontal = 16.dp),

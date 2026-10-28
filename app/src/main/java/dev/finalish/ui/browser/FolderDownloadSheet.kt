@@ -117,7 +117,7 @@ fun FolderDownloadContent(
 }
 
 @Composable
-private fun ChoiceRow(title: String, hint: String?, selected: Boolean, onClick: () -> Unit) {
+internal fun ChoiceRow(title: String, hint: String?, selected: Boolean, onClick: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).clickable(role = Role.RadioButton, onClick = onClick).padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,

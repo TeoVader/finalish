@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import dev.finalish.core.transfer.FolderUploadPlan
 import kotlinx.coroutines.launch
 
 class FolderViewModel(
@@ -451,6 +452,75 @@ class FolderViewModel(
         val items = dev.finalish.core.transfer.FolderDownloadPlan.plan(ready.tree, ready.allVersions)
         transferManager.downloadFolder(account, ready.folderName, items)
         _messages.tryEmit(plural(R.plurals.browser_folder_download_started, items.size))
+    }
+
+    private val _folderUpload = MutableStateFlow<FolderUploadUi?>(null)
+    /** "Upload folder": reading the picked folder, then waiting for the confirmation. */
+    val folderUpload = _folderUpload.asStateFlow()
+    private var localScan: Job? = null
+
+    fun pickUploadFolder(treeUri: Uri) {
+        if (!transferManager.holdFolder(treeUri)) {
+            _messages.tryEmit(str(R.string.core_transfer_read_failed))
+            return
+        }
+        localScan?.cancel()
+        _folderUpload.value = FolderUploadUi.Scanning(treeUri)
+        localScan = viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            dev.finalish.core.util.runCatchingCancellable {
+                dev.finalish.core.transfer.scanLocalFolder(getApplication(), treeUri) { n ->
+                    _folderUpload.update { (it as? FolderUploadUi.Scanning)?.copy(found = n) ?: it }
+                }
+            }.mapCatching { root ->
+                // A folder with that name already there: offer to merge with it (or a new name).
+                val siblings = repo.childrenNow(account, folderId).filter { it.isFolder }
+                val same = siblings.firstOrNull { it.name == root.name }
+                    ?: return@mapCatching FolderUploadUi.Ready(treeUri, root)
+                val tree = dev.finalish.core.transfer.scanFolder(repo, account, same) {}
+                FolderUploadUi.Ready(
+                    treeUri, root, existing = tree,
+                    newName = dev.finalish.core.transfer.FolderUploadPlan.freeName(root.name, siblings.map { it.name }.toSet()),
+                )
+            }.onSuccess { ready ->
+                val root = ready.root
+                if (FolderUploadPlan.summary(root).files == 0) {
+                    _folderUpload.value = null
+                    transferManager.releaseFolder(treeUri)
+                    _messages.emit(res.getString(R.string.browser_folder_upload_empty, root.name))
+                } else {
+                    _folderUpload.value = ready
+                }
+            }.onFailure {
+                _folderUpload.value = null
+                transferManager.releaseFolder(treeUri)
+                _messages.emit(it.userMessage())
+            }
+        }
+    }
+
+    fun setFolderUploadMerge(merge: Boolean) =
+        _folderUpload.update { (it as? FolderUploadUi.Ready)?.copy(merge = merge) ?: it }
+
+    fun setFolderUploadFiles(files: dev.finalish.core.transfer.ExistingFiles) =
+        _folderUpload.update { (it as? FolderUploadUi.Ready)?.copy(files = files) ?: it }
+
+    fun cancelFolderUpload() {
+        localScan?.cancel()
+        _folderUpload.value?.let { transferManager.releaseFolder(it.treeUri) }
+        _folderUpload.value = null
+    }
+
+    fun confirmFolderUpload() {
+        val ready = _folderUpload.value as? FolderUploadUi.Ready ?: return
+        _folderUpload.value = null
+        // Nothing left to send (all already there): no job, and the grant goes back.
+        if (ready.summary.files == 0) {
+            transferManager.releaseFolder(ready.treeUri)
+            _messages.tryEmit(res.getString(R.string.browser_folder_upload_nothing_new, ready.root.name))
+            return
+        }
+        transferManager.uploadFolder(account, folderId, ready.treeUri, ready.plan)
+        _messages.tryEmit(plural(R.plurals.browser_uploading_files, ready.summary.files))
     }
 
     fun upload(uris: List<Uri>, folderName: String) {

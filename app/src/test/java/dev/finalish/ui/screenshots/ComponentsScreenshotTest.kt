@@ -482,6 +482,29 @@ class ComponentsScreenshotTest {
         }
     }
 
+    @Test fun folderUploadSheet() = snap("folder_upload_sheet") {
+        val f = { name: String, size: Long -> dev.finalish.core.transfer.LocalFile("content://x/$name", name, size) }
+        val root = dev.finalish.core.transfer.LocalFolder(
+            name = "Day 2 rushes",
+            files = listOf(f("A001.mov", 2_100_000_000), f("A002.mov", 1_800_000_000)),
+            folders = listOf(dev.finalish.core.transfer.LocalFolder("Sound", files = listOf(f("Boom.wav", 410_000_000)))),
+        )
+        val uri = android.net.Uri.parse("content://x/tree")
+        androidx.compose.foundation.layout.Box(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(top = 20.dp)) {
+            dev.finalish.ui.browser.FolderUploadContent(
+                dev.finalish.ui.browser.FolderUploadUi.Ready(
+                    uri, root, newName = "Day 2 rushes (2)",
+                    existing = dev.finalish.core.transfer.FolderTree("Day 2 rushes", files = listOf(dev.finalish.core.transfer.RemoteFile("r", "A001.mov", 2_100_000_000)), id = "R"),
+                ),
+                "Brand film", {}, {}, {}, {},
+            )
+        }
+        androidx.compose.foundation.layout.Spacer(Modifier.height(16.dp))
+        androidx.compose.foundation.layout.Box(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(top = 20.dp)) {
+            dev.finalish.ui.browser.FolderUploadContent(dev.finalish.ui.browser.FolderUploadUi.Scanning(uri, 12), "Brand film", {}, {}, {}, {})
+        }
+    }
+
     @Test fun folderDownloadSheet() = snap("folder_download_sheet") {
         val f = { id: String, name: String, size: Long -> dev.finalish.core.transfer.RemoteFile(id, name, size) }
         val tree = dev.finalish.core.transfer.FolderTree(

@@ -25,6 +25,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -488,24 +489,10 @@ class UploadWorker(context: Context, params: WorkerParameters) : CoroutineWorker
         }
     }
 
-    /**
-     * "As new version of…": move the upload into the target's version stack, or stack the
-     * target file with it. The upload stays in the folder (and says so) if that fails.
-     */
+    /** "As new version of…" once uploaded; the upload stays in the folder (and says so) if that fails. */
     private suspend fun stackAsNewVersion(item: UploadItem, targetId: String, uploadedId: String) {
-        runCatching {
-            if (item.stackOntoType == "version_stack") {
-                c.api.move(item.accountId, "files", uploadedId, kotlinx.serialization.json.buildJsonObject {
-                    put("data", kotlinx.serialization.json.buildJsonObject { put("parent_id", kotlinx.serialization.json.JsonPrimitive(targetId)) })
-                })
-                c.repository.invalidateFolder(item.accountId, targetId)
-            } else {
-                c.repository.stackVersions(item.accountId, item.folderId, listOf(targetId, uploadedId))
-            }
-            c.repository.invalidateFolder(item.accountId, item.folderId)
-        }.onFailure { e ->
-            c.transfers.updateOwn(item.id) { it.copy(error = applicationContext.getString(R.string.core_transfer_not_stacked, e.userMessage(applicationContext))) }
-        }
+        val e = stackUpload(applicationContext, item, targetId, uploadedId) ?: return
+        c.transfers.updateOwn(item.id) { it.copy(error = applicationContext.getString(R.string.core_transfer_not_stacked, e.userMessage(applicationContext))) }
     }
 
     /** Removes a half-uploaded file left on Frame.io by an attempt that can no longer resume. */
@@ -783,3 +770,38 @@ internal fun resumeOffset(have: Long, code: Int, contentRange: String?, expected
     if (full != null && expectedTotal > 0 && full != expectedTotal) return 0
     return have
 }
+
+/** One stacking request at a time across uploads: a merged folder can finish dozens together. */
+private val stackGate = kotlinx.coroutines.sync.Mutex()
+
+/**
+ * Moves an uploaded file into the target's version stack, or stacks the target file with it.
+ * Rate limits and network drops are retried with a growing wait (5 s up to a minute, ~2.5 min
+ * in all) on top of the HTTP client's own short retries. Returns the error if it still failed.
+ */
+internal suspend fun stackUpload(context: Context, item: UploadItem, targetId: String, uploadedId: String): Throwable? {
+    val c = FinalishApp.container(context)
+    var wait = 5_000L
+    repeat(STACK_ATTEMPTS) { attempt ->
+        val result = stackGate.withLock {
+            dev.finalish.core.util.runCatchingCancellable {
+                if (item.stackOntoType == "version_stack") {
+                    c.api.move(item.accountId, "files", uploadedId, kotlinx.serialization.json.buildJsonObject {
+                        put("data", kotlinx.serialization.json.buildJsonObject { put("parent_id", kotlinx.serialization.json.JsonPrimitive(targetId)) })
+                    })
+                    c.repository.invalidateFolder(item.accountId, targetId)
+                } else {
+                    c.repository.stackVersions(item.accountId, item.folderId, listOf(targetId, uploadedId))
+                }
+                c.repository.invalidateFolder(item.accountId, item.folderId)
+            }
+        }
+        val e = result.exceptionOrNull() ?: return null
+        if (!e.isTransient() || attempt == STACK_ATTEMPTS - 1) return e
+        kotlinx.coroutines.delay(wait)
+        wait = (wait * 2).coerceAtMost(60_000)
+    }
+    return null
+}
+
+private const val STACK_ATTEMPTS = 5

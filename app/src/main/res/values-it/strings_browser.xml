@@ -379,4 +379,24 @@
         <item quantity="many">Download di %d file in Download/Finalish</item>
         <item quantity="other">Download di %d file in Download/Finalish</item>
     </plurals>
+    <string name="browser_upload_folder">Carica una cartella</string>
+    <string name="browser_folder_upload_scanning">Lettura della cartella…</string>
+    <string name="browser_folder_upload_title">Caricare “%1$s”?</string>
+    <string name="browser_folder_upload_destination">In “%2$s” come nuova cartella “%1$s”, con le sue sottocartelle.</string>
+    <string name="browser_folder_upload_empty">“%1$s” non contiene file da caricare</string>
+    <string name="browser_folder_upload_merge_destination">Nella cartella “%1$s” già presente in “%2$s”, con le sue sottocartelle.</string>
+    <string name="browser_folder_upload_exists">“%1$s” esiste già qui</string>
+    <string name="browser_folder_upload_merge">Unisci con la cartella esistente</string>
+    <string name="browser_folder_upload_merge_hint">Vengono create solo le sottocartelle che mancano</string>
+    <string name="browser_folder_upload_new">Crea una nuova cartella “%1$s”</string>
+    <plurals name="browser_folder_upload_present">
+        <item quantity="one">%1$d file già presente (stesso nome e dimensione)</item>
+        <item quantity="many">%1$d file già presenti (stesso nome e dimensione)</item>
+        <item quantity="other">%1$d file già presenti (stesso nome e dimensione)</item>
+    </plurals>
+    <string name="browser_folder_upload_skip">Salta i file già presenti</string>
+    <string name="browser_folder_upload_version">Aggiungili come nuova versione</string>
+    <string name="browser_folder_upload_anyway">Caricali comunque</string>
+    <string name="browser_folder_upload_anyway_hint">Avrai due file con lo stesso nome</string>
+    <string name="browser_folder_upload_nothing_new">Tutti i file di “%1$s” sono già presenti</string>
 </resources>

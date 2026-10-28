@@ -35,6 +35,7 @@ data class FolderTree(
     val files: List<RemoteFile> = emptyList(),
     val stacks: List<RemoteStack> = emptyList(),
     val folders: List<FolderTree> = emptyList(),
+    val id: String = "",
 )
 
 @Serializable
@@ -42,7 +43,7 @@ data class RemoteFile(val id: String, val name: String, val size: Long)
 
 /** A version stack; [versions] newest first, as Frame.io lists them. */
 @Serializable
-data class RemoteStack(val name: String, val versions: List<RemoteFile>)
+data class RemoteStack(val name: String, val versions: List<RemoteFile>, val id: String = "")
 
 /** One file to fetch, at [path] under Download/Finalish/. */
 @Serializable
@@ -119,11 +120,11 @@ suspend fun scanFolder(repo: FrameioRepository, account: String, folder: Asset, 
             async {
                 val versions = gate.withPermit { repo.versionsNow(account, s.id) }.filter { it.isFile }
                 onFound(found.addAndGet(versions.size.coerceAtMost(1)))
-                RemoteStack(s.name, versions.map { RemoteFile(it.id, it.name, it.fileSize) })
+                RemoteStack(s.name, versions.map { RemoteFile(it.id, it.name, it.fileSize) }, s.id)
             }
         }
         val folders = children.filter { it.isFolder }.map { f -> async { walk(f.id, f.name) } }
-        FolderTree(name, files, stacks.awaitAll(), folders.awaitAll())
+        FolderTree(name, files, stacks.awaitAll(), folders.awaitAll(), id)
     }
     return walk(folder.id, folder.name)
 }

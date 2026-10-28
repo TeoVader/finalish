@@ -200,4 +200,6 @@
         <item quantity="many">%d en échec</item>
         <item quantity="other">%d en échec</item>
     </plurals>
+    <string name="core_folder_upload_creating">Création des dossiers sur Frame.io…</string>
+    <string name="core_folder_upload_failed">Impossible d’importer « %1$s »</string>
 </resources>

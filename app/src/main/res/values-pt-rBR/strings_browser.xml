@@ -385,4 +385,24 @@
         <item quantity="many">Baixando %d arquivos em Download/Finalish</item>
         <item quantity="other">Baixando %d arquivos em Download/Finalish</item>
     </plurals>
+    <string name="browser_upload_folder">Enviar uma pasta</string>
+    <string name="browser_folder_upload_scanning">Lendo a pasta…</string>
+    <string name="browser_folder_upload_title">Enviar “%1$s”?</string>
+    <string name="browser_folder_upload_destination">Em “%2$s” como nova pasta “%1$s”, com suas subpastas.</string>
+    <string name="browser_folder_upload_empty">“%1$s” não tem arquivos para enviar</string>
+    <string name="browser_folder_upload_merge_destination">Na pasta “%1$s” que já existe em “%2$s”, com suas subpastas.</string>
+    <string name="browser_folder_upload_exists">“%1$s” já existe aqui</string>
+    <string name="browser_folder_upload_merge">Mesclar com a pasta existente</string>
+    <string name="browser_folder_upload_merge_hint">Só as subpastas que faltam são criadas</string>
+    <string name="browser_folder_upload_new">Criar uma nova pasta “%1$s”</string>
+    <plurals name="browser_folder_upload_present">
+        <item quantity="one">%1$d arquivo já está lá (mesmo nome e tamanho)</item>
+        <item quantity="many">%1$d arquivos já estão lá (mesmo nome e tamanho)</item>
+        <item quantity="other">%1$d arquivos já estão lá (mesmo nome e tamanho)</item>
+    </plurals>
+    <string name="browser_folder_upload_skip">Pular os arquivos que já estão lá</string>
+    <string name="browser_folder_upload_version">Adicionar como nova versão</string>
+    <string name="browser_folder_upload_anyway">Enviar mesmo assim</string>
+    <string name="browser_folder_upload_anyway_hint">Você terá dois arquivos com o mesmo nome</string>
+    <string name="browser_folder_upload_nothing_new">Todos os arquivos de “%1$s” já estão lá</string>
 </resources>

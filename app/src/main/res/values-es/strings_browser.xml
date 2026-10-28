@@ -385,4 +385,24 @@
         <item quantity="many">Descargando %d archivos en Download/Finalish</item>
         <item quantity="other">Descargando %d archivos en Download/Finalish</item>
     </plurals>
+    <string name="browser_upload_folder">Subir una carpeta</string>
+    <string name="browser_folder_upload_scanning">Leyendo la carpeta…</string>
+    <string name="browser_folder_upload_title">¿Subir «%1$s»?</string>
+    <string name="browser_folder_upload_destination">En «%2$s» como nueva carpeta «%1$s», con sus subcarpetas.</string>
+    <string name="browser_folder_upload_empty">«%1$s» no tiene archivos para subir</string>
+    <string name="browser_folder_upload_merge_destination">En la carpeta «%1$s» que ya existe en «%2$s», con sus subcarpetas.</string>
+    <string name="browser_folder_upload_exists">«%1$s» ya existe aquí</string>
+    <string name="browser_folder_upload_merge">Combinar con la carpeta existente</string>
+    <string name="browser_folder_upload_merge_hint">Solo se crean las subcarpetas que faltan</string>
+    <string name="browser_folder_upload_new">Crear una carpeta nueva «%1$s»</string>
+    <plurals name="browser_folder_upload_present">
+        <item quantity="one">%1$d archivo ya está (mismo nombre y tamaño)</item>
+        <item quantity="many">%1$d archivos ya están (mismo nombre y tamaño)</item>
+        <item quantity="other">%1$d archivos ya están (mismo nombre y tamaño)</item>
+    </plurals>
+    <string name="browser_folder_upload_skip">Omitir los archivos que ya están</string>
+    <string name="browser_folder_upload_version">Añadirlos como versión nueva</string>
+    <string name="browser_folder_upload_anyway">Subirlos de todos modos</string>
+    <string name="browser_folder_upload_anyway_hint">Tendrás dos archivos con el mismo nombre</string>
+    <string name="browser_folder_upload_nothing_new">Todos los archivos de «%1$s» ya están</string>
 </resources>
