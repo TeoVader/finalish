@@ -142,13 +142,28 @@ class TransferManager(
         }
     }
 
-    /** "Download" on a folder: [items] into Download/Finalish/, through [FolderDownloadWorker]. */
-    fun downloadFolder(accountId: String, folderName: String, items: List<PlannedDownload>) {
+    /**
+     * "Download" on a folder: [items] into Download/Finalish/, through [FolderDownloadWorker].
+     * [retryOf]: the entry in Transfers whose failed files these are ("Retry").
+     */
+    fun downloadFolder(accountId: String, folderName: String, items: List<PlannedDownload>, retryOf: String? = null) {
         if (items.isEmpty()) return
         askForNotificationsIfNeeded()
+        val name = "${UUID.randomUUID()}.json"
+        val entryId = retryOf ?: name
+        if (retryOf != null) {
+            store.updateDeviceDownload(retryOf) { it.copy(state = TransferState.Queued, failedItems = emptyList(), failed = 0, error = null) }
+        } else {
+            store.upsertDeviceDownload(
+                DeviceDownload(
+                    id = entryId, accountId = accountId, name = folderName, folder = true,
+                    path = "Finalish/" + dev.finalish.core.util.Format.safeFileName(folderName, "folder"),
+                    files = items.size, totalBytes = items.sumOf { it.size },
+                ),
+            )
+        }
         scope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            val name = "${UUID.randomUUID()}.json"
-            val job = FolderDownloadJob(accountId, folderName, items, allowMetered = settings.current().cellularTransfers)
+            val job = FolderDownloadJob(accountId, folderName, items, allowMetered = settings.current().cellularTransfers, entryId = entryId)
             File(folderJobDir(context).apply { mkdirs() }, name).writeText(folderJobJson.encodeToString(FolderDownloadJob.serializer(), job))
             val req = OneTimeWorkRequestBuilder<FolderDownloadWorker>()
                 .setInputData(workDataOf(FolderDownloadWorker.KEY_JOB to name, FolderDownloadWorker.KEY_TITLE to folderName))
@@ -156,8 +171,20 @@ class TransferManager(
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
                 .addTag(TAG_DOWNLOAD)
                 .build()
-            wm.enqueueUniqueWork("fdl:$name", ExistingWorkPolicy.KEEP, req)
+            // Named after the entry, so Transfers can cancel it.
+            wm.enqueueUniqueWork("fdl:$entryId", ExistingWorkPolicy.KEEP, req)
         }
+    }
+
+    /** Stops a download to the Download folder: a folder's worker, or the system's download of one file. */
+    fun cancelDeviceDownload(id: String) {
+        val d = store.deviceDownload(id) ?: return
+        if (d.folder) {
+            wm.cancelUniqueWork("fdl:$id")
+        } else {
+            runCatching { context.getSystemService(android.app.DownloadManager::class.java).remove(*d.systemIds.toLongArray()) }
+        }
+        store.updateDeviceDownload(id) { it.copy(state = TransferState.Cancelled) }
     }
 
     fun cancelDownload(fileId: String) {

@@ -399,4 +399,17 @@
     <string name="browser_folder_upload_anyway">Caricali comunque</string>
     <string name="browser_folder_upload_anyway_hint">Avrai due file con lo stesso nome</string>
     <string name="browser_folder_upload_nothing_new">Tutti i file di “%1$s” sono già presenti</string>
+    <string name="transfers_tab_downloads">Download · %1$d</string>
+    <string name="transfers_downloads_empty_title">Ancora nessun download</string>
+    <string name="transfers_downloads_empty_message">I file e le cartelle che salvi con “Scarica” finiscono nella cartella Download del telefono e compaiono qui.</string>
+    <plurals name="transfers_saved_count">
+        <item quantity="one">%1$d salvato</item>
+        <item quantity="many">%1$d salvati</item>
+        <item quantity="other">%1$d salvati</item>
+    </plurals>
+    <plurals name="transfers_skipped_count">
+        <item quantity="one">%1$d saltato</item>
+        <item quantity="many">%1$d saltati</item>
+        <item quantity="other">%1$d saltati</item>
+    </plurals>
 </resources>
