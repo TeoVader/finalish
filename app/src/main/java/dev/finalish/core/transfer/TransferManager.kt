@@ -15,6 +15,7 @@ import dev.finalish.R
 import dev.finalish.core.data.CommentDraft
 import dev.finalish.core.data.SettingsStore
 import dev.finalish.core.model.Asset
+import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -101,6 +102,24 @@ class TransferManager(
             if (store.download(media.id) == null) return@launch
             store.updateDownload(media.id) { it.copy(workId = req.id.toString()) }
             wm.enqueueUniqueWork("dl:${media.id}", ExistingWorkPolicy.REPLACE, req)
+        }
+    }
+
+    /** "Download" on a folder: [items] into Download/Finalish/, through [FolderDownloadWorker]. */
+    fun downloadFolder(accountId: String, folderName: String, items: List<PlannedDownload>) {
+        if (items.isEmpty()) return
+        askForNotificationsIfNeeded()
+        scope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val name = "${UUID.randomUUID()}.json"
+            val job = FolderDownloadJob(accountId, folderName, items, allowMetered = settings.current().cellularTransfers)
+            File(folderJobDir(context).apply { mkdirs() }, name).writeText(folderJobJson.encodeToString(FolderDownloadJob.serializer(), job))
+            val req = OneTimeWorkRequestBuilder<FolderDownloadWorker>()
+                .setInputData(workDataOf(FolderDownloadWorker.KEY_JOB to name, FolderDownloadWorker.KEY_TITLE to folderName))
+                .setConstraints(constraints())
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+                .addTag(TAG_DOWNLOAD)
+                .build()
+            wm.enqueueUniqueWork("fdl:$name", ExistingWorkPolicy.KEEP, req)
         }
     }
 

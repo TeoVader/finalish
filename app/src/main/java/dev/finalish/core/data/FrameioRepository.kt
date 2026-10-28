@@ -284,6 +284,15 @@ class FrameioRepository(
     }
 
     /** A stack's versions, head (current) first. */
+    /** Every item in a folder, from the network (for walking a folder to download it). */
+    suspend fun childrenNow(account: String, folderId: String): List<Asset> =
+        allPages(
+            first = { api.children(account, folderId, pageSize = 100) },
+            next = { api.children(account, folderId, pageSize = 100, after = it) },
+            // A download must not leave files out silently.
+            limit = Int.MAX_VALUE,
+        )
+
     suspend fun versionsNow(account: String, stackId: String): List<Asset> =
         allPages(first = { api.versions(account, stackId) }, next = { api.versions(account, stackId, after = it) })
 

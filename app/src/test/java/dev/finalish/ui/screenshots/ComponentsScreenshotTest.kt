@@ -481,4 +481,21 @@ class ComponentsScreenshotTest {
             }
         }
     }
+
+    @Test fun folderDownloadSheet() = snap("folder_download_sheet") {
+        val f = { id: String, name: String, size: Long -> dev.finalish.core.transfer.RemoteFile(id, name, size) }
+        val tree = dev.finalish.core.transfer.FolderTree(
+            name = "Brand film",
+            files = listOf(f("1", "Script.pdf", 2_400_000), f("2", "Moodboard.png", 8_100_000)),
+            stacks = listOf(dev.finalish.core.transfer.RemoteStack("Edit.mov", listOf(f("3", "Edit_v2.mov", 1_900_000_000), f("4", "Edit_v1.mov", 1_700_000_000)))),
+            folders = listOf(dev.finalish.core.transfer.FolderTree("Stills", files = listOf(f("5", "A.jpg", 6_000_000), f("6", "B.jpg", 5_500_000)))),
+        )
+        androidx.compose.foundation.layout.Box(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(top = 20.dp)) {
+            dev.finalish.ui.browser.FolderDownloadContent(dev.finalish.ui.browser.FolderDownloadUi.Ready("Brand film", tree), {}, {}, {})
+        }
+        androidx.compose.foundation.layout.Spacer(Modifier.height(16.dp))
+        androidx.compose.foundation.layout.Box(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(top = 20.dp)) {
+            dev.finalish.ui.browser.FolderDownloadContent(dev.finalish.ui.browser.FolderDownloadUi.Scanning("Brand film", 37), {}, {}, {})
+        }
+    }
 }

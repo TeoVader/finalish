@@ -183,4 +183,25 @@
     <string name="core_time_minutes_ago">há %1$d min</string>
     <string name="core_time_hours_ago">há %1$d h</string>
     <string name="core_time_days_ago">há %1$d d</string>
+    <plurals name="core_folder_download_progress">
+        <item quantity="one">%1$d de %2$d arquivo</item>
+        <item quantity="many">%1$d de %2$d arquivos</item>
+        <item quantity="other">%1$d de %2$d arquivos</item>
+    </plurals>
+    <string name="core_folder_download_done">“%1$s” baixada</string>
+    <plurals name="core_folder_download_saved">
+        <item quantity="one">%1$d arquivo em Download/Finalish/%2$s</item>
+        <item quantity="many">%1$d arquivos em Download/Finalish/%2$s</item>
+        <item quantity="other">%1$d arquivos em Download/Finalish/%2$s</item>
+    </plurals>
+    <plurals name="core_folder_download_skipped">
+        <item quantity="one">%d ignorado: downloads desativados ou o arquivo não existe mais</item>
+        <item quantity="many">%d ignorados: downloads desativados ou os arquivos não existem mais</item>
+        <item quantity="other">%d ignorados: downloads desativados ou os arquivos não existem mais</item>
+    </plurals>
+    <plurals name="core_folder_download_failed">
+        <item quantity="one">%d falhou</item>
+        <item quantity="many">%d falharam</item>
+        <item quantity="other">%d falharam</item>
+    </plurals>
 </resources>

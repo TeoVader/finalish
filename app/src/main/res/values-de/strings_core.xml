@@ -173,4 +173,21 @@
     <string name="core_time_minutes_ago">vor %1$d min</string>
     <string name="core_time_hours_ago">vor %1$d h</string>
     <string name="core_time_days_ago">vor %1$d T.</string>
+    <plurals name="core_folder_download_progress">
+        <item quantity="one">%1$d von %2$d Datei</item>
+        <item quantity="other">%1$d von %2$d Dateien</item>
+    </plurals>
+    <string name="core_folder_download_done">„%1$s“ heruntergeladen</string>
+    <plurals name="core_folder_download_saved">
+        <item quantity="one">%1$d Datei in Download/Finalish/%2$s</item>
+        <item quantity="other">%1$d Dateien in Download/Finalish/%2$s</item>
+    </plurals>
+    <plurals name="core_folder_download_skipped">
+        <item quantity="one">%d übersprungen: Downloads sind aus oder die Datei ist weg</item>
+        <item quantity="other">%d übersprungen: Downloads sind aus oder die Dateien sind weg</item>
+    </plurals>
+    <plurals name="core_folder_download_failed">
+        <item quantity="one">%d fehlgeschlagen</item>
+        <item quantity="other">%d fehlgeschlagen</item>
+    </plurals>
 </resources>

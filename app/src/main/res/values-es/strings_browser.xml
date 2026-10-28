@@ -353,4 +353,36 @@
         <item quantity="many">%1$d sin leer</item>
         <item quantity="other">%1$d sin leer</item>
     </plurals>
+    <string name="browser_folder_download_scanning">Revisando “%1$s”…</string>
+    <plurals name="browser_folder_download_found">
+        <item quantity="one">%d archivo encontrado</item>
+        <item quantity="many">%d archivos encontrados</item>
+        <item quantity="other">%d archivos encontrados</item>
+    </plurals>
+    <string name="browser_folder_download_title">¿Descargar “%1$s”?</string>
+    <string name="browser_folder_download_destination">En Download/Finalish/%1$s, con sus subcarpetas.</string>
+    <plurals name="browser_folder_download_files">
+        <item quantity="one">%d archivo</item>
+        <item quantity="many">%d archivos</item>
+        <item quantity="other">%d archivos</item>
+    </plurals>
+    <plurals name="browser_folder_download_subfolders">
+        <item quantity="one">%d subcarpeta</item>
+        <item quantity="many">%d subcarpetas</item>
+        <item quantity="other">%d subcarpetas</item>
+    </plurals>
+    <plurals name="browser_folder_download_stacks">
+        <item quantity="one">%d pila de versiones</item>
+        <item quantity="many">%d pilas de versiones</item>
+        <item quantity="other">%d pilas de versiones</item>
+    </plurals>
+    <string name="browser_folder_download_latest">Solo la última versión</string>
+    <string name="browser_folder_download_all">Todas las versiones</string>
+    <string name="browser_folder_download_all_hint">Cada pila se convierte en una carpeta con v1, v2… (v1 es la más antigua)</string>
+    <string name="browser_folder_download_empty">“%1$s” no tiene archivos para descargar</string>
+    <plurals name="browser_folder_download_started">
+        <item quantity="one">Descargando %d archivo en Download/Finalish</item>
+        <item quantity="many">Descargando %d archivos en Download/Finalish</item>
+        <item quantity="other">Descargando %d archivos en Download/Finalish</item>
+    </plurals>
 </resources>
