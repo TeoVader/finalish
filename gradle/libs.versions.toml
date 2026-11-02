@@ -1,6 +1,6 @@
 [versions]
 zxing = "3.5.4"
-agp = "9.4.1"
+agp = "9.5.0"
 kotlin = "2.4.21"
 coreKtx = "1.19.1"
 activityCompose = "1.13.0"
