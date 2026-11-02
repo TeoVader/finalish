@@ -4,4 +4,6 @@
     <issue id="ObsoleteSdkInt">
         <ignore path="src/main/res/mipmap-anydpi-v26" />
     </issue>
+    <!-- Dependabot proposes AGP updates; a new release must not break unrelated builds. -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
 </lint>
