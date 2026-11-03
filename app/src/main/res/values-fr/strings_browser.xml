@@ -68,6 +68,7 @@
     <string name="browser_needs_network">Connexion requise pour l\'ouvrir</string>
     <string name="browser_more_actions_for">Plus d\'actions pour %1$s</string>
     <string name="browser_action_share_link">Lien de partage</string>
+    <string name="browser_action_add_to_share_link">Ajouter au lien de partage…</string>
     <string name="browser_action_save_offline">Enregistrer hors connexion</string>
     <string name="browser_action_members">Membres</string>
     <string name="browser_action_rename">Renommer</string>

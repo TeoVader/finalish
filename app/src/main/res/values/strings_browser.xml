@@ -63,6 +63,7 @@
     <string name="browser_needs_network">Needs network to open</string>
     <string name="browser_more_actions_for">More actions for %1$s</string>
     <string name="browser_action_share_link">Share link</string>
+    <string name="browser_action_add_to_share_link">Add to share link…</string>
     <string name="browser_action_save_offline">Save offline</string>
     <string name="browser_action_members">Members</string>
     <string name="browser_action_rename">Rename</string>

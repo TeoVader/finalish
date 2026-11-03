@@ -68,6 +68,7 @@
     <string name="browser_needs_network">Serve la rete per aprirlo</string>
     <string name="browser_more_actions_for">Altre azioni per %1$s</string>
     <string name="browser_action_share_link">Link di condivisione</string>
+    <string name="browser_action_add_to_share_link">Aggiungi al link di condivisione…</string>
     <string name="browser_action_save_offline">Salva offline</string>
     <string name="browser_action_members">Membri</string>
     <string name="browser_action_rename">Rinomina</string>
