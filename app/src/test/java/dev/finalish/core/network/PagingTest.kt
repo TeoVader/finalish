@@ -70,28 +70,38 @@ class PagingTest {
     }
 
     @Test
-    fun `stops at an empty page that still has a next link`() = runBlocking {
+    fun `reads on past an empty page with a new cursor`() = runBlocking {
         val asked = mutableListOf<String>()
-        val partials = mutableListOf<List<Int>>()
+        val rest = mapOf(
+            "c1" to PageEnvelope(emptyList(), Links("/x?after=c2")),
+            "c2" to PageEnvelope(listOf(2), Links(null)),
+        )
         val all = allPages(
             first = { PageEnvelope(listOf(1), Links("/x?after=c1")) },
-            next = { asked += it; PageEnvelope(emptyList(), Links("/x?after=c2")) },
-            partial = { partials += it },
+            next = { asked += it; rest.getValue(it) },
         )
-        assertEquals(listOf(1), all)
-        assertEquals(listOf("c1"), asked)
-        assertEquals(listOf(listOf(1)), partials)
+        assertEquals(listOf(1, 2), all)
+        assertEquals(listOf("c1", "c2"), asked)
     }
 
     @Test
-    fun `an empty first page with a next link makes one call`() = runBlocking {
-        var calls = 0
+    fun `reads on past an empty first page with a next link`() = runBlocking {
+        val all = allPages(
+            first = { PageEnvelope(emptyList(), Links("/x?after=c1")) },
+            next = { PageEnvelope(listOf(1), Links(null)) },
+        )
+        assertEquals(listOf(1), all)
+    }
+
+    @Test
+    fun `stops at empty pages that repeat their cursor`() = runBlocking {
+        val asked = mutableListOf<String>()
         val all = allPages<Int>(
             first = { PageEnvelope(emptyList(), Links("/x?after=c1")) },
-            next = { calls++; PageEnvelope() },
+            next = { asked += it; PageEnvelope(emptyList(), Links("/x?after=c1")) },
         )
         assertEquals(emptyList<Int>(), all)
-        assertEquals(0, calls)
+        assertEquals(listOf("c1"), asked)
     }
 
     @Test
