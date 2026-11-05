@@ -44,6 +44,67 @@ class PagingTest {
     }
 
     @Test
+    fun `stops when a page repeats its own cursor`() = runBlocking {
+        val asked = mutableListOf<String>()
+        val all = allPages(
+            first = { PageEnvelope(listOf(1), Links("/x?after=c1")) },
+            next = { asked += it; PageEnvelope(listOf(2), Links("/x?after=c1")) },
+        )
+        assertEquals(listOf(1, 2), all)
+        assertEquals(listOf("c1"), asked)
+    }
+
+    @Test
+    fun `stops when cursors go round in a cycle`() = runBlocking {
+        val asked = mutableListOf<String>()
+        val cycle = mapOf(
+            "c1" to PageEnvelope(listOf(2), Links("/x?after=c2")),
+            "c2" to PageEnvelope(listOf(3), Links("/x?after=c1")),
+        )
+        val all = allPages(
+            first = { PageEnvelope(listOf(1), Links("/x?after=c1")) },
+            next = { asked += it; cycle.getValue(it) },
+        )
+        assertEquals(listOf(1, 2, 3), all)
+        assertEquals(listOf("c1", "c2"), asked)
+    }
+
+    @Test
+    fun `reads on past an empty page with a new cursor`() = runBlocking {
+        val asked = mutableListOf<String>()
+        val rest = mapOf(
+            "c1" to PageEnvelope(emptyList(), Links("/x?after=c2")),
+            "c2" to PageEnvelope(listOf(2), Links(null)),
+        )
+        val all = allPages(
+            first = { PageEnvelope(listOf(1), Links("/x?after=c1")) },
+            next = { asked += it; rest.getValue(it) },
+        )
+        assertEquals(listOf(1, 2), all)
+        assertEquals(listOf("c1", "c2"), asked)
+    }
+
+    @Test
+    fun `reads on past an empty first page with a next link`() = runBlocking {
+        val all = allPages(
+            first = { PageEnvelope(emptyList(), Links("/x?after=c1")) },
+            next = { PageEnvelope(listOf(1), Links(null)) },
+        )
+        assertEquals(listOf(1), all)
+    }
+
+    @Test
+    fun `stops at empty pages that repeat their cursor`() = runBlocking {
+        val asked = mutableListOf<String>()
+        val all = allPages<Int>(
+            first = { PageEnvelope(emptyList(), Links("/x?after=c1")) },
+            next = { asked += it; PageEnvelope(emptyList(), Links("/x?after=c1")) },
+        )
+        assertEquals(emptyList<Int>(), all)
+        assertEquals(listOf("c1"), asked)
+    }
+
+    @Test
     fun `cursor comes from a path or a full URL`() {
         assertEquals("abc", afterCursor("/v4/accounts/a/shares?after=abc&page_size=100"))
         assertEquals("x y", afterCursor("https://api.frame.io/v4/x?after=x%20y"))

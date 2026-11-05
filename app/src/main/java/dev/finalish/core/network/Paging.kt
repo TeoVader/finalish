@@ -5,7 +5,9 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 /**
  * Fetches every page of a cursor-paginated listing (up to [limit] items), calling [partial] with
- * the accumulated list before each further page.
+ * the accumulated list before each further page. A cursor that repeats ends the listing, so a
+ * misbehaving server can't keep it going forever. An empty page with a new cursor doesn't: more
+ * items can follow it, and stopping there would leave files out of a folder download.
  */
 suspend fun <T> allPages(
     first: suspend () -> PageEnvelope<T>,
@@ -15,8 +17,10 @@ suspend fun <T> allPages(
 ): List<T> {
     var page = first()
     val items = page.data.toMutableList()
+    val cursors = mutableSetOf<String>()
     while (items.size < limit) {
         val after = page.links?.next?.let(::afterCursor) ?: break
+        if (!cursors.add(after)) break
         partial(items.toList())
         page = next(after)
         items += page.data

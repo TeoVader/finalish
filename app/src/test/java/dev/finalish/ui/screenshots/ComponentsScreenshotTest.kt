@@ -373,6 +373,13 @@ class ComponentsScreenshotTest {
         }
     }
 
+    /** End of a share link's file list while more pages are still loading. */
+    @Test fun shareFilesLoadingMore() = snap("share_files_loading_more") {
+        Column(Modifier.fillMaxWidth().clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)).background(Palette.Surface2)) {
+            dev.finalish.ui.shares.ShareFilesLoadingMore()
+        }
+    }
+
     /** Report form: the Frame.io plan the reporter is on (Italian, unanswered and answered). */
     @Test
     @Config(qualifiers = "it-w448dp-h997dp-night-xxhdpi")
