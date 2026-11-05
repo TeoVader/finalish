@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.finalish.R
+import dev.finalish.core.model.Asset
 import dev.finalish.core.model.Share
 import dev.finalish.core.util.Format
 import dev.finalish.ui.components.pressable
@@ -93,6 +94,10 @@ fun ShareRow(s: Share, onClick: () -> Unit) {
     }
     HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(start = 58.dp))
 }
+
+/** A link lists everything inside a folder, subfolders included: on a public link that publishes it all. */
+internal fun publishesFolderContents(share: Share, assets: List<Asset>): Boolean =
+    share.access == "public" && assets.any { it.isFolder }
 
 /**
  * Bottom sheet for adding files or folders to an existing share link in the folder browser.

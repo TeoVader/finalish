@@ -69,6 +69,9 @@
     <string name="browser_more_actions_for">Mais ações para %1$s</string>
     <string name="browser_action_share_link">Link de compartilhamento</string>
     <string name="browser_action_add_to_share_link">Adicionar ao link de compartilhamento…</string>
+    <string name="browser_public_folder_title">Publicar o conteúdo?</string>
+    <string name="browser_public_folder_message">Este link é público. Quem tiver o link verá todo o conteúdo das pastas selecionadas, incluindo as subpastas.</string>
+    <string name="browser_public_folder_confirm">Adicionar ao link</string>
     <string name="browser_action_save_offline">Salvar off-line</string>
     <string name="browser_action_members">Membros</string>
     <string name="browser_action_rename">Renomear</string>

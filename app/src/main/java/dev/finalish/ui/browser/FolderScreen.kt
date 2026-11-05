@@ -204,6 +204,7 @@ fun FolderScreen(
     var moveTargets by remember { mutableStateOf<Pair<List<Asset>, Boolean>?>(null) } // (assets, isCopy)
     var shareTargets by remember { mutableStateOf<List<Asset>?>(null) }
     var addToShareTargets by remember { mutableStateOf<List<Asset>?>(null) }
+    var confirmPublicFolder by remember { mutableStateOf<Pair<dev.finalish.core.model.Share, List<Asset>>?>(null) }
     var addMenu by remember { mutableStateOf(false) }
     var importing by remember { mutableStateOf(false) }
 
@@ -651,10 +652,23 @@ fun FolderScreen(
         dev.finalish.ui.shares.AddToShareSheet(
             shares = projectShares,
             onPick = { share ->
-                vm.addToShare(share, list)
+                if (dev.finalish.ui.shares.publishesFolderContents(share, list)) confirmPublicFolder = share to list
+                else vm.addToShare(share, list)
                 addToShareTargets = null
             },
             onDismiss = { addToShareTargets = null },
+        )
+    }
+    confirmPublicFolder?.let { (share, list) ->
+        AlertDialog(
+            onDismissRequest = { confirmPublicFolder = null },
+            containerColor = Palette.Surface2,
+            title = { Text(stringResource(R.string.browser_public_folder_title)) },
+            text = { Text(stringResource(R.string.browser_public_folder_message), color = Palette.TextSecondary) },
+            confirmButton = {
+                TextButton(onClick = { confirmPublicFolder = null; vm.addToShare(share, list) }) { Text(stringResource(R.string.browser_public_folder_confirm)) }
+            },
+            dismissButton = { TextButton(onClick = { confirmPublicFolder = null }) { Text(stringResource(R.string.browser_cancel)) } },
         )
     }
 }

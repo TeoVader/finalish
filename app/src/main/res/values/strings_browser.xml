@@ -64,6 +64,9 @@
     <string name="browser_more_actions_for">More actions for %1$s</string>
     <string name="browser_action_share_link">Share link</string>
     <string name="browser_action_add_to_share_link">Add to share link…</string>
+    <string name="browser_public_folder_title">Publish folder contents?</string>
+    <string name="browser_public_folder_message">This link is public. Anyone who has it will see everything in the selected folders, including their subfolders.</string>
+    <string name="browser_public_folder_confirm">Add to link</string>
     <string name="browser_action_save_offline">Save offline</string>
     <string name="browser_action_members">Members</string>
     <string name="browser_action_rename">Rename</string>
