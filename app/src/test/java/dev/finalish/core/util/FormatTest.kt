@@ -77,6 +77,14 @@ class FormatTest {
         assertEquals(null, Format.remaining("2026-10-12T12:00:00Z", now))
     }
 
+    @Test fun expiredMatchesRemaining() {
+        val now = java.time.Instant.parse("2026-10-13T12:00:00Z")
+        assertEquals(true, Format.expired("2026-10-12T12:00:00Z", now))
+        assertEquals(false, Format.expired("2026-10-20T12:00:00Z", now))
+        assertEquals(false, Format.expired(null, now))
+        assertEquals(true, Format.expired("not a date", now))
+    }
+
     @Test fun safeFileName() {
         assertEquals("clip.mov", Format.safeFileName("clip.mov"))
         assertEquals("_.._etc_passwd", Format.safeFileName("/../etc/passwd"))

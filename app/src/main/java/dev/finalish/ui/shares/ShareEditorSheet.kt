@@ -218,7 +218,11 @@ fun ShareEditorSheet(
                     }
 
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        val (label, fg) = if (share.enabled) stringResource(R.string.shares_status_active) to Palette.Green else stringResource(R.string.shares_status_turned_off) to Palette.TextSecondary
+                        val (label, fg) = when {
+                            !share.enabled -> stringResource(R.string.shares_status_turned_off) to Palette.TextSecondary
+                            Format.expired(share.expiration) -> stringResource(R.string.shares_status_expired) to Palette.Amber
+                            else -> stringResource(R.string.shares_status_active) to Palette.Green
+                        }
                         Text(
                             label, style = MaterialTheme.typography.labelMedium, color = fg,
                             modifier = Modifier.clip(RoundedCornerShape(50)).background(fg.copy(alpha = 0.16f)).padding(horizontal = 8.dp, vertical = 3.dp),
@@ -252,7 +256,11 @@ fun ShareEditorSheet(
                     Column(Modifier.weight(1f)) {
                         Text(stringResource(R.string.shares_link_visibility), style = MaterialTheme.typography.bodyLarge)
                         Text(
-                            if (share.enabled) stringResource(R.string.shares_anyone_can_view) else stringResource(R.string.shares_link_turned_off),
+                            when {
+                                !share.enabled -> stringResource(R.string.shares_link_turned_off)
+                                Format.expired(share.expiration) -> stringResource(R.string.shares_status_expired)
+                                else -> stringResource(R.string.shares_anyone_can_view)
+                            },
                             style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
                         )
                     }

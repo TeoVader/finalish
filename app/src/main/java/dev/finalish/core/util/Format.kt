@@ -41,6 +41,13 @@ object Format {
         }
     }
 
+    /**
+     * Whether a link with expiry [iso] has expired, with the same rule the share cards use: an expiry is set and
+     * [remaining] has nothing left to show. No expiry means it never expires; an unparsable one counts as expired,
+     * as the cards already show it.
+     */
+    fun expired(iso: String?, now: Instant = Instant.now()): Boolean = iso != null && remaining(iso, now) == null
+
     /** Whole days left until [iso], rounded up (null if unset or passed). */
     fun daysLeft(iso: String?, now: Instant = Instant.now()): Long? {
         val end = parseInstant(iso) ?: return null
