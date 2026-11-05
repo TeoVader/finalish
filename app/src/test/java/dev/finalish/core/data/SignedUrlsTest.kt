@@ -33,4 +33,17 @@ class SignedUrlsTest {
         assertTrue(signedUrlExpired("https://example.com/t.jpg?Signature=abc&Expires=1700000000&Key-Pair-Id=K1", now))
         assertFalse(signedUrlExpired("https://example.com/t.jpg?Signature=abc&Expires=1800086400&Key-Pair-Id=K1", now))
     }
+
+    @Test fun `an avatar exp parameter is read too`() {
+        assertTrue(signedUrlExpired("https://example.com/a.jpg?w=96&exp=1700000000&sig=abc", now))
+        assertFalse(signedUrlExpired("https://example.com/a.jpg?w=96&exp=1800086400&sig=abc", now))
+        assertTrue(signedUrlExpired("https://example.com/a.jpg?exp=${now.epochSecond + 60}", now))
+    }
+
+    @Test fun `an exp that isn't an integer never expires`() {
+        assertFalse(signedUrlExpired("https://example.com/a.jpg?exp=soon", now))
+        assertFalse(signedUrlExpired("https://example.com/a.jpg?exp=", now))
+        assertFalse(signedUrlExpired("https://example.com/a.jpg?exp=1.7e9", now))
+        assertFalse(signedUrlExpired("https://example.com/a.jpg?exp=${Long.MAX_VALUE}", now))
+    }
 }

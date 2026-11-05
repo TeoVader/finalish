@@ -399,7 +399,12 @@ class FrameioRepository(
         val key = "authors:$account"
         val ser = kotlinx.serialization.builtins.MapSerializer(String.serializer(), User.serializer())
         val known = (cache.get(key, ser) ?: emptyMap()).toMutableMap()
-        val wanted = ownerless.map { it.id }.filterNot { it in known || it in authorsNotLogged }.toMutableSet()
+        // Avatars are signed links: a known author whose picture expired is looked up again. The old entry
+        // stays in [known] until replaced, so a failed or empty lookup still names the comment.
+        fun avatarExpired(u: User) = u.avatarUrl?.let(::signedUrlExpired) == true
+        val wanted = ownerless.map { it.id }
+            .filterNot { id -> known[id]?.let { !avatarExpired(it) } == true || id in authorsNotLogged }.toMutableSet()
+        val asked = wanted.toSet()
         val days = ownerless.filter { it.id in wanted }.mapNotNull { it.createdAt?.take(10) }.sorted()
         if (wanted.isNotEmpty() && days.isNotEmpty() && account !in auditUnavailable) {
             runCatchingCancellable {
@@ -418,6 +423,8 @@ class FrameioRepository(
                     after = page.links?.next?.let(::afterCursor)
                 } while (wanted.isNotEmpty() && after != null && ++pages < 30)
                 authorsNotLogged += wanted
+                // A log that hands back an already expired picture would otherwise be asked again on every refresh.
+                authorsNotLogged += asked.filter { id -> known[id]?.let(::avatarExpired) == true }
                 cache.put(key, ser, known)
             }.onFailure {
                 if (it is kotlinx.coroutines.CancellationException) throw it
