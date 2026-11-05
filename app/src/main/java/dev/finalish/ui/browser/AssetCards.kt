@@ -37,6 +37,7 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.DownloadForOffline
 import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.Link
+import androidx.compose.material.icons.rounded.AddLink
 import androidx.compose.material.icons.rounded.MoreHoriz
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.DownloadDone
@@ -260,7 +261,7 @@ private fun offlineLine(asset: Asset, online: Boolean, offline: Boolean): Pair<S
 }
 
 /** What the "⋯" on a file or folder can do; the folder screen runs the same actions as the selection bar. */
-enum class FileAction { Share, SaveToDevice, Download, Members, Rename, Move, Copy, Delete }
+enum class FileAction { Share, AddToShare, SaveToDevice, Download, Members, Rename, Move, Copy, Delete }
 
 /** "⋯" on a card: a small menu that opens from where you tapped (mockup's context menu). */
 @Composable
@@ -285,6 +286,7 @@ fun FileMenuButton(asset: Asset, onAction: (FileAction) -> Unit, compact: Boolea
                     onClick = { open = false; onAction(action) },
                 )
             item(FileAction.Share, stringResource(R.string.browser_action_share_link), Icons.Rounded.Link)
+            item(FileAction.AddToShare, stringResource(R.string.browser_action_add_to_share_link), Icons.Rounded.AddLink)
             item(FileAction.SaveToDevice, stringResource(R.string.viewer_action_download), Icons.Rounded.FileDownload)
             if (!asset.isFolder) item(FileAction.Download, stringResource(R.string.browser_action_save_offline), Icons.Rounded.DownloadForOffline)
             // Who can open this folder (restricted folders have their own members).

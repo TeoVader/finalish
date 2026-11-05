@@ -203,6 +203,8 @@ fun FolderScreen(
     var confirmDelete by remember { mutableStateOf<List<Asset>?>(null) }
     var moveTargets by remember { mutableStateOf<Pair<List<Asset>, Boolean>?>(null) } // (assets, isCopy)
     var shareTargets by remember { mutableStateOf<List<Asset>?>(null) }
+    var addToShareTargets by remember { mutableStateOf<List<Asset>?>(null) }
+    var confirmPublicFolder by remember { mutableStateOf<Pair<dev.finalish.core.model.Share, List<Asset>>?>(null) }
     var addMenu by remember { mutableStateOf(false) }
     var importing by remember { mutableStateOf(false) }
 
@@ -231,6 +233,7 @@ fun FolderScreen(
         { a, action ->
             when (action) {
                 FileAction.Share -> shareTargets = listOf(a)
+                FileAction.AddToShare -> addToShareTargets = listOf(a)
                 FileAction.Download -> vm.download(listOf(a))
                 FileAction.SaveToDevice -> if (a.isFolder) vm.downloadFolder(a) else vm.saveToDevice(a)
                 FileAction.Members -> currentOpenFolderMembers(a.id, a.name)
@@ -334,6 +337,7 @@ fun FolderScreen(
                     selected = selected,
                     onDownload = { vm.download(selected) },
                     onShare = { shareTargets = selected },
+                    onAddToShare = { addToShareTargets = selected },
                     onMove = { moveTargets = selected to false },
                     onCopy = { moveTargets = selected to true },
                     onRename = { renameTarget = selected.firstOrNull() },
@@ -643,6 +647,30 @@ fun FolderScreen(
     shareTargets?.let { list ->
         CreateShareSheet(accountId, projectId, list, onDismiss = { shareTargets = null; vm.clearSelection() })
     }
+    addToShareTargets?.let { list ->
+        LaunchedEffect(projectId) { vm.loadShares(projectId) }
+        dev.finalish.ui.shares.AddToShareSheet(
+            shares = projectShares,
+            onPick = { share ->
+                if (dev.finalish.ui.shares.publishesFolderContents(share, list)) confirmPublicFolder = share to list
+                else vm.addToShare(share, list)
+                addToShareTargets = null
+            },
+            onDismiss = { addToShareTargets = null },
+        )
+    }
+    confirmPublicFolder?.let { (share, list) ->
+        AlertDialog(
+            onDismissRequest = { confirmPublicFolder = null },
+            containerColor = Palette.Surface2,
+            title = { Text(stringResource(R.string.browser_public_folder_title)) },
+            text = { Text(stringResource(R.string.browser_public_folder_message), color = Palette.TextSecondary) },
+            confirmButton = {
+                TextButton(onClick = { confirmPublicFolder = null; vm.addToShare(share, list) }) { Text(stringResource(R.string.browser_public_folder_confirm)) }
+            },
+            dismissButton = { TextButton(onClick = { confirmPublicFolder = null }) { Text(stringResource(R.string.browser_cancel)) } },
+        )
+    }
 }
 
 class ProjectActions(val members: () -> Unit, val trash: () -> Unit, val shares: () -> Unit, val folderMembers: (() -> Unit)? = null)
@@ -780,6 +808,7 @@ private fun SelectionActions(
     selected: List<Asset>,
     onDownload: () -> Unit,
     onShare: () -> Unit,
+    onAddToShare: () -> Unit,
     onMove: () -> Unit,
     onCopy: () -> Unit,
     onRename: () -> Unit,
@@ -811,6 +840,10 @@ private fun SelectionActions(
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.browser_action_save_offline)) }, leadingIcon = { Icon(Icons.Rounded.DownloadForOffline, null) },
                     enabled = selected.any { !it.isFolder }, onClick = { more = false; onDownload() },
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.browser_action_add_to_share_link)) }, leadingIcon = { Icon(Icons.Rounded.AddLink, null) },
+                    enabled = selected.isNotEmpty(), onClick = { more = false; onAddToShare() },
                 )
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.browser_action_rename)) }, leadingIcon = { Icon(Icons.Rounded.DriveFileRenameOutline, null) },

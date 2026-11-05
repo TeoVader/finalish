@@ -69,4 +69,57 @@ class FolderViewModelTest : ViewModelTest() {
         vm.clearSelection()
         assertTrue(vm.selection.value.isEmpty())
     }
+
+    @Test fun `addToShare adds single item, clears selection and reports success`() {
+        frameio.on("POST accounts/acc/shares/s1/assets", "{}")
+        val share = dev.finalish.core.model.Share("s1", name = "Client Review")
+        val asset = vm.items.value.first { it.id == "c1" }
+        vm.toggleSelect("c1")
+        assertEquals(setOf("c1"), vm.selection.value)
+        val messages = record(vm.messages)
+
+        vm.addToShare(share, listOf(asset))
+
+        assertTrue(vm.selection.value.isEmpty())
+        assertTrue("POST accounts/acc/shares/s1/assets" in frameio.calls)
+        assertEquals(listOf(app.getString(dev.finalish.R.string.viewer_msg_added_to_share, "Client Review")), awaitValue(messages) { it.isNotEmpty() })
+    }
+
+    @Test fun `addToShare adds multiple items and reports count`() {
+        frameio.on("POST accounts/acc/shares/s1/assets", "{}")
+        val share = dev.finalish.core.model.Share("s1", name = "Client Review")
+        val assets = vm.items.value.take(2)
+        vm.toggleSelect(assets[0].id)
+        vm.toggleSelect(assets[1].id)
+        val messages = record(vm.messages)
+
+        vm.addToShare(share, assets)
+
+        assertTrue(vm.selection.value.isEmpty())
+        assertEquals(listOf(app.getString(dev.finalish.R.string.shares_added_n_to_link, 2)), awaitValue(messages) { it.isNotEmpty() })
+    }
+
+    @Test fun `addToShare reports single item failure with error message`() {
+        frameio.on("POST accounts/acc/shares/s1/assets", """{"errors":[{"detail":"Folders cannot be added to share"}]}""", code = 422)
+        val share = dev.finalish.core.model.Share("s1", name = "Client Review")
+        val folder = vm.items.value.first { it.id == "d1" }
+        val messages = record(vm.messages)
+
+        vm.addToShare(share, listOf(folder))
+
+        assertTrue(vm.selection.value.isEmpty())
+        assertEquals(listOf("Folders cannot be added to share"), awaitValue(messages) { it.isNotEmpty() })
+    }
+
+    @Test fun `addToShare reports failure count for multiple items`() {
+        frameio.on("POST accounts/acc/shares/s1/assets", """{"errors":[{"detail":"Cannot add"}]}""", code = 422)
+        val share = dev.finalish.core.model.Share("s1", name = "Client Review")
+        val assets = vm.items.value.take(3)
+        val messages = record(vm.messages)
+
+        vm.addToShare(share, assets)
+
+        assertTrue(vm.selection.value.isEmpty())
+        assertEquals(listOf(app.resources.getQuantityString(dev.finalish.R.plurals.shares_couldnt_add_items, 3, 3)), awaitValue(messages) { it.isNotEmpty() })
+    }
 }

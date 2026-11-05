@@ -63,6 +63,10 @@
     <string name="browser_needs_network">Zum Öffnen ist eine Verbindung nötig</string>
     <string name="browser_more_actions_for">Weitere Aktionen für %1$s</string>
     <string name="browser_action_share_link">Link teilen</string>
+    <string name="browser_action_add_to_share_link">Zu Freigabelink hinzufügen…</string>
+    <string name="browser_public_folder_title">Inhalt veröffentlichen?</string>
+    <string name="browser_public_folder_message">Dieser Link ist öffentlich. Alle, die ihn haben, sehen den gesamten Inhalt der ausgewählten Ordner, einschließlich der Unterordner.</string>
+    <string name="browser_public_folder_confirm">Zum Link hinzufügen</string>
     <string name="browser_action_save_offline">Offline speichern</string>
     <string name="browser_action_members">Mitglieder</string>
     <string name="browser_action_rename">Umbenennen</string>

@@ -169,7 +169,18 @@ fun AssetActionsSheet(
                             }
                         }
                     }
-                    ActionsPage.Shares -> SharesPicker(vm, onBack = { page = ActionsPage.Main }, onPicked = onDismiss)
+                    ActionsPage.Shares -> {
+                        val shares by vm.projectShares.collectAsStateWithLifecycle()
+                        LaunchedEffect(Unit) { vm.loadProjectShares() }
+                        dev.finalish.ui.shares.SharesPicker(
+                            shares = shares,
+                            onPick = { share ->
+                                vm.addToShare(share)
+                                onDismiss()
+                            },
+                            onBack = { page = ActionsPage.Main },
+                        )
+                    }
                 }
             }
         }
@@ -252,48 +263,4 @@ private fun ActionRow(
     }
 }
 
-@Composable
-private fun SharesPicker(vm: ViewerViewModel, onBack: () -> Unit, onPicked: () -> Unit) {
-    val shares by vm.projectShares.collectAsStateWithLifecycle()
-    LaunchedEffect(Unit) { vm.loadProjectShares() }
-    Row(
-        Modifier.fillMaxWidth().pressable(onBack, scaleTo = 0.985f).padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.viewer_back), modifier = Modifier.padding(8.dp))
-        Text(stringResource(R.string.viewer_add_to_share_link), style = MaterialTheme.typography.titleMedium)
-    }
-    val list = shares
-    when {
-        list == null -> Box(Modifier.fillMaxWidth().heightIn(min = 160.dp), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(Modifier.size(28.dp), strokeWidth = 2.dp)
-        }
-        list.isEmpty() -> Text(
-            stringResource(R.string.viewer_no_share_links),
-            color = Palette.TextTertiary,
-            modifier = Modifier.padding(24.dp),
-        )
-        else -> LazyColumn(Modifier.heightIn(max = 420.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            items(list, key = { it.id }) { s -> ShareRow(s) { vm.addToShare(s); onPicked() } }
-        }
-    }
-}
 
-@Composable
-private fun ShareRow(s: Share, onClick: () -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().pressable(onClick, scaleTo = 0.985f).padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(Icons.Rounded.Link, null, tint = if (s.enabled) Palette.AccentBright else Palette.TextTertiary)
-        Spacer(Modifier.width(14.dp))
-        Column(Modifier.weight(1f)) {
-            Text(s.name ?: stringResource(R.string.viewer_untitled_share), style = MaterialTheme.typography.bodyLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(
-                listOfNotNull(s.access.replaceFirstChar { it.uppercase() }, Format.relative(s.createdAt).ifBlank { null }).joinToString(" · "),
-                style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
-            )
-        }
-    }
-    HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(start = 58.dp))
-}

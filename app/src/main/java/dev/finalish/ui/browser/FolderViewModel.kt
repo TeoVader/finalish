@@ -49,7 +49,7 @@ class FolderViewModel(
     private val transferManager: TransferManager,
 ) : AndroidViewModel(app) {
     private val res get() = getApplication<Application>().resources
-    private fun str(@StringRes id: Int) = res.getString(id)
+    private fun str(@StringRes id: Int, vararg args: Any) = if (args.isEmpty()) res.getString(id) else res.getString(id, *args)
     private fun plural(id: Int, n: Int) = res.getQuantityString(id, n, n)
 
     private val _remote = MutableStateFlow<Remote<List<Asset>>>(Remote.loading())
@@ -328,6 +328,32 @@ class FolderViewModel(
 
     fun replaceShare(s: dev.finalish.core.model.Share) =
         _shares.update { list -> list?.map { if (it.id == s.id) s else it } }
+
+    fun addToShare(share: dev.finalish.core.model.Share, assets: List<Asset>) {
+        if (assets.isEmpty()) return
+        clearSelection()
+        viewModelScope.launch {
+            if (assets.size == 1) {
+                val a = assets.first()
+                _messages.report({
+                    str(R.string.viewer_msg_added_to_share, share.name ?: str(R.string.viewer_msg_share_fallback))
+                }) {
+                    repo.addToShare(account, share.id, a.id)
+                }
+            } else {
+                val failed = mutableListOf<Throwable>()
+                for (a in assets) {
+                    dev.finalish.core.util.runCatchingCancellable { repo.addToShare(account, share.id, a.id) }
+                        .onFailure { failed.add(it) }
+                }
+                if (failed.isNotEmpty()) {
+                    _messages.emit(plural(R.plurals.shares_couldnt_add_items, failed.size))
+                } else {
+                    _messages.emit(str(R.string.shares_added_n_to_link, assets.size))
+                }
+            }
+        }
+    }
 
     fun updateSettings(block: (dev.finalish.core.data.AppSettings) -> dev.finalish.core.data.AppSettings) =
         settingsStore.update(block)

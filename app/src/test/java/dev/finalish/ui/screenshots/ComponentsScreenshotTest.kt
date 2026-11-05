@@ -546,4 +546,15 @@ class ComponentsScreenshotTest {
             dev.finalish.ui.browser.FolderDownloadContent(dev.finalish.ui.browser.FolderDownloadUi.Scanning("Brand film", 37), {}, {}, {})
         }
     }
+
+    @Test fun sharesPicker() = snap("shares_picker") {
+        val shares = listOf(
+            dev.finalish.core.model.Share("s1", name = "Rough Cut Review", access = "public", enabled = true, createdAt = "2026-01-02T00:00:00Z"),
+            dev.finalish.core.model.Share("s2", name = "Color Grade", access = "passphrase", enabled = true, createdAt = "2026-01-01T00:00:00Z"),
+            dev.finalish.core.model.Share("s3", name = null, access = "private", enabled = false, createdAt = "2025-12-28T00:00:00Z"),
+        )
+        androidx.compose.foundation.layout.Box(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(vertical = 12.dp)) {
+            dev.finalish.ui.shares.SharesPicker(shares = shares, onPick = {})
+        }
+    }
 }

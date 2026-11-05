@@ -68,6 +68,10 @@
     <string name="browser_needs_network">Connexion requise pour l\'ouvrir</string>
     <string name="browser_more_actions_for">Plus d\'actions pour %1$s</string>
     <string name="browser_action_share_link">Lien de partage</string>
+    <string name="browser_action_add_to_share_link">Ajouter au lien de partage…</string>
+    <string name="browser_public_folder_title">Publier le contenu ?</string>
+    <string name="browser_public_folder_message">Ce lien est public. Toute personne qui le possède verra tout le contenu des dossiers sélectionnés, y compris les sous-dossiers.</string>
+    <string name="browser_public_folder_confirm">Ajouter au lien</string>
     <string name="browser_action_save_offline">Enregistrer hors connexion</string>
     <string name="browser_action_members">Membres</string>
     <string name="browser_action_rename">Renommer</string>
