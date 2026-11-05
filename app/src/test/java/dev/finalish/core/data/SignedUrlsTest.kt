@@ -26,6 +26,7 @@ class SignedUrlsTest {
         assertFalse(signedUrlExpired("https://example.com/t.jpg?Expires=soon", now))
         assertFalse(signedUrlExpired("https://example.com/t.jpg?Expires=", now))
         assertFalse(signedUrlExpired("not a url", now))
+        assertFalse(signedUrlExpired("https://example.com/t.jpg?Expires=${Long.MAX_VALUE}", now))
     }
 
     @Test fun `the expiry is found among other parameters`() {

@@ -14,5 +14,6 @@ val SIGNED_URL_EXPIRY_MARGIN: Duration = Duration.ofMinutes(5)
  */
 fun signedUrlExpired(url: String, now: Instant = Instant.now()): Boolean {
     val expires = url.toHttpUrlOrNull()?.queryParameter("Expires")?.toLongOrNull() ?: return false
-    return !Instant.ofEpochSecond(expires).isAfter(now.plus(SIGNED_URL_EXPIRY_MARGIN))
+    // Compared as numbers: Instant.ofEpochSecond throws on a value outside its range.
+    return expires <= now.plus(SIGNED_URL_EXPIRY_MARGIN).epochSecond
 }
