@@ -114,6 +114,7 @@ fun ShareEditorSheet(
     var rename by remember { mutableStateOf(false) }
     var passphrase by remember { mutableStateOf(false) }
     var adding by remember { mutableStateOf(false) }
+    var confirmPublicFolder by remember { mutableStateOf<List<Asset>?>(null) }
     var qr by remember { mutableStateOf(false) }
     var pickingTemplate by remember { mutableStateOf(false) }
     var templates by remember { mutableStateOf<List<dev.finalish.core.model.WatermarkTemplate>?>(null) }
@@ -546,6 +547,24 @@ fun ShareEditorSheet(
 
     if (qr) share.shortUrl?.let { url -> QrDialog(url, share.name, onDismiss = { qr = false }) }
 
+    fun addPicked(picked: List<Asset>) {
+        val pickedIds = picked.map { it.id }.toSet()
+        val readded = removedAssetIds intersect pickedIds
+        addedAssets = addedAssets + picked
+        removedAssetIds = removedAssetIds - pickedIds
+        scope.launch {
+            val failed = picked.filter { a -> runCatchingCancellable { repo.addToShare(accountId, share.id, a.id) }.isFailure }
+            if (failed.isNotEmpty()) {
+                val failedIds = failed.map { it.id }.toSet()
+                addedAssets = addedAssets.filterNot { it.id in failedIds }
+                removedAssetIds = removedAssetIds + (readded intersect failedIds)
+                notify(res.getQuantityString(R.plurals.shares_couldnt_add_items, failed.size, failed.size))
+            } else {
+                notify(res.getString(R.string.shares_added_n_to_link, picked.size))
+            }
+        }
+    }
+
     if (adding && projectId != null) {
         dev.finalish.ui.browser.AssetPickerSheet(
             accountId = accountId,
@@ -555,22 +574,20 @@ fun ShareEditorSheet(
             onDismiss = { adding = false },
             onPick = { picked ->
                 adding = false
-                val pickedIds = picked.map { it.id }.toSet()
-                val readded = removedAssetIds intersect pickedIds
-                addedAssets = addedAssets + picked
-                removedAssetIds = removedAssetIds - pickedIds
-                scope.launch {
-                    val failed = picked.filter { a -> runCatchingCancellable { repo.addToShare(accountId, share.id, a.id) }.isFailure }
-                    if (failed.isNotEmpty()) {
-                        val failedIds = failed.map { it.id }.toSet()
-                        addedAssets = addedAssets.filterNot { it.id in failedIds }
-                        removedAssetIds = removedAssetIds + (readded intersect failedIds)
-                        notify(res.getQuantityString(R.plurals.shares_couldnt_add_items, failed.size, failed.size))
-                    } else {
-                        notify(res.getString(R.string.shares_added_n_to_link, picked.size))
-                    }
-                }
+                if (publishesFolderContents(share, picked)) confirmPublicFolder = picked else addPicked(picked)
             },
+        )
+    }
+    confirmPublicFolder?.let { picked ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { confirmPublicFolder = null },
+            containerColor = Palette.Surface2,
+            title = { Text(stringResource(R.string.browser_public_folder_title)) },
+            text = { Text(stringResource(R.string.browser_public_folder_message), color = Palette.TextSecondary) },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { confirmPublicFolder = null; addPicked(picked) }) { Text(stringResource(R.string.browser_public_folder_confirm)) }
+            },
+            dismissButton = { androidx.compose.material3.TextButton(onClick = { confirmPublicFolder = null }) { Text(stringResource(R.string.browser_cancel)) } },
         )
     }
 
