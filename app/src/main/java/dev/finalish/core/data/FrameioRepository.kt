@@ -249,8 +249,10 @@ class FrameioRepository(
     suspend fun folderPreview(account: String, folder: Asset, force: Boolean = false): dev.finalish.core.model.FolderPreview? {
         val key = "preview2:$account:${folder.id}:${folder.updatedAt}"
         val stale = stalePreviews.remove(folder.id)
-        if (!force && !stale) cache.get(key, dev.finalish.core.model.FolderPreview.serializer())?.let { return it }
-        return previewGate.withPermit {
+        // Its thumbnails are signed links: once one has expired, fetch fresh ones.
+        val cached = if (!force && !stale) cache.get(key, dev.finalish.core.model.FolderPreview.serializer()) else null
+        if (cached != null && cached.thumbnails.none { signedUrlExpired(it) }) return cached
+        val fresh = previewGate.withPermit {
             runCatchingCancellable {
                 val page = api.childrenPreview(account, folder.id)
                 val thumbs = page.data
@@ -262,6 +264,8 @@ class FrameioRepository(
                 preview
             }.getOrNull()
         }
+        // Offline: the expired entry still shows the images the image cache kept (stable keys).
+        return fresh ?: cached
     }
 
     /**
@@ -270,7 +274,8 @@ class FrameioRepository(
      */
     suspend fun projectCover(account: String, project: dev.finalish.core.model.Project): dev.finalish.core.model.FolderPreview {
         val key = "projcover2:$account:${project.id}:${project.updatedAt}"
-        if (project.rootFolderId !in stalePreviews) cache.get(key, dev.finalish.core.model.FolderPreview.serializer())?.let { return it }
+        val cached = if (project.rootFolderId !in stalePreviews) cache.get(key, dev.finalish.core.model.FolderPreview.serializer()) else null
+        if (cached != null && cached.thumbnails.none { signedUrlExpired(it) }) return cached
         val root = Asset(id = project.rootFolderId, type = "folder", updatedAt = project.updatedAt)
         val rootPreview = folderPreview(account, root)
         val direct = rootPreview?.thumbnails.orEmpty()
@@ -278,6 +283,8 @@ class FrameioRepository(
             api.childrenPreview(account, project.rootFolderId).data.filter { it.isFolder }.take(3)
                 .flatMap { folderPreview(account, it)?.thumbnails.orEmpty().take(1) }
         }.getOrDefault(emptyList())
+        // Nothing fetched (offline): keep the expired cover rather than losing its images.
+        if (thumbs.isEmpty() && cached != null) return cached
         val cover = dev.finalish.core.model.FolderPreview(thumbs, rootPreview?.count)
         if (thumbs.isNotEmpty()) cache.put(key, dev.finalish.core.model.FolderPreview.serializer(), cover)
         return cover
