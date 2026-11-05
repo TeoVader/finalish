@@ -585,15 +585,19 @@ class FrameioRepository(
 
     /**
      * What a share link holds. The share listing can come back with empty media links, so files
-     * without a thumbnail are re-read (at most 24, in parallel) to show their pictures.
+     * without a thumbnail are re-read (at most 24, in parallel) to show their pictures. [partial]
+     * gets the files read so far, before each further page and before that re-read; the returned
+     * list is the complete one.
      */
-    suspend fun shareAssets(account: String, shareId: String): List<Asset> {
+    suspend fun shareAssets(account: String, shareId: String, partial: suspend (List<Asset>) -> Unit = {}): List<Asset> {
         val items = allPages(
             first = { api.shareAssets(account, shareId, include = FrameioApi.INCLUDE_BROWSE) },
             next = { api.shareAssets(account, shareId, include = FrameioApi.INCLUDE_BROWSE, after = it) },
+            partial = partial,
         )
         val missing = items.filter { !it.isFolder && it.thumbnailUrl == null }.take(24).map { it.id }.toSet()
         if (missing.isEmpty()) return items
+        partial(items)
         val fresh = kotlinx.coroutines.coroutineScope {
             missing.map { id -> async { runCatchingCancellable { api.file(account, id, include = FrameioApi.INCLUDE_BROWSE).data }.getOrNull() } }
                 .mapNotNull { it.await() }.associateBy { it.id }

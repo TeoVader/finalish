@@ -42,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +69,7 @@ import dev.finalish.core.model.Asset
 import dev.finalish.core.model.Share
 import dev.finalish.core.network.userMessage
 import dev.finalish.core.util.Format
+import dev.finalish.core.util.runCatchingCancellable
 import dev.finalish.ui.browser.AssetThumbnail
 import dev.finalish.ui.browser.TextPromptDialog
 import dev.finalish.ui.components.pressable
@@ -99,7 +101,12 @@ fun ShareEditorSheet(
     var share by remember { mutableStateOf(initial) }
     val patchSeq = remember { java.util.concurrent.atomic.AtomicInteger() }
     val patchesInFlight = remember { java.util.concurrent.atomic.AtomicInteger() }
-    var assets by remember { mutableStateOf<List<Asset>?>(null) }
+    // Files come in page by page; edits are kept apart so that a later page can't undo them.
+    var loadedAssets by remember { mutableStateOf(emptyList<Asset>()) }
+    var assetsLoading by remember { mutableStateOf(true) }
+    var addedAssets by remember { mutableStateOf(emptyList<Asset>()) }
+    var removedAssetIds by remember { mutableStateOf(emptySet<String>()) }
+    val assets by remember { derivedStateOf { shareFilesShown(loadedAssets, addedAssets, removedAssetIds) } }
     var reviewers by remember { mutableStateOf<List<dev.finalish.core.model.User>?>(null) }
     var activity by remember { mutableStateOf<List<dev.finalish.core.model.ShareActivity>?>(null) }
     var inviting by remember { mutableStateOf(false) }
@@ -119,17 +126,25 @@ fun ShareEditorSheet(
 
     LaunchedEffect(initial.id) {
         // GET omits layout/watermark/versions/etc.; a no-op PATCH (same name) returns the full share.
-        runCatching {
+        runCatchingCancellable {
             val current = repo.share(accountId, initial.id)
             repo.updateShare(accountId, initial.id, mapOf("name" to JsonPrimitive(current.name ?: initial.name.orEmpty())))
         }.onSuccess { share = it.copy(shortUrl = it.shortUrl ?: initial.shortUrl); onChanged(share) }
         loaded = true
         // Opening a link's settings means you care about it: notify when it's viewed.
         container.activityWatch.watchShare(accountId, projectId.orEmpty(), share.id, share.name ?: res.getString(R.string.shares_share_link))
-        assets = runCatching { repo.shareAssets(accountId, initial.id) }.getOrDefault(emptyList())
-        // Only secure (invite-only) shares have reviewers; public ones answer 400.
-        reviewers = if (share.access == "secure") runCatching { repo.shareReviewers(accountId, initial.id) }.getOrDefault(emptyList()) else emptyList()
-        activity = runCatching { repo.shareActivities(accountId, initial.id) }.getOrDefault(emptyList())
+        // Independent of each other: a large link's files must not hold up the rest, and one failing leaves the others alone.
+        launch {
+            runCatchingCancellable { repo.shareAssets(accountId, initial.id, partial = { loadedAssets = it }) }
+                .onSuccess { loadedAssets = it }
+                .onFailure { notify(it.userMessage()) } // Whatever pages did arrive stay on screen.
+            assetsLoading = false
+        }
+        launch {
+            // Only secure (invite-only) shares have reviewers; public ones answer 400.
+            reviewers = if (share.access == "secure") runCatchingCancellable { repo.shareReviewers(accountId, initial.id) }.getOrDefault(emptyList()) else emptyList()
+        }
+        launch { activity = runCatchingCancellable { repo.shareActivities(accountId, initial.id) }.getOrDefault(emptyList()) }
     }
 
     /**
@@ -220,13 +235,13 @@ fun ShareEditorSheet(
             }
             if (compact) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    ShareMosaic(accountId, share, assets.orEmpty(), Modifier.width(176.dp).aspectRatio(16f / 9f).clip(RoundedCornerShape(12.dp)), iconSize = 28.dp)
+                    ShareMosaic(accountId, share, assets, Modifier.width(176.dp).aspectRatio(16f / 9f).clip(RoundedCornerShape(12.dp)), iconSize = 28.dp)
                     Box(Modifier.weight(1f)) { title() }
                 }
             } else {
                 // A link with nothing in it gets a short band, not a half-sheet of empty colour.
-                val header = if (assets?.isEmpty() == true) Modifier.fillMaxWidth().height(88.dp) else Modifier.fillMaxWidth().aspectRatio(16f / 9f)
-                ShareMosaic(accountId, share, assets.orEmpty(), header.clip(RoundedCornerShape(16.dp)), iconSize = 34.dp)
+                val header = if (!assetsLoading && assets.isEmpty()) Modifier.fillMaxWidth().height(88.dp) else Modifier.fillMaxWidth().aspectRatio(16f / 9f)
+                ShareMosaic(accountId, share, assets, header.clip(RoundedCornerShape(16.dp)), iconSize = 34.dp)
                 title()
             }
 
@@ -449,7 +464,7 @@ fun ShareEditorSheet(
                             Column(Modifier.weight(1f)) {
                                 val who = ev.user?.displayName ?: stringResource(R.string.shares_activity_someone)
                                 val verb = activityVerbRes(ev.type)?.let { stringResource(it) } ?: ev.type.replace('_', ' ')
-                                val assetName = ev.assetId?.let { id -> assets?.firstOrNull { it.id == id }?.name }
+                                val assetName = ev.assetId?.let { id -> assets.firstOrNull { it.id == id }?.name }
                                 Text(
                                     if (assetName != null) stringResource(R.string.shares_activity_on_asset, who, verb, assetName)
                                     else stringResource(R.string.shares_activity, who, verb),
@@ -463,7 +478,12 @@ fun ShareEditorSheet(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Label(stringResource(R.string.shares_files_in_link) + (assets?.let { " · ${it.size}" } ?: ""))
+                val count = when {
+                    !assetsLoading -> " · ${assets.size}"
+                    assets.isEmpty() -> ""
+                    else -> " · ${assets.size}+"
+                }
+                Label(stringResource(R.string.shares_files_in_link) + count)
                 Spacer(Modifier.weight(1f))
                 if (projectId != null) {
                     androidx.compose.material3.TextButton(onClick = { adding = true }) {
@@ -475,7 +495,7 @@ fun ShareEditorSheet(
             }
             Card {
                 val list = assets
-                if (list == null) {
+                if (list.isEmpty() && assetsLoading) {
                     Text(stringResource(R.string.shares_loading), color = Palette.TextTertiary, modifier = Modifier.padding(16.dp))
                 } else if (list.isEmpty()) {
                     Text(stringResource(R.string.shares_no_assets), color = Palette.TextTertiary, modifier = Modifier.padding(16.dp))
@@ -490,14 +510,18 @@ fun ShareEditorSheet(
                         Icon(
                             Icons.Rounded.Close, stringResource(R.string.shares_remove), tint = Palette.TextTertiary,
                             modifier = Modifier.size(32.dp).clip(RoundedCornerShape(8.dp)).pressable({
-                                assets = list.filterNot { it.id == a.id }
+                                removedAssetIds = removedAssetIds + a.id
                                 scope.launch {
-                                    runCatching { repo.removeFromShare(accountId, share.id, a.id) }
-                                        .onFailure { assets = list; notify(it.userMessage()) }
+                                    runCatchingCancellable { repo.removeFromShare(accountId, share.id, a.id) }
+                                        .onFailure { removedAssetIds = removedAssetIds - a.id; notify(it.userMessage()) }
                                 }
                             }).padding(6.dp),
                         )
                     }
+                }
+                if (assetsLoading && list.isNotEmpty()) {
+                    Divider()
+                    ShareFilesLoadingMore()
                 }
             }
             if (onDelete != null) {
@@ -526,16 +550,21 @@ fun ShareEditorSheet(
         dev.finalish.ui.browser.AssetPickerSheet(
             accountId = accountId,
             projectId = projectId,
-            excludeIds = assets.orEmpty().map { it.id }.toSet(),
+            excludeIds = assets.map { it.id }.toSet(),
             actionLabel = { n -> if (n == 0) res.getString(R.string.shares_choose_files_to_add) else res.getString(R.string.shares_add_n_to_link, n) },
             onDismiss = { adding = false },
             onPick = { picked ->
                 adding = false
-                assets = assets.orEmpty() + picked
+                val pickedIds = picked.map { it.id }.toSet()
+                val readded = removedAssetIds intersect pickedIds
+                addedAssets = addedAssets + picked
+                removedAssetIds = removedAssetIds - pickedIds
                 scope.launch {
-                    val failed = picked.filter { a -> runCatching { repo.addToShare(accountId, share.id, a.id) }.isFailure }
+                    val failed = picked.filter { a -> runCatchingCancellable { repo.addToShare(accountId, share.id, a.id) }.isFailure }
                     if (failed.isNotEmpty()) {
-                        assets = assets.orEmpty().filterNot { a -> failed.any { it.id == a.id } }
+                        val failedIds = failed.map { it.id }.toSet()
+                        addedAssets = addedAssets.filterNot { it.id in failedIds }
+                        removedAssetIds = removedAssetIds + (readded intersect failedIds)
                         notify(res.getQuantityString(R.plurals.shares_couldnt_add_items, failed.size, failed.size))
                     } else {
                         notify(res.getString(R.string.shares_added_n_to_link, picked.size))
@@ -589,6 +618,23 @@ fun ShareEditorSheet(
             passphrase = false
             patch(share.copy(passphrase = p.ifBlank { null }), "passphrase", p.ifBlank { null }?.let { JsonPrimitive(it) } ?: JsonNull)
         }
+    }
+}
+
+/**
+ * The files a link shows: those loaded so far, in the server's order, then those added here,
+ * without those removed here. Pages can overlap with each other and with what was just added.
+ */
+internal fun shareFilesShown(loaded: List<Asset>, added: List<Asset>, removedIds: Set<String>): List<Asset> =
+    (loaded + added).distinctBy { it.id }.filterNot { it.id in removedIds }
+
+/** Closes a link's file list while more pages are on their way. */
+@Composable
+internal fun ShareFilesLoadingMore() {
+    Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        androidx.compose.material3.CircularProgressIndicator(Modifier.size(16.dp), color = Palette.Accent, strokeWidth = 2.dp)
+        Spacer(Modifier.width(12.dp))
+        Text(stringResource(R.string.shares_loading), style = MaterialTheme.typography.bodyMedium, color = Palette.TextTertiary)
     }
 }
 
