@@ -1,0 +1,34 @@
+Inoffizielle App. Final(ish) ist weder mit Adobe oder Frame.io verbunden noch von ihnen unterstützt oder gesponsert. Adobe und Frame.io sind eingetragene Marken oder Marken von Adobe in den USA und/oder anderen Ländern.
+
+Final(ish) ist ein kostenloser Open-Source-Client für Frame.io auf Android-Smartphones und -Tablets. Frame.io hat keine eigene Android-App – Final(ish) bringt die Video-Review von Frame.io auf Android: Cutter, Produzenten und Kunden prüfen Schnitte, kommentieren per Timecode und geben Versionen frei, egal wo sie sind.
+
+REVIEW
+• Framegenauer Player mit Timecode, 0,25–2× Geschwindigkeit, Loop, echten Auflösungen bis 4K und Bild-im-Bild
+• Kommentare mit Timecode und für Bereiche, Zeichnungen auf dem Frame, Emoji, als erledigt markieren
+• Seitenverhältnis-Masken (2.39, 1.85, 9:16…) und Title-/Action-Safe-Hilfslinien
+• Zwei Versionen nebeneinander oder mit Wischregler vergleichen
+• Bilder, PDFs, Audio und Office-Dokumente
+
+FREIGEBEN UND TEILEN
+• Status, Bewertung und eigene Metadatenfelder ändern
+• Freigabelinks erstellen und jede Einstellung bearbeiten: Passwort, Ablaufdatum, Downloads, Wasserzeichen
+• Frame.io-Links direkt in der App öffnen
+
+HOCHLADEN UND HERUNTERLADEN
+• Clips, Fotos und ganze Ordner vom Smartphone hochladen, im Hintergrund und mit Fortsetzung nach einem Verbindungsabbruch
+• Dateien und Ordner herunterladen oder offline speichern, um sie ohne Verbindung zu prüfen
+
+UND AUSSERDEM
+• Benachrichtigungen über neue Kommentare, Erwähnungen und geöffnete Freigabelinks, ganz ohne Server
+• Suche im gesamten Konto
+• Funktioniert mit allen Frame.io-Tarifen, auch Free
+• Smartphones und Tablets, im Hoch- und Querformat
+• Deutsch, Englisch, Italienisch, Französisch, Spanisch und Portugiesisch (Brasilien)
+• Demo-Modus: App ohne Konto ausprobieren
+
+Melde dich mit deiner eigenen Adobe ID an; du brauchst ein bestehendes Frame.io-Konto (V4).
+
+Um Frame.io-Links in der App zu öffnen, aktiviere „Frame.io-Links“ unter Einstellungen › Berechtigungen in der App.
+
+Keine Werbung, kein Tracking. Open Source unter GPL-3.0: github.com/TeoVader/finalish
+Schüttle das Smartphone, um einen Fehler zu melden oder eine Funktion vorzuschlagen.

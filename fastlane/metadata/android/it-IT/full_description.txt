@@ -1,0 +1,34 @@
+App non ufficiale. Final(ish) non è affiliata, approvata o sponsorizzata da Adobe o Frame.io. Adobe e Frame.io sono marchi registrati o marchi di Adobe negli Stati Uniti e/o in altri paesi.
+
+Final(ish) è un client Frame.io gratuito e open source per telefoni e tablet Android. Frame.io non ha un'app Android: Final(ish) porta su Android la revisione video di Frame.io, così montatori, produttori e clienti possono rivedere i montaggi, lasciare commenti al timecode e approvare le versioni ovunque si trovino.
+
+REVISIONE
+• Player preciso al fotogramma con timecode, velocità da 0,25× a 2×, loop, risoluzioni reali fino al 4K e picture-in-picture
+• Commenti al timecode e su intervalli, disegni sul fotogramma, emoji, segna come fatto
+• Maschere di formato (2.39, 1.85, 9:16…) e guide title/action safe
+• Confronto di due versioni affiancate o con tendina
+• Immagini, PDF, audio e documenti Office
+
+APPROVAZIONE E CONDIVISIONE
+• Modifica stato, valutazione e campi metadati personalizzati
+• Crea link di condivisione e modifica ogni impostazione: passphrase, scadenza, download, filigrana
+• Apri i link di Frame.io direttamente nell'app
+
+CARICAMENTO E DOWNLOAD
+• Carica clip, foto e intere cartelle dal telefono, in background, con ripresa dopo un calo di rete
+• Scarica file e cartelle, o tieni copie offline per rivederle senza connessione
+
+E ANCORA
+• Notifiche per nuovi commenti, menzioni e link di condivisione aperti, senza bisogno di server
+• Ricerca in tutto l'account
+• Funziona con tutti i piani Frame.io, anche Free
+• Telefoni e tablet, in verticale e in orizzontale
+• Italiano, inglese, tedesco, francese, spagnolo e portoghese (Brasile)
+• Modalità demo: prova l'app senza account
+
+Accedi con il tuo Adobe ID; serve un account Frame.io esistente (V4).
+
+Per aprire i link di Frame.io nell'app, attiva Link di Frame.io in Impostazioni › Autorizzazioni dell'app.
+
+Niente pubblicità, nessun tracciamento. Open source con licenza GPL-3.0: github.com/TeoVader/finalish
+Scuoti il telefono per segnalare un bug o proporre una funzione.

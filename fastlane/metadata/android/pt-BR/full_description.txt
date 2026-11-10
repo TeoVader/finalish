@@ -1,0 +1,34 @@
+App não oficial. O Final(ish) não é afiliado, endossado nem patrocinado pela Adobe ou pelo Frame.io. Adobe e Frame.io são marcas registradas ou marcas comerciais da Adobe nos Estados Unidos e/ou em outros países.
+
+O Final(ish) é um cliente do Frame.io gratuito e de código aberto para celulares e tablets Android. O Frame.io não tem app para Android: o Final(ish) leva a revisão de vídeo do Frame.io para o Android, para que editores, produtores e clientes revisem cortes, comentem no timecode e aprovem versões de onde estiverem.
+
+REVISÃO
+• Player preciso ao quadro com timecode, velocidade de 0,25× a 2×, loop, resoluções reais até 4K e picture-in-picture
+• Comentários no timecode e em intervalos, desenhos sobre o quadro, emoji, marcar como concluído
+• Máscaras de proporção (2.39, 1.85, 9:16…) e guias title/action safe
+• Compare duas versões lado a lado ou com cortina
+• Imagens, PDFs, áudio e documentos do Office
+
+APROVAR E COMPARTILHAR
+• Altere status, avaliação e campos de metadados personalizados
+• Crie links de compartilhamento e ajuste cada opção: senha, expiração, downloads, marca d'água
+• Abra links do Frame.io direto no app
+
+UPLOAD E DOWNLOAD
+• Envie clipes, fotos e pastas inteiras do celular, em segundo plano, retomando após uma queda de rede
+• Baixe arquivos e pastas, ou guarde cópias offline para revisar sem conexão
+
+E MAIS
+• Notificações de novos comentários, menções e links compartilhados abertos, sem precisar de servidor
+• Busca em toda a conta
+• Funciona com todos os planos do Frame.io, incluindo o Free
+• Celulares e tablets, na vertical e na horizontal
+• Português (Brasil), inglês, italiano, alemão, francês e espanhol
+• Modo demo: experimente o app sem conta
+
+Entre com o seu próprio Adobe ID; é preciso ter uma conta do Frame.io (V4).
+
+Para abrir links do Frame.io no app, ative "Links do Frame.io" em Configurações › Permissões do app.
+
+Sem anúncios, sem rastreamento. Código aberto sob a licença GPL-3.0: github.com/TeoVader/finalish
+Sacuda o celular para relatar um bug ou sugerir um recurso.
