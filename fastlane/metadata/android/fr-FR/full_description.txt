@@ -1,0 +1,34 @@
+Application non officielle. Final(ish) n'est ni affiliée à Adobe ou Frame.io, ni approuvée ou sponsorisée par eux. Adobe et Frame.io sont des marques déposées ou des marques commerciales d'Adobe aux États-Unis et/ou dans d'autres pays.
+
+Final(ish) est un client Frame.io gratuit et open source pour smartphones et tablettes Android. Frame.io n'a pas d'application Android : Final(ish) apporte la revue vidéo de Frame.io sur Android, pour que monteurs, producteurs et clients revoient les montages, commentent au timecode et valident les versions où qu'ils soient.
+
+REVUE
+• Lecteur précis à l'image près avec timecode, vitesse de 0,25× à 2×, boucle, vraies résolutions jusqu'en 4K et picture-in-picture
+• Commentaires au timecode et sur une plage, dessins sur l'image, emoji, marquer comme terminé
+• Masques de format (2.39, 1.85, 9:16…) et repères title/action safe
+• Comparaison de deux versions côte à côte ou avec un volet
+• Images, PDF, audio et documents Office
+
+VALIDER ET PARTAGER
+• Modifier le statut, la note et les champs de métadonnées personnalisés
+• Créer des liens de partage et régler chaque option : mot de passe, expiration, téléchargements, filigrane
+• Ouvrir les liens Frame.io directement dans l'application
+
+ENVOI ET TÉLÉCHARGEMENT
+• Envoyer des clips, des photos et des dossiers entiers depuis le téléphone, en arrière-plan, avec reprise après une coupure réseau
+• Télécharger fichiers et dossiers, ou garder des copies hors ligne pour les revoir sans connexion
+
+ET AUSSI
+• Notifications des nouveaux commentaires, mentions et liens de partage ouverts, sans serveur
+• Recherche dans tout le compte
+• Compatible avec toutes les offres Frame.io, y compris Free
+• Smartphones et tablettes, en portrait et en paysage
+• Français, anglais, italien, allemand, espagnol et portugais (Brésil)
+• Mode démo : essayez l'application sans compte
+
+Connectez-vous avec votre propre Adobe ID ; un compte Frame.io existant (V4) est nécessaire.
+
+Pour ouvrir les liens Frame.io dans l'application, activez « Liens Frame.io » dans Paramètres › Autorisations de l'application.
+
+Sans publicité, sans pistage. Open source sous licence GPL-3.0 : github.com/TeoVader/finalish
+Secouez le téléphone pour signaler un bug ou proposer une fonction.
