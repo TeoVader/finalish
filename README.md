@@ -19,7 +19,12 @@
 Review videos, leave time-coded comments, approve versions and share review links from your Android phone
 or tablet. Built with Kotlin, Jetpack Compose and Media3, designed to feel fast and look great.
 Website: [teovader.github.io/finalish](https://teovader.github.io/finalish/) ·
-Download: [latest APK](https://github.com/TeoVader/finalish/releases/latest).
+Download: [Google Play](https://play.google.com/store/apps/details?id=dev.finalish) or the
+[latest APK](https://github.com/TeoVader/finalish/releases/latest).
+
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=dev.finalish"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80"></a>
+</p>
 
 Frame.io has no official Android app (as of 2026). Final(ish) brings the Frame.io review workflow to
 Android phones and tablets, using the official Frame.io **V4** API.
@@ -118,8 +123,9 @@ report it, or [open an issue](https://github.com/TeoVader/finalish/issues).
 
 ## Download and build
 
-Download the signed APK from [Releases](https://github.com/TeoVader/finalish/releases/latest) (pre-release,
-Android 8.0 or later); Google Play will follow. Or build it yourself with JDK 21 and the Android SDK:
+Install it from [Google Play](https://play.google.com/store/apps/details?id=dev.finalish) (Android 8.0 or
+later), or download the signed APK from [Releases](https://github.com/TeoVader/finalish/releases/latest).
+Or build it yourself with JDK 21 and the Android SDK:
 
 ```bash
 ./gradlew assembleDebug        # app/build/outputs/apk/debug/
