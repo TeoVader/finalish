@@ -28,7 +28,7 @@ E ANCORA
 
 Accedi con il tuo Adobe ID; serve un account Frame.io esistente (V4).
 
-Per aprire i link di Frame.io nell'app, attiva Link di Frame.io in Impostazioni › Permessi dell'app.
+Per aprire i link di Frame.io nell'app, attiva Link di Frame.io in Impostazioni › Autorizzazioni dell'app.
 
 Niente pubblicità, nessun tracciamento. Open source con licenza GPL-3.0: github.com/TeoVader/finalish
 Scuoti il telefono per segnalare un bug o proporre una funzione.
