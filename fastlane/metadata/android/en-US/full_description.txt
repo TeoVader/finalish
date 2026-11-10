@@ -1,0 +1,34 @@
+Unofficial app. Final(ish) is not affiliated with, endorsed by or sponsored by Adobe or Frame.io. Adobe and Frame.io are either registered trademarks or trademarks of Adobe in the United States and/or other countries.
+
+Final(ish) is a free, open-source Frame.io client for Android phones and tablets. Frame.io has no Android app of its own, so Final(ish) brings the Frame.io video review workflow to Android: editors, producers and clients can review cuts, leave timecoded comments and approve versions on the go.
+
+REVIEW
+• Frame-accurate player with timecode, 0.25–2× speed, loop, real resolutions up to 4K and picture-in-picture
+• Timecoded and range comments, drawings on the frame, emoji, mark as done
+• Aspect-ratio masks (2.39, 1.85, 9:16…) and title/action safe guides
+• Compare two versions side by side or with a wipe slider
+• Images, PDFs, audio and Office documents
+
+APPROVE AND SHARE
+• Change status, rating and custom metadata fields
+• Create share links and edit every setting: passphrase, expiry, downloads, watermark
+• Open Frame.io links straight in the app
+
+UPLOAD AND DOWNLOAD
+• Upload clips, photos and whole folders from your phone, in the background, resuming after a network drop
+• Download files and folders, or keep copies offline for review without a connection
+
+AND MORE
+• Notifications for new comments, mentions and opened share links, with no server needed
+• Account-wide search
+• Works on every Frame.io plan, Free included
+• Phones and tablets, portrait and landscape
+• English, Italian, German, French, Spanish and Portuguese (Brazil)
+• Demo mode: try the app without an account
+
+Sign in with your own Adobe ID; you need an existing Frame.io account (V4).
+
+To open Frame.io links in the app: Settings › Apps › Final(ish) › Open by default › add the links.
+
+No ads, no tracking. Open source under GPL-3.0: github.com/TeoVader/finalish
+Shake the phone to report a bug or suggest a feature.
