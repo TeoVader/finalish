@@ -28,7 +28,7 @@ AND MORE
 
 Sign in with your own Adobe ID; you need an existing Frame.io account (V4).
 
-To open Frame.io links in the app: Settings › Apps › Final(ish) › Open by default › add the links.
+To open Frame.io links in the app, turn on Frame.io links in the app's Settings › Permissions.
 
 No ads, no tracking. Open source under GPL-3.0: github.com/TeoVader/finalish
 Shake the phone to report a bug or suggest a feature.
