@@ -379,13 +379,14 @@ const streamedReport = (e, stream) => worker.fetch(new Request('https://relay.te
   headers: { 'content-type': `multipart/form-data; boundary=${BOUNDARY}`, 'cf-connecting-ip': IP },
 }), e);
 
-const MB = new Uint8Array(1024 * 1024);
+// Small chunks, so the bytes the runtime reads ahead (a chunk or two) don't hide what the relay read.
+const CHUNK = new Uint8Array(16 * 1024);
 
 test('a forged ticket is refused before any attachment is read', async () => {
   const e = env();
   mockGitHub();
   const meta = JSON.stringify({ installId: INSTALL, ticket: 'forged.ticket', powNonce: '1', title: 'x' });
-  const body = streamedForm(part('report', meta) + part('screenshot', '', 'a.png'), () => MB);
+  const body = streamedForm(part('report', meta) + part('screenshot', '', 'a.png'), () => CHUNK);
   const res = await streamedReport(e, body.stream);
   assert.equal(res.status, 403);
   assert.ok(body.pulled() < 64 * 1024, `read ${body.pulled()} bytes`);
@@ -397,10 +398,10 @@ test('a body without Content-Length stops at the size limit while it streams', a
   const t = await ticketFor(e);
   await later(10_000, async () => {
     const meta = JSON.stringify({ installId: INSTALL, ticket: t.ticket, powNonce: await solve(t.seed, t.bits), title: 'x' });
-    const body = streamedForm(part('report', meta) + part('screenshot', '', 'a.png'), () => MB);
+    const body = streamedForm(part('report', meta) + part('screenshot', '', 'a.png'), () => CHUNK);
     const res = await streamedReport(e, body.stream);
     assert.equal(res.status, 413);
-    assert.ok(body.pulled() <= 22 * 1024 * 1024, `read ${body.pulled()} bytes`);
+    assert.ok(body.pulled() <= 21 * 1024 * 1024 + 4 * CHUNK.length, `read ${body.pulled()} bytes`);
     assert.equal(calls.length, 0);
     // The ticket was not spent: the same report, small enough, still goes through.
     const ok = await sendReport(e, reportForm(t, await solve(t.seed, t.bits)));
@@ -410,10 +411,10 @@ test('a body without Content-Length stops at the size limit while it streams', a
 
 test('a body that does not start with the report is refused after a few kilobytes', async () => {
   const e = env();
-  const body = streamedForm(`--${BOUNDARY}\r\nContent-Disposition: form-data; name="screenshot"; filename="a.png"\r\n\r\n`, () => MB);
+  const body = streamedForm(`--${BOUNDARY}\r\nContent-Disposition: form-data; name="screenshot"; filename="a.png"\r\n\r\n`, () => CHUNK);
   const res = await streamedReport(e, body.stream);
   assert.equal(res.status, 400);
-  assert.ok(body.pulled() < 2 * 1024 * 1024, `read ${body.pulled()} bytes`);
+  assert.ok(body.pulled() < 128 * 1024, `read ${body.pulled()} bytes`);
 });
 
 test('a report part larger than its limit is refused', async () => {
@@ -433,12 +434,12 @@ test('a Content-Length over the limit is refused without reading', async () => {
 
 test('/challenge bodies are limited too', async () => {
   const e = env();
-  const body = streamedForm(`{"installId":"${INSTALL}","pad":"`, () => MB);
+  const body = streamedForm(`{"installId":"${INSTALL}","pad":"`, () => CHUNK);
   const res = await worker.fetch(new Request('https://relay.test/challenge', {
     method: 'POST', body: body.stream, duplex: 'half', headers: { 'content-type': 'application/json', 'cf-connecting-ip': IP },
   }), e);
   assert.equal(res.status, 413);
-  assert.ok(body.pulled() < 2 * 1024 * 1024);
+  assert.ok(body.pulled() < 64 * 1024, `read ${body.pulled()} bytes`);
   const declared = await worker.fetch(post('/challenge', JSON.stringify({ installId: INSTALL }), { 'content-length': '5000', 'cf-connecting-ip': IP }), e);
   assert.equal(declared.status, 413);
 });
