@@ -1,5 +1,6 @@
 package dev.finalish.core.data
 
+import dev.finalish.core.model.linkImageKey
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -16,23 +17,34 @@ import kotlinx.serialization.json.JsonPrimitive
  *   download exists (`MediaLink.hasStream`, `hasDownload`) and shows cached images by their stable
  *   key (`ImageRef`).
  * - Every `signed_url` field (an `ImageRef`'s link) is dropped.
+ * - Bare signed image links (a project's, account's or workspace's `image`, a user's `avatar_url`)
+ *   are dropped too, and replaced by their [linkImageKey] in `image_key` / `avatar_key`: a copy
+ *   read back from disk shows the cached picture by that key, or the initials, until a refresh
+ *   brings a fresh link.
  */
 internal object DiskScrub {
     private val LINK_FIELDS = listOf("url", "download_url", "inline_url")
 
+    /** Bare image links and the field that keeps each one's image cache key on disk. */
+    private val IMAGE_FIELDS = mapOf("image" to "image_key", "avatar_url" to "avatar_key")
+
     fun scrub(element: JsonElement): JsonElement = when (element) {
         is JsonObject -> JsonObject(
-            element.mapNotNull { (name, value) ->
+            element.flatMap { (name, value) ->
                 when {
-                    name == "signed_url" -> null
-                    name == "media_links" && value is JsonObject -> name to scrubMediaLinks(value)
-                    else -> name to scrub(value)
+                    name == "signed_url" -> emptyList()
+                    name == "media_links" && value is JsonObject -> listOf(name to scrubMediaLinks(value))
+                    name in IMAGE_FIELDS && value is JsonPrimitive && value.isString -> imageKey(IMAGE_FIELDS.getValue(name), value.content)
+                    else -> listOf(name to scrub(value))
                 }
             }.toMap(),
         )
         is JsonArray -> JsonArray(element.map(::scrub))
         else -> element
     }
+
+    private fun imageKey(keyField: String, url: String): List<Pair<String, JsonElement>> =
+        if (url.isBlank()) emptyList() else listOf(keyField to JsonPrimitive(linkImageKey(url)))
 
     private fun scrubMediaLinks(links: JsonObject) = JsonObject(
         links.mapValues { (_, link) -> if (link is JsonObject) scrubLink(link) else link },

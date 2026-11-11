@@ -1,6 +1,7 @@
 package dev.finalish.core.data
 
 import dev.finalish.core.model.User
+import dev.finalish.core.model.linkImageKey
 import dev.finalish.testing.FakeFrameio.Companion.page
 import dev.finalish.testing.ViewModelTest
 import dev.finalish.testing.awaitValue
@@ -16,7 +17,8 @@ import org.robolectric.annotation.Config
 
 /**
  * Guest comment authors are remembered with their avatar, a signed link: once it expires the
- * audit log is asked again, without ever losing the name or asking twice in a session.
+ * audit log is asked again, without ever losing the name or asking twice in a session. The disk
+ * copy keeps only the avatar's image cache key, so an author from an earlier session is asked again.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35], application = android.app.Application::class)
@@ -25,6 +27,9 @@ class GuestAuthorsTest : ViewModelTest() {
 
     private val expired = "https://example.com/ann.jpg?exp=1000&sig=x"
     private val valid = "https://example.com/ann.jpg?exp=4102444800&sig=y"
+
+    /** What an earlier session left on disk for Ann: her avatar's key, without the link. */
+    private val annFromDisk = User(name = "Ann", avatarKey = linkImageKey(expired))
 
     @Before fun comments() {
         frameio.on(
@@ -64,7 +69,7 @@ class GuestAuthorsTest : ViewModelTest() {
         remember(User(name = "Ann", avatarUrl = expired))
         frameio.on(audit, """{"errors":[]}""", code = 500)
 
-        assertEquals(User(name = "Ann", avatarUrl = expired), author())
+        assertEquals(annFromDisk, author())
         assertEquals(1, auditCalls())
     }
 
@@ -78,10 +83,15 @@ class GuestAuthorsTest : ViewModelTest() {
         assertEquals(0, auditCalls())
     }
 
-    @Test fun `a valid avatar makes no audit call`() {
+    @Test fun `an avatar from an earlier session is looked up once, its link wasn't kept`() {
         remember(User(name = "Ann", avatarUrl = valid))
         frameio.on(audit, logged(valid))
 
+        assertEquals(User(name = "Ann", avatarUrl = valid), author())
+        assertEquals(1, auditCalls())
+
+        // Valid now, in memory: no further lookup.
+        frameio.calls.clear()
         assertEquals(User(name = "Ann", avatarUrl = valid), author())
         assertEquals(0, auditCalls())
     }
@@ -98,11 +108,11 @@ class GuestAuthorsTest : ViewModelTest() {
         remember(User(name = "Ann", avatarUrl = expired))
         frameio.on(audit, page())
 
-        assertEquals(User(name = "Ann", avatarUrl = expired), author())
+        assertEquals(annFromDisk, author())
         assertEquals(1, auditCalls())
 
         frameio.calls.clear()
-        assertEquals(User(name = "Ann", avatarUrl = expired), author())
+        assertEquals(annFromDisk, author())
         assertEquals(0, auditCalls())
     }
 
