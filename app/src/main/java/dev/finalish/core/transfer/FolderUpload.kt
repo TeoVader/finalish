@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
+import dev.finalish.core.notify.privateOnLockscreen
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
@@ -236,6 +237,7 @@ class FolderUploadWorker(context: Context, params: WorkerParameters) : Coroutine
         val ctx = applicationContext
         TransferNotifications.ensureChannel(ctx)
         val n = NotificationCompat.Builder(ctx, TransferNotifications.CHANNEL)
+            .privateOnLockscreen(ctx, TransferNotifications.CHANNEL, R.string.core_notify_public_transfer)
             .setSmallIcon(android.R.drawable.stat_notify_error)
             .setContentTitle(ctx.getString(R.string.core_folder_upload_failed, folderName))
             .setContentText(reason)

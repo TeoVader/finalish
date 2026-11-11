@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import dev.finalish.core.notify.privateOnLockscreen
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -526,6 +527,7 @@ internal object Notifier {
         val intent = openIntent(context, link)
         val pi = PendingIntent.getActivity(context, key.hashCode(), intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val n = NotificationCompat.Builder(context, CHANNEL)
+            .privateOnLockscreen(context, CHANNEL, R.string.core_notify_public_activity)
             .setSmallIcon(R.drawable.ic_stat_finalish)
             .setContentTitle(title)
             .setContentText(text)

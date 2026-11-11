@@ -192,4 +192,6 @@
     </plurals>
     <string name="core_folder_upload_creating">Creating folders on Frame.io…</string>
     <string name="core_folder_upload_failed">Couldn’t upload “%1$s”</string>
+    <string name="core_notify_public_activity">New activity in Final(ish)</string>
+    <string name="core_notify_public_transfer">Transfer in Final(ish)</string>
 </resources>

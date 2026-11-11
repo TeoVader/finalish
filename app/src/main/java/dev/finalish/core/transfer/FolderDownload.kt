@@ -4,6 +4,7 @@ import android.app.DownloadManager
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Environment
+import dev.finalish.core.notify.privateOnLockscreen
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.work.CoroutineWorker
@@ -284,6 +285,7 @@ class FolderDownloadWorker(context: Context, params: WorkerParameters) : Corouti
         ).joinToString(" · ")
         TransferNotifications.ensureChannel(ctx)
         val n = NotificationCompat.Builder(ctx, TransferNotifications.CHANNEL)
+            .privateOnLockscreen(ctx, TransferNotifications.CHANNEL, R.string.core_notify_public_transfer)
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
             .setContentTitle(ctx.getString(R.string.core_folder_download_done, job.folderName))
             .setContentText(text)
