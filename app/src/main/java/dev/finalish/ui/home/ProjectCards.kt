@@ -89,7 +89,7 @@ internal fun ProjectStack(
     name: String,
     meta: String,
     seed: String,
-    image: String?,
+    image: dev.finalish.core.model.ImageRef?,
     cover: dev.finalish.core.model.FolderPreview,
     onMenu: () -> Unit,
     modifier: Modifier = Modifier,
@@ -97,8 +97,8 @@ internal fun ProjectStack(
     restricted: Boolean = false,
     newComments: Int = 0,
 ) {
-    // The project's own image is keyed by its link without the signature, as before.
-    val front = image?.let { dev.finalish.core.model.ImageRef(dev.finalish.ui.components.stableImageKey(it), it) } ?: cover.thumbnails.firstOrNull()
+    // The project's own image, keyed by its link without the signature (only the key in a disk copy).
+    val front = image ?: cover.thumbnails.firstOrNull()
     val backs = if (image != null) emptyList() else cover.thumbnails.drop(1).take(2)
     val edge = if (large) 14.dp else 11.dp
     Column(modifier) {
@@ -281,7 +281,7 @@ internal fun ProjectCard(
         meta = listOfNotNull(Format.relative(project.updatedAt).ifBlank { null }, Format.bytes(project.storage).takeIf { project.storage > 0 })
             .joinToString(" · "),
         seed = project.id,
-        image = project.image,
+        image = project.imageRef,
         cover = cover,
         onMenu = onMenu,
         large = large,

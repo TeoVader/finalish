@@ -140,8 +140,8 @@ fun Modifier.shimmer(shape: androidx.compose.ui.graphics.Shape = RoundedCornerSh
 
 private const val SHIMMER_MS = 1400L
 
-/** Signed media URLs rotate their query string; cache by path instead. */
-fun stableImageKey(url: String): String = url.substringBefore('?')
+/** Signed media URLs rotate their query string; cache by (a hash of) the path instead. */
+fun stableImageKey(url: String): String = dev.finalish.core.model.linkImageKey(url)
 
 /**
  * A request for [url] cached under [key]. Without a URL (a value read back from the disk cache,
@@ -267,7 +267,8 @@ fun Avatar(user: User?, size: Dp = 28.dp, modifier: Modifier = Modifier, ring: C
             fontSize = (size.value * 0.38f).sp,
             fontWeight = FontWeight.SemiBold,
         )
-        user?.avatarUrl?.let { RemoteImage(it, Modifier.fillMaxSize(), fallback = {}) }
+        // Over the initials; a copy from the disk cache has only the key, so it shows if cached.
+        user?.avatar?.let { RemoteImage(it, Modifier.fillMaxSize(), fallback = {}) }
     }
 }
 
