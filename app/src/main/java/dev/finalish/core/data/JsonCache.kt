@@ -104,7 +104,10 @@ class JsonCache(private val root: File) {
                 tmp.writeText(clean.toString())
                 // Keeps its age for the trim, unless a put wrote the file since it was read.
                 tmp.setLastModified(modified)
-                if (f.lastModified() != modified || !tmp.renameTo(f)) tmp.delete()
+                val replaced = f.lastModified() == modified && runCatching {
+                    java.nio.file.Files.move(tmp.toPath(), f.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING, java.nio.file.StandardCopyOption.ATOMIC_MOVE)
+                }.isSuccess
+                if (!replaced) tmp.delete()
             }
         }
         // Whatever was left (an unreadable file) is gone or clean: don't scan again.
