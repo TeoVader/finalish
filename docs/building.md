@@ -50,4 +50,4 @@ app/src/main/java/dev/finalish
     ├── search, transfers, shares, settings, login
 ```
 
-There is no DI framework, just a small `AppContainer`. Playback uses a 768 MB LRU media cache keyed on stable URLs (Frame.io links are signed), so re-opening a clip is instant.
+There is no DI framework, just a small `AppContainer`. Playback uses a 768 MB LRU media cache keyed on stable URLs (Frame.io links are signed), so re-opening a clip is instant. Frame.io asks clients not to store its signed `media_links`, so they live in memory only: the disk copy of API responses (`JsonCache`, through `DiskScrub`) keeps which links exist but not the links, and images are cached under stable keys (asset id + rendition, `ImageRef`), so covers and thumbnails still show offline after a restart.

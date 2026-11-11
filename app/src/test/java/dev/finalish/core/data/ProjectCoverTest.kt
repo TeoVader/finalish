@@ -2,11 +2,15 @@ package dev.finalish.core.data
 
 import dev.finalish.core.model.Asset
 import dev.finalish.core.model.FolderPreview
+import dev.finalish.core.model.ImageRef
+import dev.finalish.core.model.imageKey
 import dev.finalish.core.model.Project
 import dev.finalish.testing.FakeFrameio.Companion.page
 import dev.finalish.testing.ViewModelTest
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -32,15 +36,15 @@ class ProjectCoverTest : ViewModelTest() {
 
     @Test fun `an expired cached cover is fetched again and replaced`() {
         frameio.on(route, page(child(expired)))
-        assertEquals(listOf(expired), cover().thumbnails)
+        assertEquals(listOf(expired), cover().thumbnails.map { it.url })
 
         frameio.on(route, page(child(valid)))
-        assertEquals(listOf(valid), cover().thumbnails)
+        assertEquals(listOf(valid), cover().thumbnails.map { it.url })
 
         // The fresh links replaced the old entry: no further request.
         frameio.calls.clear()
         frameio.on(route, page(child(alsoValid)))
-        assertEquals(listOf(valid), cover().thumbnails)
+        assertEquals(listOf(valid), cover().thumbnails.map { it.url })
         assertEquals(emptyList<String>(), frameio.calls)
     }
 
@@ -49,7 +53,7 @@ class ProjectCoverTest : ViewModelTest() {
         cover()
         frameio.calls.clear()
 
-        assertEquals(listOf(valid), cover().thumbnails)
+        assertEquals(listOf(valid), cover().thumbnails.map { it.url })
         assertEquals(emptyList<String>(), frameio.calls)
     }
 
@@ -58,17 +62,17 @@ class ProjectCoverTest : ViewModelTest() {
         cover()
         frameio.on(route, """{"errors":[]}""", code = 500)
 
-        assertEquals(listOf(expired), cover().thumbnails)
+        assertEquals(listOf(expired), cover().thumbnails.map { it.url })
     }
 
     @Test fun `an expired folder preview is fetched again`() {
         frameio.on(route, page(child(expired)))
-        assertEquals(FolderPreview(listOf(expired), 1), preview())
+        assertEquals(FolderPreview(listOf(ImageRef(imageKey("f1", "thumbnail"), expired)), 1), preview())
 
         frameio.on(route, page(child(valid)))
-        assertEquals(listOf(valid), preview()?.thumbnails)
+        assertEquals(listOf(valid), preview()?.thumbnails?.map { it.url })
         frameio.calls.clear()
-        assertEquals(listOf(valid), preview()?.thumbnails)
+        assertEquals(listOf(valid), preview()?.thumbnails?.map { it.url })
         assertEquals(emptyList<String>(), frameio.calls)
     }
 
@@ -77,6 +81,60 @@ class ProjectCoverTest : ViewModelTest() {
         preview()
         frameio.on(route, """{"errors":[]}""", code = 500)
 
-        assertEquals(listOf(expired), preview()?.thumbnails)
+        assertEquals(listOf(expired), preview()?.thumbnails?.map { it.url })
+    }
+
+    /** The same cache folder read by a new process: memory is empty, only the disk copy is left. */
+    private fun restarted() = dev.finalish.testing.FakeFrameio(app.cacheDir.resolve("test-api-cache"))
+
+    private fun diskText() = app.cacheDir.resolve("test-api-cache/api").listFiles()!!.joinToString("\n") { it.readText() }
+
+    @Test fun `no signed link reaches the disk`() {
+        frameio.on(route, page(child(valid)))
+        cover()
+        preview()
+        assertFalse(diskText().contains("Signature"))
+        assertFalse(diskText().contains("new.jpg"))
+    }
+
+    @Test fun `after a restart the cover keeps its keys and fetches fresh links`() {
+        frameio.on(route, page(child(valid)))
+        cover()
+
+        val next = restarted()
+        next.on(route, page(child(alsoValid)))
+        val again = runBlocking { next.repository.projectCover("acc", project) }
+        assertEquals(listOf(ImageRef(imageKey("f1", "thumbnail"), alsoValid)), again.thumbnails)
+    }
+
+    @Test fun `offline after a restart, covers and previews still name their images`() {
+        frameio.on(route, page(child(valid)))
+        cover()
+
+        val next = restarted()
+        next.on(route, """{"errors":[]}""", code = 500)
+        val key = ImageRef(imageKey("f1", "thumbnail"))
+        assertEquals(listOf(key), runBlocking { next.repository.projectCover("acc", project) }.thumbnails)
+        assertEquals(listOf(key), runBlocking { next.repository.folderPreview("acc", folder) }?.thumbnails)
+    }
+
+    @Test fun `offline after a restart, a file keeps its thumbnail key and knows its download exists`() {
+        val file = """{"id":"f1","type":"file","name":"cut.mov","media_links":{"thumbnail":{"url":"$valid"},""" +
+            """"original":{"download_url":"$valid"},"efficient":{"url":null}}}"""
+        frameio.on("GET accounts/acc/files/f1", dev.finalish.testing.FakeFrameio.data(file))
+        runBlocking { frameio.repository.file("acc", "f1").collect {} }
+
+        val next = restarted()
+        next.on("GET accounts/acc/files/f1", """{"errors":[]}""", code = 500)
+        val result = runBlocking { next.repository.file("acc", "f1").toList() }.last()
+        assertEquals(false, result.loading)
+        val cached = result.data!!
+        assertEquals(null, cached.thumbnailUrl)
+        assertEquals(ImageRef(imageKey("f1", "thumbnail")), cached.thumbnail)
+        assertEquals(true, cached.mediaLinks?.original?.hasDownload)
+        assertEquals(null, cached.mediaLinks?.original?.downloadUrl)
+        assertEquals(true, cached.mediaLinks?.withoutUrls)
+        // A link Frame.io sent empty stays empty: no download or picture is made up.
+        assertEquals(false, cached.mediaLinks?.efficient?.hasStream)
     }
 }

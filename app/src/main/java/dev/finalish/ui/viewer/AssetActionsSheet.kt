@@ -117,7 +117,7 @@ fun AssetActionsSheet(
                     ActionsPage.Main -> {
                         // Actions the user's role on the project can't do aren't offered (the server would refuse).
                         val access = state.access
-                        val downloadable = access.download && file.mediaLinks?.original?.downloadUrl != null
+                        val downloadable = access.download && file.mediaLinks?.original?.hasDownload == true
                         Header(file, state)
                         // Mockup: three quick actions as tiles, everything else in grouped rows.
                         Row(Modifier.padding(horizontal = 16.dp, vertical = 6.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
@@ -202,7 +202,7 @@ private fun Header(file: Asset, state: ViewerState) {
     // Like the official sheet: the thumbnail with its duration, the name, who uploaded it.
     Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(Modifier.width(150.dp).aspectRatio(16f / 9f).clip(RoundedCornerShape(10.dp)).background(Palette.Surface3)) {
-            RemoteImage(file.thumbnailUrl, Modifier.fillMaxSize(), fallback = {})
+            RemoteImage(file.thumbnail, Modifier.fillMaxSize(), fallback = {})
             file.meta("Duration")?.doubleValue?.takeIf { it > 0 }?.let { d ->
                 Text(
                     Format.clock((d * 1000).toLong()),

@@ -182,7 +182,14 @@ class ViewerViewModel(
                     loadAccess(f.projectId)
                     // The cached copy's signed links may have expired: play from the fresh one (or
                     // from the cache once the refresh failed). An offline copy plays at once.
-                    if (!r.loading || _state.value.offlinePath != null) startPlayback(f)
+                    if (_state.value.offlinePath != null) startPlayback(f)
+                    else if (!r.loading) {
+                        // The disk cache keeps no signed links: with the refresh failed (no network),
+                        // its copy can't play, but that doesn't mean Frame.io withholds the media.
+                        // Keep asking for the file, and play once the links come.
+                        val playable = f.kind == MediaKind.Video || f.kind == MediaKind.Audio || f.kind == MediaKind.Image
+                        if (playable && f.media.mediaLinks?.withoutUrls == true) waitForRendition(f.id, preparing = false) else startPlayback(f)
+                    }
                 }
                 _state.update { it.copy(loading = r.loading && r.data == null, error = if (r.data == null) r.error else null) }
             }
@@ -237,9 +244,13 @@ class ViewerViewModel(
         _state.update { it.copy(preparing = false, mediaUnavailable = true) }
     }
 
-    /** Polls the file until Frame.io has a playable rendition, then starts playback by itself. */
-    private fun waitForRendition(fileId: String) {
-        _state.update { it.copy(preparing = true) }
+    /**
+     * Polls the file until Frame.io has a playable rendition, then starts playback by itself.
+     * [preparing] shows "Frame.io is preparing…" meanwhile; without it the stage just waits (for
+     * links the disk cache doesn't keep), until the file says it is still being prepared.
+     */
+    private fun waitForRendition(fileId: String, preparing: Boolean = true) {
+        if (preparing) _state.update { it.copy(preparing = true) }
         if (preparingJob?.isActive == true) return
         preparingJob = viewModelScope.launch {
             while (true) {
@@ -249,7 +260,8 @@ class ViewerViewModel(
                     .first { it.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED) }
                 val f = runCatching { repo.fileNow(account, fileId) }.getOrNull() ?: continue
                 if (_state.value.file?.id != fileId) return@launch
-                when (mediaState(f, hasLink = pickStreamUrl(f) != null)) {
+                val hasLink = if (f.kind == MediaKind.Image) imageStreamUrl(f) != null else pickStreamUrl(f) != null
+                when (mediaState(f, hasLink = hasLink)) {
                     MediaState.Ready -> {
                         _state.update { it.copy(file = metadata.withMeta(f), preparing = false) }
                         startPlayback(f)
@@ -260,7 +272,7 @@ class ViewerViewModel(
                         _state.update { it.copy(file = metadata.withMeta(f), preparing = false, mediaUnavailable = true) }
                         return@launch
                     }
-                    MediaState.Preparing -> Unit
+                    MediaState.Preparing -> _state.update { it.copy(file = metadata.withMeta(f), preparing = true) }
                 }
             }
         }

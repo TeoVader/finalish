@@ -348,10 +348,10 @@ fun VideoStage(
             ) {
                 VideoSurface(controller, Modifier.fillMaxSize())
                 if (!controller.hasVideo) {
-                    file.thumbnailUrl?.let { t ->
+                    file.thumbnail?.let { t ->
+                        val context = LocalContext.current
                         coil3.compose.AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current).data(t)
-                                .memoryCacheKey(stableImageKey(t)).diskCacheKey(stableImageKey(t)).build(),
+                            model = remember(t.key, t.url == null) { dev.finalish.ui.components.cachedImageRequest(context, t.url, t.key) },
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             modifier = Modifier.fillMaxSize(),
@@ -460,15 +460,17 @@ fun ImageStage(
     val context = LocalContext.current
     var aspect by remember(file.id) { mutableFloatStateOf(0f) }
     val url = offlinePath?.let { File(it) } ?: imageStreamUrl(file)
-    val placeholder = file.thumbnailUrl
+    // The card's thumbnail, by the same key: already in the image cache, even offline.
+    val placeholder = file.thumbnail
     Box(modifier, contentAlignment = Alignment.Center) {
         Box(
             if (aspect > 0f) Modifier.aspectRatio(aspect, matchHeightConstraintsFirst = true) else Modifier.fillMaxSize(),
         ) {
             if (placeholder != null && aspect == 0f) {
                 AsyncImage(
-                    model = ImageRequest.Builder(context).data(placeholder)
-                        .memoryCacheKey(stableImageKey(placeholder)).diskCacheKey(stableImageKey(placeholder)).build(),
+                    model = remember(placeholder.key, placeholder.url == null) {
+                        dev.finalish.ui.components.cachedImageRequest(context, placeholder.url, placeholder.key)
+                    },
                     contentDescription = null, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -791,8 +793,9 @@ fun OtherStage(
 ) {
     val context = LocalContext.current
     val isZip = file.name.endsWith(".zip", ignoreCase = true) || file.media.mediaType == "application/zip"
-    val entries by produceState<List<dev.finalish.core.media.ZipPeek.Entry>?>(null, file.id) {
-        val url = file.mediaLinks?.original?.downloadUrl ?: file.mediaLinks?.original?.inlineUrl
+    // Keyed on the link too: a copy without links (the listing's, or the disk cache's) is followed by one with them.
+    val url = file.mediaLinks?.original?.downloadUrl ?: file.mediaLinks?.original?.inlineUrl
+    val entries by produceState<List<dev.finalish.core.media.ZipPeek.Entry>?>(null, file.id, url != null) {
         if (isZip && url != null) value = withContext(Dispatchers.IO) {
             runCatching {
                 dev.finalish.core.media.ZipPeek.list(dev.finalish.FinalishApp.container(context).baseHttp, url, file.media.fileSize)

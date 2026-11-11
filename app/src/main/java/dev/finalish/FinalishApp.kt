@@ -43,7 +43,11 @@ class AppContainer(val context: Context) {
     private val apiHttp = Network.apiClient(baseHttp, auth)
     val api: FrameioApi = Network.api(apiHttp)
     val settings = SettingsStore(context, appScope)
-    val repository = FrameioRepository(api, JsonCache(context.cacheDir))
+    private val jsonCache = JsonCache(context.cacheDir).also { cache ->
+        // Signed links older versions wrote to disk: removed once, in the background.
+        appScope.launch(Dispatchers.IO) { cache.scrubLegacyFiles() }
+    }
+    val repository = FrameioRepository(api, jsonCache)
     val transfers = TransferStore(context.filesDir)
     val transferManager = TransferManager(context, transfers, settings, appScope)
     val activityWatch = dev.finalish.core.notify.ActivityWatch(context)

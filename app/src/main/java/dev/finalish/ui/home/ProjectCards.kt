@@ -66,14 +66,12 @@ fun projectGradient(seed: String): Brush {
  * Android version, and its tiny bitmap gets its own memory-cache entry.
  */
 @Composable
-private fun FrostedImage(url: String, modifier: Modifier) {
+private fun FrostedImage(image: dev.finalish.core.model.ImageRef, modifier: Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
-    val key = dev.finalish.ui.components.stableImageKey(url)
-    val request = androidx.compose.runtime.remember(key) {
-        coil3.request.ImageRequest.Builder(context).data(url)
+    val request = androidx.compose.runtime.remember(image.key, image.url == null) {
+        dev.finalish.ui.components.cachedImageRequest(context, image.url, image.key).newBuilder()
             .size(FROST_PX)
-            .memoryCacheKey("$key#frost$FROST_PX")
-            .diskCacheKey(key)
+            .memoryCacheKey("${image.key}#frost$FROST_PX")
             .build()
     }
     coil3.compose.AsyncImage(request, null, modifier, contentScale = androidx.compose.ui.layout.ContentScale.Crop)
@@ -99,7 +97,8 @@ internal fun ProjectStack(
     restricted: Boolean = false,
     newComments: Int = 0,
 ) {
-    val front = image ?: cover.thumbnails.firstOrNull()
+    // The project's own image is keyed by its link without the signature, as before.
+    val front = image?.let { dev.finalish.core.model.ImageRef(dev.finalish.ui.components.stableImageKey(it), it) } ?: cover.thumbnails.firstOrNull()
     val backs = if (image != null) emptyList() else cover.thumbnails.drop(1).take(2)
     val edge = if (large) 14.dp else 11.dp
     Column(modifier) {

@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import dev.finalish.R
 import dev.finalish.core.model.Asset
 import dev.finalish.core.model.FolderPreview
+import dev.finalish.core.model.ImageRef
 import dev.finalish.core.util.Format
 import dev.finalish.ui.components.RemoteImage
 import dev.finalish.ui.components.pressable
@@ -142,7 +143,7 @@ fun FolderGridCard(
 
 /** 0 → folder icon, 1 → full, 2 → halves, 3 → one large + two stacked (like the iPad app). */
 @Composable
-private fun Mosaic(urls: List<String>, modifier: Modifier) {
+private fun Mosaic(urls: List<ImageRef>, modifier: Modifier) {
     val gap = 2.dp
     Box(modifier.background(Brush.linearGradient(listOf(Palette.Surface2, Palette.Ink)))) {
         when (urls.size) {
@@ -168,7 +169,7 @@ private fun Mosaic(urls: List<String>, modifier: Modifier) {
 }
 
 @Composable
-private fun Tile(url: String, modifier: Modifier) {
+private fun Tile(url: ImageRef, modifier: Modifier) {
     RemoteImage(url, modifier.background(Palette.Surface3), fallback = {
         Box(Modifier.fillMaxSize().background(Palette.Surface3), contentAlignment = Alignment.Center) {
             Icon(Icons.Rounded.Image, null, tint = Palette.TextTertiary.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))

@@ -292,8 +292,8 @@ class ComponentsScreenshotTest {
         ) {
             // Phone width: two columns, as in the Projects grid. A full stack, a two-file project, one with no files yet.
             val cards = listOf(
-                Triple("Mosswood Pictures", dev.finalish.core.model.FolderPreview(listOf("a", "b", "c"), 27), "3d ago · 42.3 GB"),
-                Triple("Saltmarsh", dev.finalish.core.model.FolderPreview(listOf("d", "e"), 2), "5d ago · 2.1 GB"),
+                Triple("Mosswood Pictures", dev.finalish.core.model.FolderPreview(listOf("a", "b", "c").map { dev.finalish.core.model.ImageRef(it, it) }, 27), "3d ago · 42.3 GB"),
+                Triple("Saltmarsh", dev.finalish.core.model.FolderPreview(listOf("d", "e").map { dev.finalish.core.model.ImageRef(it, it) }, 2), "5d ago · 2.1 GB"),
                 Triple("New project", dev.finalish.core.model.FolderPreview(), ""),
             )
             androidx.compose.foundation.layout.Column(
