@@ -150,6 +150,7 @@ fun FolderScreen(
     // Bound during composition (it's idempotent) so cached items are there on the first frame.
     remember(accountId, folderId) { vm.bind(accountId, folderId); true }
     remember(isProjectRoot, accountId) { if (isProjectRoot) vm.loadShares(projectId); true }
+    remember(projectId, accountId) { vm.loadAccess(projectId); true }
     // Subfolders show their project above the title (mockup); look it up when the route didn't carry it.
     val context = androidx.compose.ui.platform.LocalContext.current
     var project by rememberSaveable(projectId) { mutableStateOf(projectName) }
@@ -259,6 +260,9 @@ fun FolderScreen(
         }
     }
 
+    val fileAccess by vm.access.collectAsStateWithLifecycle()
+    // Menus offer only what the user's role on the project allows.
+    androidx.compose.runtime.CompositionLocalProvider(LocalFileAccess provides fileAccess) {
     Scaffold(
         containerColor = Palette.Ink,
         snackbarHost = { SnackbarHost(snackbar) },
@@ -341,6 +345,7 @@ fun FolderScreen(
                 val selected = vm.selected()
                 SelectionActions(
                     selected = selected,
+                    access = fileAccess,
                     onDownload = { vm.download(selected) },
                     onShare = { shareTargets = selected },
                     onAddToShare = { addToShareTargets = selected },
@@ -578,6 +583,7 @@ fun FolderScreen(
             }
         }
     }
+    }
 
     editingShare?.let { s ->
         dev.finalish.ui.shares.ShareEditorSheet(
@@ -812,6 +818,7 @@ private fun SelectionTopBar(count: Int, onClose: () -> Unit, onSelectAll: () -> 
 @Composable
 private fun SelectionActions(
     selected: List<Asset>,
+    access: dev.finalish.core.model.FileAccess,
     onDownload: () -> Unit,
     onShare: () -> Unit,
     onAddToShare: () -> Unit,
@@ -837,35 +844,39 @@ private fun SelectionActions(
     ) {
         Text(pluralStringResource(R.plurals.browser_selected_count, selected.size, selected.size), style = MaterialTheme.typography.titleSmall, maxLines = 1)
         Spacer(Modifier.width(6.dp))
-        BarIcon(Icons.Rounded.Link, stringResource(R.string.browser_share), onShare)
-        BarIcon(Icons.AutoMirrored.Rounded.DriveFileMove, stringResource(R.string.browser_move), onMove)
-        BarIcon(Icons.Rounded.Delete, stringResource(R.string.browser_action_delete), onDelete, tint = Palette.Red)
-        Box {
+        // Only what the user's role on the project allows (the server would refuse the rest).
+        if (access.share) BarIcon(Icons.Rounded.Link, stringResource(R.string.browser_share), onShare)
+        if (access.manage) {
+            BarIcon(Icons.AutoMirrored.Rounded.DriveFileMove, stringResource(R.string.browser_move), onMove)
+            BarIcon(Icons.Rounded.Delete, stringResource(R.string.browser_action_delete), onDelete, tint = Palette.Red)
+        }
+        if (access.download || access.share || access.manage) Box {
             BarIcon(Icons.Rounded.MoreHoriz, stringResource(R.string.browser_more), { more = true })
             DropdownMenu(more, onDismissRequest = { more = false }, shape = dev.finalish.ui.theme.MenuShape) {
-                DropdownMenuItem(
+                if (access.download) DropdownMenuItem(
                     text = { Text(stringResource(R.string.browser_action_save_offline)) }, leadingIcon = { Icon(Icons.Rounded.DownloadForOffline, null) },
                     enabled = selected.any { !it.isFolder }, onClick = { more = false; onDownload() },
                 )
-                DropdownMenuItem(
+                if (access.share) DropdownMenuItem(
                     text = { Text(stringResource(R.string.browser_action_add_to_share_link)) }, leadingIcon = { Icon(Icons.Rounded.AddLink, null) },
                     enabled = selected.isNotEmpty(), onClick = { more = false; onAddToShare() },
                 )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.browser_action_rename)) }, leadingIcon = { Icon(Icons.Rounded.DriveFileRenameOutline, null) },
-                    enabled = selected.size == 1, onClick = { more = false; onRename() },
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.browser_action_copy_to)) }, leadingIcon = { Icon(Icons.Rounded.ContentCopy, null) },
-                    enabled = selected.isNotEmpty(), onClick = { more = false; onCopy() },
-                )
-                HorizontalDivider(color = Palette.Hairline)
-                // Files make a new stack; files plus one existing stack go into that stack.
-                val stacks = selected.filter { it.isVersionStack }
-                val stackable = files.size + stacks.size == selected.size && when (stacks.size) {
-                    0 -> files.size in 2..10
-                    1 -> files.size in 1..10
-                    else -> false
+                if (access.manage) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.browser_action_rename)) }, leadingIcon = { Icon(Icons.Rounded.DriveFileRenameOutline, null) },
+                        enabled = selected.size == 1, onClick = { more = false; onRename() },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.browser_action_copy_to)) }, leadingIcon = { Icon(Icons.Rounded.ContentCopy, null) },
+                        enabled = selected.isNotEmpty(), onClick = { more = false; onCopy() },
+                    )
+                    HorizontalDivider(color = Palette.Hairline)
+                    // Files make a new stack; files plus one existing stack go into that stack.
+                    val stacks = selected.filter { it.isVersionStack }
+                    val stackable = files.size + stacks.size == selected.size && when (stacks.size) {
+                        0 -> files.size in 2..10
+                        1 -> files.size in 1..10
+                        else -> false
                 }
                 DropdownMenuItem(
                     text = {
@@ -878,6 +889,7 @@ private fun SelectionActions(
                     enabled = stackable,
                     onClick = { more = false; onStack() },
                 )
+                }
             }
         }
         Spacer(Modifier.width(4.dp))

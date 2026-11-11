@@ -78,6 +78,15 @@ class ComponentsScreenshotTest {
         )
     }
 
+    // "No preview on the device" when downloads are off (file or role): no Open with / Download buttons.
+    @Test fun noPreviewDownloadsDisabled() = snap("no_preview_downloads_disabled") {
+        dev.finalish.ui.viewer.OtherStage(
+            file = dev.finalish.core.model.Asset("design", name = "Poster.psd", mediaType = "image/vnd.adobe.photoshop"),
+            modifier = Modifier.fillMaxSize(),
+            downloadsDisabled = true,
+        )
+    }
+
     @Test fun brand() = snap("brand") {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             BrandMark(72.dp)
