@@ -263,9 +263,27 @@ private fun offlineLine(asset: Asset, online: Boolean, offline: Boolean): Pair<S
 /** What the "⋯" on a file or folder can do; the folder screen runs the same actions as the selection bar. */
 enum class FileAction { Share, AddToShare, SaveToDevice, Download, Members, Rename, Move, Copy, Delete }
 
+/** What the user's role allows in the folder on screen; the "⋯" menus only offer those actions. */
+val LocalFileAccess = androidx.compose.runtime.compositionLocalOf { dev.finalish.core.model.FileAccess.Full }
+
+/** The "⋯" actions [access] allows on [asset], in menu order. */
+fun fileActionsFor(asset: Asset, access: dev.finalish.core.model.FileAccess): List<FileAction> = buildList {
+    if (access.share) { add(FileAction.Share); add(FileAction.AddToShare) }
+    if (access.download) {
+        add(FileAction.SaveToDevice)
+        if (!asset.isFolder) add(FileAction.Download)
+    }
+    // Who can open this folder (restricted folders have their own members).
+    if (asset.isFolder) add(FileAction.Members)
+    if (access.manage) { add(FileAction.Rename); add(FileAction.Move); add(FileAction.Copy); add(FileAction.Delete) }
+}
+
 /** "⋯" on a card: a small menu that opens from where you tapped (mockup's context menu). */
 @Composable
 fun FileMenuButton(asset: Asset, onAction: (FileAction) -> Unit, compact: Boolean = false) {
+    val actions = fileActionsFor(asset, LocalFileAccess.current)
+    // Nothing the role allows (a viewer on a file): no button rather than an empty menu.
+    if (actions.isEmpty()) return
     var open by remember { mutableStateOf(false) }
     // Compact: under a card, the 32 dp target overflows a text-high row instead of pushing the info line down.
     Box(if (compact) Modifier.height(20.dp).wrapContentHeight(unbounded = true) else Modifier) {
@@ -285,17 +303,20 @@ fun FileMenuButton(asset: Asset, onAction: (FileAction) -> Unit, compact: Boolea
                     leadingIcon = { Icon(icon, null, tint = if (danger) Palette.Red else Palette.TextSecondary) },
                     onClick = { open = false; onAction(action) },
                 )
-            item(FileAction.Share, stringResource(R.string.browser_action_share_link), Icons.Rounded.Link)
-            item(FileAction.AddToShare, stringResource(R.string.browser_action_add_to_share_link), Icons.Rounded.AddLink)
-            item(FileAction.SaveToDevice, stringResource(R.string.viewer_action_download), Icons.Rounded.FileDownload)
-            if (!asset.isFolder) item(FileAction.Download, stringResource(R.string.browser_action_save_offline), Icons.Rounded.DownloadForOffline)
-            // Who can open this folder (restricted folders have their own members).
-            if (asset.isFolder) item(FileAction.Members, stringResource(R.string.browser_action_members), Icons.Rounded.Group)
-            item(FileAction.Rename, stringResource(R.string.browser_action_rename), Icons.Rounded.Edit)
-            item(FileAction.Move, stringResource(R.string.browser_action_move_to), Icons.AutoMirrored.Rounded.DriveFileMove)
-            item(FileAction.Copy, stringResource(R.string.browser_action_copy_to), Icons.Rounded.ContentCopy)
-            androidx.compose.material3.HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
-            item(FileAction.Delete, stringResource(R.string.browser_action_delete), Icons.Rounded.DeleteOutline, danger = true)
+            for (action in actions) when (action) {
+                FileAction.Share -> item(action, stringResource(R.string.browser_action_share_link), Icons.Rounded.Link)
+                FileAction.AddToShare -> item(action, stringResource(R.string.browser_action_add_to_share_link), Icons.Rounded.AddLink)
+                FileAction.SaveToDevice -> item(action, stringResource(R.string.viewer_action_download), Icons.Rounded.FileDownload)
+                FileAction.Download -> item(action, stringResource(R.string.browser_action_save_offline), Icons.Rounded.DownloadForOffline)
+                FileAction.Members -> item(action, stringResource(R.string.browser_action_members), Icons.Rounded.Group)
+                FileAction.Rename -> item(action, stringResource(R.string.browser_action_rename), Icons.Rounded.Edit)
+                FileAction.Move -> item(action, stringResource(R.string.browser_action_move_to), Icons.AutoMirrored.Rounded.DriveFileMove)
+                FileAction.Copy -> item(action, stringResource(R.string.browser_action_copy_to), Icons.Rounded.ContentCopy)
+                FileAction.Delete -> {
+                    if (actions.size > 1) androidx.compose.material3.HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
+                    item(action, stringResource(R.string.browser_action_delete), Icons.Rounded.DeleteOutline, danger = true)
+                }
+            }
         }
     }
 }

@@ -7,7 +7,12 @@ import androidx.core.net.toUri
 import dev.finalish.BuildConfig
 import java.security.MessageDigest
 import java.security.SecureRandom
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -145,6 +150,8 @@ class AuthManager(
     }
 
     suspend fun exchangeCode(code: String) {
+        // The previous session's data must be gone before the next account's arrives.
+        awaitSessionCleanup()
         val cfg = config
         val body = FormBody.Builder()
             .add("grant_type", "authorization_code")
@@ -159,7 +166,8 @@ class AuthManager(
         store.put(K_STATE, null)
     }
 
-    fun signInDemo() {
+    suspend fun signInDemo() {
+        awaitSessionCleanup()
         isDemo = true
         store.put(K_ACCESS, DEMO_TOKEN)
         clearExpired()
@@ -193,13 +201,55 @@ class AuthManager(
     /** Bumped on every sign-out, so a refresh still in flight knows its tokens are no longer wanted. */
     @Volatile private var session = 0
 
+    /**
+     * Ends the session, by the user or because Adobe refused the refresh token: both run the same
+     * [attachSessionCleanup] block, and a new sign-in waits for it (see [awaitSessionCleanup]).
+     */
     fun signOut(expired: Boolean = false) {
         session++
         isDemo = false
         listOf(K_ACCESS, K_REFRESH, K_LEGACY, K_EXPIRES, K_PKCE, K_STATE).forEach { store.put(it, null) }
         store.put(K_EXPIRED, if (expired) "1" else null)
+        // Saved first: if the app dies before the cleanup ends, the next start finishes it.
+        store.put(K_CLEANUP, "1")
         _sessionExpired.value = expired
         _state.value = AuthState.SignedOut
+        startCleanup()
+    }
+
+    // ---- End of session ----------------------------------------------------
+
+    private val cleanupScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    @Volatile private var cleanup: (suspend () -> Unit)? = null
+    @Volatile private var cleanupJob: Job? = null
+
+    /**
+     * Sets what an end of session deletes (transfers, caches, notifications, reports...) and runs it
+     * now if the last one was cut short by the app being closed.
+     */
+    fun attachSessionCleanup(block: suspend () -> Unit) {
+        cleanup = block
+        if (store.get(K_CLEANUP) == "1" && _state.value is AuthState.SignedOut) startCleanup()
+    }
+
+    @Synchronized
+    private fun startCleanup() {
+        val block = cleanup ?: return
+        val previous = cleanupJob
+        lateinit var job: Job
+        job = cleanupScope.launch(start = CoroutineStart.LAZY) {
+            previous?.join()
+            runCatching { block() }.onFailure { dev.finalish.core.util.AppLog.w("Session cleanup failed", it) }
+            // A sign-out during the run has queued another one, which clears the flag itself.
+            if (cleanupJob === job) store.put(K_CLEANUP, null)
+        }
+        cleanupJob = job
+        job.start()
+    }
+
+    /** Waits until the last session's data is gone: a sign-in must not start while it's being deleted. */
+    suspend fun awaitSessionCleanup() {
+        cleanupJob?.join()
     }
 
     private suspend fun postToken(body: FormBody): TokenResponse = withContext(Dispatchers.IO) {
@@ -264,6 +314,7 @@ class AuthManager(
         private const val K_CLIENT_ID = "client_id"
         private const val K_REDIRECT = "redirect_uri"
         private const val K_EXPIRED = "session_expired"
+        private const val K_CLEANUP = "cleanup_pending"
     }
 }
 

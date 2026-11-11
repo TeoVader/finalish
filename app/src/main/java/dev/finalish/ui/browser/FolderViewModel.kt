@@ -315,6 +315,15 @@ class FolderViewModel(
     private var sharesJob: Job? = null
 
     /** Project-level share links, shown at the project root. */
+    private val _access = MutableStateFlow(dev.finalish.core.model.FileAccess.Full)
+    /** What the user's role on the project allows; menus hide the rest. Full until known. */
+    val access: StateFlow<dev.finalish.core.model.FileAccess> = _access.asStateFlow()
+
+    fun loadAccess(projectId: String) {
+        if (account.isBlank()) return
+        viewModelScope.launch { _access.value = repo.fileAccess(account, projectId) }
+    }
+
     fun loadShares(projectId: String) {
         if (sharesJob?.isActive == true) return
         // Cached links first, so the section doesn't arrive late and push the folder down.

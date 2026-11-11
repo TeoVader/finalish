@@ -145,17 +145,18 @@ internal fun MediaArea(
                         file, state.offlinePath, state.pdfPage, vm::setPdfPage, Modifier.fillMaxSize(),
                         commentPages = remember(state.comments) { state.comments.mapNotNull { it.page }.toSet() },
                     )
-                    else -> if (file.media.name.substringAfterLast('.', "").lowercase() in dev.finalish.core.media.OfficePreview.EXTENSIONS) {
-                        OfficeStage(
-                            file, state.offlinePath, Modifier.fillMaxSize(),
-                            onOpenWith = { vm.openWith(viewerContext) },
-                            onDownload = vm::saveToDevice,
-                        )
-                    } else OtherStage(
-                        file, Modifier.fillMaxSize(),
-                        onOpenWith = { vm.openWith(viewerContext) },
-                        onDownload = vm::saveToDevice,
-                    )
+                    else -> {
+                        // "Open with" and "Download" both need the original: not offered when downloads
+                        // are off for this file or the user's role (an offline copy still opens).
+                        val canOpen = state.offlinePath != null ||
+                            (state.access.download && file.mediaLinks?.original?.hasDownload == true)
+                        val canDownload = state.access.download && file.mediaLinks?.original?.hasDownload == true
+                        val openWith: (() -> Unit)? = if (canOpen) ({ vm.openWith(viewerContext) }) else null
+                        val download: (() -> Unit)? = if (canDownload) vm::saveToDevice else null
+                        if (file.media.name.substringAfterLast('.', "").lowercase() in dev.finalish.core.media.OfficePreview.EXTENSIONS) {
+                            OfficeStage(file, state.offlinePath, Modifier.fillMaxSize(), onOpenWith = openWith, onDownload = download)
+                        } else OtherStage(file, Modifier.fillMaxSize(), onOpenWith = openWith, onDownload = download, downloadsDisabled = !canDownload)
+                    }
                 }
             }
         }

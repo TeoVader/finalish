@@ -78,6 +78,20 @@ class ComponentsScreenshotTest {
         )
     }
 
+    // A share link of the user's own account opened as the plain file: what doesn't apply, and the way to the link.
+    @Test fun shareAccessNotice() = snap("share_access_notice") {
+        dev.finalish.ui.shares.ShareAccessNotice(onOpenInBrowser = {}, onDismiss = {})
+    }
+
+    // "No preview on the device" when downloads are off (file or role): no Open with / Download buttons.
+    @Test fun noPreviewDownloadsDisabled() = snap("no_preview_downloads_disabled") {
+        dev.finalish.ui.viewer.OtherStage(
+            file = dev.finalish.core.model.Asset("design", name = "Poster.psd", mediaType = "image/vnd.adobe.photoshop"),
+            modifier = Modifier.fillMaxSize(),
+            downloadsDisabled = true,
+        )
+    }
+
     @Test fun brand() = snap("brand") {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             BrandMark(72.dp)

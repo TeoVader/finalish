@@ -104,7 +104,7 @@ class TransferManager(
             val req = OneTimeWorkRequestBuilder<FolderUploadWorker>()
                 .setInputData(workDataOf(FolderUploadWorker.KEY_JOB to name, FolderUploadWorker.KEY_TITLE to folders.first().name))
                 .setConstraints(constraints())
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, dev.finalish.core.network.SERVER_ERROR_BACKOFF_S, TimeUnit.SECONDS)
                 .addTag(TAG_UPLOAD)
                 .build()
             wm.enqueueUniqueWork("fup:$name", ExistingWorkPolicy.KEEP, req)
@@ -132,7 +132,7 @@ class TransferManager(
             val req = OneTimeWorkRequestBuilder<DownloadWorker>()
                 .setInputData(workDataOf(DownloadWorker.KEY_FILE to media.id, DownloadWorker.KEY_ACCOUNT to accountId))
                 .setConstraints(constraints())
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, dev.finalish.core.network.SERVER_ERROR_BACKOFF_S, TimeUnit.SECONDS)
                 .addTag(TAG_DOWNLOAD)
                 .build()
             // Cancelled while the settings loaded: nothing to start.
@@ -168,7 +168,7 @@ class TransferManager(
             val req = OneTimeWorkRequestBuilder<FolderDownloadWorker>()
                 .setInputData(workDataOf(FolderDownloadWorker.KEY_JOB to name, FolderDownloadWorker.KEY_TITLE to folderName))
                 .setConstraints(constraints())
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, dev.finalish.core.network.SERVER_ERROR_BACKOFF_S, TimeUnit.SECONDS)
                 .addTag(TAG_DOWNLOAD)
                 .build()
             // Named after the entry, so Transfers can cancel it.
@@ -353,12 +353,16 @@ class TransferManager(
      * Signing out: stops every transfer and offline-comment sync and forgets them, so the next
      * account never sends the previous one's uploads or comments, nor sees its offline files.
      */
+    // Blocking (disk and DownloadManager): called off the main thread by the end-of-session cleanup.
     fun signOut() {
         wm.cancelAllWorkByTag(TAG_UPLOAD)
         wm.cancelAllWorkByTag(TAG_DOWNLOAD)
         wm.cancelUniqueWork(COMMENT_SYNC)
-        // Deleting the offline copies can take a while: off the main thread.
-        scope.launch(kotlinx.coroutines.Dispatchers.IO) { store.clearAll() }
+        // Downloads already handed to the system would go on without us: stop the unfinished ones
+        // while their ids are still known. Finished files stay in Download (removing those deletes them).
+        cancelSystemDownloads(context, store.deviceDownloads.value.flatMap { it.systemIds })
+        runCatching { folderJobDir(context).deleteRecursively() }
+        store.clearAll()
     }
 
     private fun enqueueUpload(id: String) {
@@ -370,7 +374,7 @@ class TransferManager(
                 .setInputData(workDataOf(UploadWorker.KEY_UPLOAD to id))
                 .setConstraints(constraints())
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, dev.finalish.core.network.SERVER_ERROR_BACKOFF_S, TimeUnit.SECONDS)
                 .addTag(TAG_UPLOAD)
                 .build()
             // Cancelled while the settings loaded: nothing to start.
@@ -391,7 +395,7 @@ class TransferManager(
         if (store.pendingComments.value.isEmpty()) return
         val req = OneTimeWorkRequestBuilder<CommentSyncWorker>()
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, dev.finalish.core.network.SERVER_ERROR_BACKOFF_S, TimeUnit.SECONDS)
             .build()
         // Append: a comment queued while a sync runs is sent by a run after it, not skipped.
         wm.enqueueUniqueWork(COMMENT_SYNC, ExistingWorkPolicy.APPEND_OR_REPLACE, req)

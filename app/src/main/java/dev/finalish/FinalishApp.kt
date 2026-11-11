@@ -81,6 +81,28 @@ class AppContainer(val context: Context) {
         runCatching { mediaCache.keys.toList().forEach { mediaCache.removeResource(it) } }
         for (dir in listOf("pdf", "office", "scrub", "waveforms")) runCatching { File(context.cacheDir, dir).deleteRecursively() }
     }
+
+    /**
+     * Everything an end of session deletes, the same whether the user signed out or Adobe ended the
+     * session: transfers (with the system's unfinished downloads), offline copies, queued comments,
+     * caches, watched files and posted notifications, reports, the log and the selected account.
+     * Files already saved to Download or Pictures stay. Runs off the main thread; a new sign-in
+     * waits for it ([AuthManager.awaitSessionCleanup]).
+     */
+    internal fun endSession() {
+        runCatching { transferManager.signOut() }.onFailure { dev.finalish.core.util.AppLog.w("Clearing transfers failed", it) }
+        runCatching { activityWatch.clearAll() }
+        runCatching { clearCaches() }
+        // Reports, the log ring and the last crash belong to this user too.
+        runCatching { feedback.clearAll() }
+        dev.finalish.core.feedback.Breadcrumbs.clear()
+        dev.finalish.core.util.AppLog.clear()
+        settings.update { it.copy(accountId = null) }
+    }
+
+    init {
+        auth.attachSessionCleanup { endSession() }
+    }
 }
 
 class FinalishApp : Application(), SingletonImageLoader.Factory {
@@ -99,16 +121,6 @@ class FinalishApp : Application(), SingletonImageLoader.Factory {
         container = AppContainer(this)
         container.transferManager.scheduleCommentSync()
         container.transferManager.reconcileUploads()
-        // Any end of a session (also an expired one) forgets the cached user and data,
-        // so the next Adobe ID never sees the previous one's.
-        container.appScope.launch {
-            var signedIn = container.auth.state.value is dev.finalish.core.auth.AuthState.SignedIn
-            container.auth.state.collect { state ->
-                val now = state is dev.finalish.core.auth.AuthState.SignedIn
-                if (signedIn && !now) container.repository.clearCache()
-                signedIn = now
-            }
-        }
         // Keep the background activity check in line with the setting.
         container.appScope.launch {
             container.settings.settings.map { it.notifications }.distinctUntilChanged().collect { on ->

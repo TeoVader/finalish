@@ -1,4 +1,5 @@
-# Runs tests and builds the debug APK on pushes to main; tags and manual runs also build the release.
+# Runs tests and builds the debug APK on pushes to main and pull requests; tags and manual runs also
+# build the signed release, the only builds that get the signing key.
 # Works on GitHub Actions and on Forgejo/Gitea Actions (use a runner image that has Docker, e.g. catthehacker/ubuntu:act-latest).
 name: Android
 
@@ -75,8 +76,17 @@ jobs:
           echo "::error::KEYSTORE_BASE64 is not set: refusing to publish a debug-signed release."
           exit 1
 
+      # Every run (pushes, pull requests) builds the debug APK with no signing secret in its environment.
+      - name: Build debug
+        env:
+          # Report relay URL (repository variable); unset, the app shares reports instead.
+          FINALISH_REPORTRELAY: ${{ vars.FINALISH_REPORTRELAY }}
+        run: ./gradlew --no-daemon assembleDebug
+
+      # The release key and its passwords reach only tag and manual release builds, never pull
+      # requests or pushes to main, in the steps below.
       - name: Decode signing key
-        if: env.HAS_KEY == 'true'
+        if: env.HAS_KEY == 'true' && env.RELEASE == 'true'
         env:
           KEYSTORE_B64: ${{ secrets.KEYSTORE_BASE64 }}
         run: printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
@@ -89,19 +99,22 @@ jobs:
 
       # The Adobe client ID goes only into tagged releases: on a public repository the APK artifacts of
       # every push are downloadable, and Adobe allows public distribution only once the app is approved.
-      - name: Build
+      - name: Build release
+        if: env.HAS_KEY == 'true' && env.RELEASE == 'true'
         env:
           FINALISH_IMSCLIENTID: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.IMS_CLIENT_ID || '' }}
           FINALISH_REDIRECTURI: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.IMS_REDIRECT_URI || '' }}
-          # Report relay URL (repository variable); unset, the app shares reports instead.
           FINALISH_REPORTRELAY: ${{ vars.FINALISH_REPORTRELAY }}
-          FINALISH_KEYSTORE: ${{ env.HAS_KEY == 'true' && format('{0}/release.jks', runner.temp) || '' }}
+          FINALISH_KEYSTORE: ${{ format('{0}/release.jks', runner.temp) }}
           FINALISH_KEYSTOREPASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           FINALISH_KEYALIAS: ${{ secrets.KEY_ALIAS }}
           FINALISH_KEYPASSWORD: ${{ secrets.KEY_PASSWORD }}
         # The release key is the Play upload key: Google re-signs the bundle with the app signing key.
-        # Release builds (R8, a few minutes) only for tags and manual runs; pushes build the debug APK.
-        run: ./gradlew --no-daemon assembleDebug ${{ env.HAS_KEY == 'true' && env.RELEASE == 'true' && 'assembleRelease bundleRelease' || '' }}
+        run: ./gradlew --no-daemon assembleRelease bundleRelease
+
+      - name: Remove signing key
+        if: always() && env.HAS_KEY == 'true' && env.RELEASE == 'true'
+        run: rm -f "$RUNNER_TEMP/release.jks"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

@@ -788,6 +788,8 @@ fun OtherStage(
     modifier: Modifier = Modifier,
     onOpenWith: (() -> Unit)? = null,
     onDownload: (() -> Unit)? = null,
+    /** Downloads are off (file or role): say so instead of offering to download. */
+    downloadsDisabled: Boolean = false,
 ) {
     val context = LocalContext.current
     val isZip = file.name.endsWith(".zip", ignoreCase = true) || file.media.mediaType == "application/zip"
@@ -808,7 +810,7 @@ fun OtherStage(
         KindPlaceholder(file.kind, Modifier.size(88.dp).clip(RoundedCornerShape(24.dp)).border(1.dp, Palette.Hairline, RoundedCornerShape(24.dp)))
         Text(stringResource(R.string.viewer_no_preview_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 16.dp))
         Text(
-            stringResource(R.string.viewer_no_preview_body),
+            stringResource(if (downloadsDisabled) R.string.viewer_msg_downloads_disabled else R.string.viewer_no_preview_body),
             style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             modifier = Modifier.padding(top = 4.dp),

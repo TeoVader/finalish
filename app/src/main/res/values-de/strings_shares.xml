@@ -267,4 +267,10 @@
     <string name="common_try_again">Erneut versuchen</string>
     <string name="common_offline_title">Du bist offline.</string>
     <string name="common_offline_body">Die zuletzt gespeicherte Kopie wird angezeigt; Kommentare und Uploads werden gesendet, sobald du wieder online bist.</string>
+    <string name="shares_settings_unread">Frame.io hat das Layout und die Anzeigeeinstellungen dieses Links nicht gesendet, daher erscheinen sie als nicht festgelegt. Ändere eine, um alle zu laden.</string>
+    <string name="shares_remove_reviewer_body">Diese Person kann den Link dann nicht mehr öffnen. Das gilt sofort.</string>
+    <string name="shares_remove_file_body">Prüfer sehen die Datei dann nicht mehr über diesen Link. Sie bleibt im Projekt.</string>
+    <string name="shares_opened_with_access_title">Mit deinem Zugriff geöffnet</string>
+    <string name="shares_opened_with_access_body">Dieser Freigabelink gehört zu deinem Konto und wurde daher als Datei oder Ordner mit deinen eigenen Berechtigungen geöffnet. Ablaufdatum, Passphrase, Download-Einstellung und Wasserzeichen des Links gelten hier nicht.</string>
+    <string name="shares_open_link_in_browser">Freigabelink im Browser öffnen</string>
 </resources>
