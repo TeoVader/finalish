@@ -26,6 +26,12 @@ sealed interface LinkTarget {
     data class Browser(val url: String) : LinkTarget
     /** [target] lives in another of the user's accounts: switch to [accountId] first. */
     data class InAccount(val accountId: String, val target: LinkTarget) : LinkTarget
+    /**
+     * [target] was reached through a share link ([shareUrl]) of the user's own accounts: it opens with
+     * the member's own access, so the link's expiry, passphrase, download setting and watermark
+     * don't apply. The app says so and offers the link in a browser.
+     */
+    data class FromShare(val shareUrl: String, val target: LinkTarget) : LinkTarget
 }
 
 /**
@@ -84,6 +90,7 @@ object FrameLinks {
                     // current one first. A share from anyone else's account goes to the browser.
                     (listOf(account) + others.filter { it != account }).firstNotNullOfOrNull { acc ->
                         runCatchingCancellable { shareTarget(acc, p.shareId, repo) }.getOrNull()
+                            ?.let { LinkTarget.FromShare(full, it) }
                             ?.let { if (acc == account) it else LinkTarget.InAccount(acc, it) }
                     } ?: LinkTarget.Browser(full)
                 }

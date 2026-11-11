@@ -267,4 +267,10 @@
     <string name="common_try_again">Try again</string>
     <string name="common_offline_title">You\'re offline.</string>
     <string name="common_offline_body">Showing the last saved copy; comments and uploads go out when you\'re back online.</string>
+    <string name="shares_settings_unread">Frame.io didn\'t send this link\'s layout and viewer settings, so they show as unset. Change one to load them all.</string>
+    <string name="shares_remove_reviewer_body">They will no longer be able to open this link. This happens right away.</string>
+    <string name="shares_remove_file_body">Reviewers will no longer see it through this link. The file stays in the project.</string>
+    <string name="shares_opened_with_access_title">Opened with your access</string>
+    <string name="shares_opened_with_access_body">This share link is from your account, so it opened as the file or folder with your own permissions. Its expiry, passphrase, download setting and watermark don\'t apply here.</string>
+    <string name="shares_open_link_in_browser">Open the share link in the browser</string>
 </resources>

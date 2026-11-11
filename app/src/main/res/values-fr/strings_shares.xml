@@ -276,4 +276,10 @@
     <string name="common_try_again">Réessayer</string>
     <string name="common_offline_title">Vous êtes hors connexion.</string>
     <string name="common_offline_body">Affichage de la dernière copie enregistrée ; les commentaires et les importations partiront dès que vous serez de nouveau en ligne.</string>
+    <string name="shares_settings_unread">Frame.io n\'a pas envoyé la mise en page ni les réglages d\'affichage de ce lien : ils apparaissent comme non définis. Modifiez-en un pour tous les charger.</string>
+    <string name="shares_remove_reviewer_body">Cette personne ne pourra plus ouvrir ce lien. Le changement est immédiat.</string>
+    <string name="shares_remove_file_body">Les relecteurs ne le verront plus via ce lien. Le fichier reste dans le projet.</string>
+    <string name="shares_opened_with_access_title">Ouvert avec votre accès</string>
+    <string name="shares_opened_with_access_body">Ce lien de partage provient de votre compte : il s\'est ouvert comme le fichier ou le dossier, avec vos propres autorisations. Son expiration, sa phrase secrète, son réglage de téléchargement et son filigrane ne s\'appliquent pas ici.</string>
+    <string name="shares_open_link_in_browser">Ouvrir le lien de partage dans le navigateur</string>
 </resources>

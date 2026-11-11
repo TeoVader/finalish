@@ -598,6 +598,17 @@ class FrameioRepository(
     suspend fun share(account: String, shareId: String): Share = api.share(account, shareId).data
 
     /**
+     * A share with all its settings, read without changing it: the experimental "Show share" first
+     * (it documents layout, theme, versions, captions, watermark...), the stable one if that fails.
+     * [ShareDetails.complete] is false when only the stable answer came back.
+     */
+    suspend fun shareDetails(account: String, shareId: String): ShareDetails =
+        runCatchingCancellable { ShareDetails(api.shareExperimental(account, shareId).data, complete = true) }
+            .getOrElse { ShareDetails(api.share(account, shareId).data, complete = false) }
+
+    data class ShareDetails(val share: Share, val complete: Boolean)
+
+    /**
      * What a share link holds. The share listing can come back with empty media links, so files
      * without a thumbnail are re-read (at most 24, in parallel) to show their pictures. [partial]
      * gets the files read so far, before each further page and before that re-read; the returned
