@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://teovader.github.io/finalish/</loc><lastmod>2026-11-11</lastmod></url>
-<url><loc>https://teovader.github.io/finalish/privacy-policy</loc><lastmod>2026-11-11</lastmod></url>
-<url><loc>https://teovader.github.io/finalish/terms</loc><lastmod>2026-11-11</lastmod></url>
-<url><loc>https://teovader.github.io/finalish/press/</loc><lastmod>2026-11-11</lastmod></url>
-<url><loc>https://teovader.github.io/finalish/it/</loc><lastmod>2026-11-11</lastmod></url>
-<url><loc>https://teovader.github.io/finalish/it/privacy-policy</loc><lastmod>2026-11-11</lastmod></url>
-<url><loc>https://teovader.github.io/finalish/it/terms</loc><lastmod>2026-11-11</lastmod></url>
-<url><loc>https://teovader.github.io/finalish/it/press/</loc><lastmod>2026-11-11</lastmod></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<url><loc>https://teovader.github.io/finalish/</loc><lastmod>2026-11-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/"/><xhtml:link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/"/></url>
+<url><loc>https://teovader.github.io/finalish/it/</loc><lastmod>2026-11-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/"/><xhtml:link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/"/></url>
+<url><loc>https://teovader.github.io/finalish/privacy-policy</loc><lastmod>2026-11-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/privacy-policy"/><xhtml:link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/privacy-policy"/><xhtml:link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/privacy-policy"/></url>
+<url><loc>https://teovader.github.io/finalish/it/privacy-policy</loc><lastmod>2026-11-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/privacy-policy"/><xhtml:link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/privacy-policy"/><xhtml:link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/privacy-policy"/></url>
+<url><loc>https://teovader.github.io/finalish/terms</loc><lastmod>2026-11-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/terms"/><xhtml:link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/terms"/><xhtml:link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/terms"/></url>
+<url><loc>https://teovader.github.io/finalish/it/terms</loc><lastmod>2026-11-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/terms"/><xhtml:link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/terms"/><xhtml:link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/terms"/></url>
+<url><loc>https://teovader.github.io/finalish/press/</loc><lastmod>2026-11-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/press/"/><xhtml:link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/press/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/press/"/></url>
+<url><loc>https://teovader.github.io/finalish/it/press/</loc><lastmod>2026-11-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/press/"/><xhtml:link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/press/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/press/"/></url>
 </urlset>
