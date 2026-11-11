@@ -152,7 +152,8 @@ fun CommentsList(
                 EmptyState(
                     Icons.Rounded.ChatBubbleOutline,
                     if (state.filter == CommentFilter.All) stringResource(R.string.viewer_comments_empty_title) else stringResource(R.string.viewer_comments_empty_filtered),
-                    if (state.filter == CommentFilter.All) {
+                    // A role that can't comment reads the note under the list instead of an invitation.
+                    if (state.filter == CommentFilter.All && canComment) {
                         stringResource(
                             when (state.kind) {
                                 MediaKind.Video -> R.string.viewer_comments_empty_body_video

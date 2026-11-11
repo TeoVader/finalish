@@ -77,7 +77,8 @@ fun InfoPanel(
     file: Asset,
     offline: Boolean,
     vm: ViewerViewModel,
-    onShare: () -> Unit,
+    /** Null when the user's role can't share: no share-link button. */
+    onShare: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -109,7 +110,7 @@ fun InfoPanel(
                     Modifier.weight(1f),
                     tint = if (offline) Palette.Green else Palette.Text,
                 ) { if (offline) vm.removeOffline() else vm.downloadForOffline() }
-                QuickAction(Icons.Rounded.Link, stringResource(R.string.viewer_share_link), Modifier.weight(1f), onClick = onShare)
+                if (onShare != null) QuickAction(Icons.Rounded.Link, stringResource(R.string.viewer_share_link), Modifier.weight(1f), onClick = onShare)
                 QuickAction(Icons.AutoMirrored.Rounded.OpenInNew, stringResource(R.string.viewer_open_web), Modifier.weight(1f)) {
                     file.viewUrl?.let {
                         context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, it.toUri()))

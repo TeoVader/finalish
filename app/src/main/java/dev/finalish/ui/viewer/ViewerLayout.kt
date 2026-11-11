@@ -135,7 +135,7 @@ internal fun SidePanel(
                         onDeleteAttachment = vm::deleteAttachment,
                     )
                     // Status, rating and fields stay visible but read-only for roles that can't edit them.
-                    PanelTab.Info -> InfoPanel(if (state.access.manage) file else remember(file) { file.readOnlyMetadata() }, state.offlinePath != null, vm, onShare)
+                    PanelTab.Info -> InfoPanel(if (state.access.manage) file else remember(file) { file.readOnlyMetadata() }, state.offlinePath != null, vm, onShare.takeIf { state.access.share })
                     PanelTab.Versions -> VersionsPanel(
                         state.versions, file.id, vm::selectVersion, onCompare,
                         onReorder = if (state.access.manage) vm::reorderVersion else null,
