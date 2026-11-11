@@ -100,7 +100,8 @@ class JsonCache(private val root: File) {
                 }
                 val clean = DiskScrub.scrub(element)
                 if (clean == element) return@runCatching
-                val tmp = File.createTempFile(f.nameWithoutExtension, ".tmp", dir)
+                // createTempFile wants a prefix of 3 characters or more.
+                val tmp = File.createTempFile("scrub-${f.nameWithoutExtension}", ".tmp", dir)
                 tmp.writeText(clean.toString())
                 // Keeps its age for the trim, unless a put wrote the file since it was read.
                 tmp.setLastModified(modified)
