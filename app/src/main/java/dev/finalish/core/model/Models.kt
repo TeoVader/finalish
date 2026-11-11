@@ -371,6 +371,8 @@ data class Share(
     val description: String? = null,
     val theme: String? = null,
     @SerialName("accent_color") val accentColor: String? = null,
+    /** Only from the experimental API (null there means the default template). */
+    @SerialName("watermark_template_id") val watermarkTemplateId: String? = null,
 )
 
 @Immutable

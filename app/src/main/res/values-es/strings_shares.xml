@@ -276,4 +276,10 @@
     <string name="common_try_again">Reintentar</string>
     <string name="common_offline_title">No tienes conexión.</string>
     <string name="common_offline_body">Se muestra la última copia guardada; los comentarios y las subidas se enviarán cuando vuelvas a tener conexión.</string>
+    <string name="shares_settings_unread">Frame.io no envió el diseño ni los ajustes de visualización de este enlace, así que aparecen sin definir. Cambia uno para cargarlos todos.</string>
+    <string name="shares_remove_reviewer_body">Ya no podrá abrir este enlace. El cambio es inmediato.</string>
+    <string name="shares_remove_file_body">Los revisores dejarán de verlo a través de este enlace. El archivo sigue en el proyecto.</string>
+    <string name="shares_opened_with_access_title">Abierto con tu acceso</string>
+    <string name="shares_opened_with_access_body">Este enlace compartido es de tu cuenta, así que se abrió como el archivo o la carpeta con tus propios permisos. Su caducidad, frase de contraseña, ajuste de descargas y marca de agua no se aplican aquí.</string>
+    <string name="shares_open_link_in_browser">Abrir el enlace compartido en el navegador</string>
 </resources>

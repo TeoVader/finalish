@@ -78,6 +78,12 @@ class ComponentsScreenshotTest {
         )
     }
 
+    // A share link of the user's own account opened as the plain file: what doesn't apply, and the way to the link.
+    @Test fun shareAccessNotice() = snap("share_access_notice") {
+        androidx.compose.foundation.layout.Spacer(Modifier.weight(1f))
+        dev.finalish.ui.shares.ShareAccessNotice(onOpenInBrowser = {}, onDismiss = {})
+    }
+
     @Test fun brand() = snap("brand") {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             BrandMark(72.dp)

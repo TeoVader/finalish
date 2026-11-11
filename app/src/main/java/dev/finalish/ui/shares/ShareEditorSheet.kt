@@ -122,15 +122,24 @@ fun ShareEditorSheet(
     LaunchedEffect(initial.id) { templateId = repo.shareWatermarkTemplate(initial.id) }
     // The list endpoint omits layout/watermark/etc., so load the full share first.
     var loaded by remember { mutableStateOf(false) }
+    // The settings the list omits didn't come back either: shown unset until the user changes one.
+    var settingsUnread by remember { mutableStateOf(false) }
+    var confirmRemoveReviewer by remember { mutableStateOf<dev.finalish.core.model.User?>(null) }
+    var confirmRemoveAsset by remember { mutableStateOf<Asset?>(null) }
     val snack = remember { androidx.compose.material3.SnackbarHostState() }
     val notify: (String) -> Unit = { m -> scope.launch { snack.currentSnackbarData?.dismiss(); snack.showSnackbar(m) } }
 
     LaunchedEffect(initial.id) {
-        // GET omits layout/watermark/versions/etc.; a no-op PATCH (same name) returns the full share.
-        runCatchingCancellable {
-            val current = repo.share(accountId, initial.id)
-            repo.updateShare(accountId, initial.id, mapOf("name" to JsonPrimitive(current.name ?: initial.name.orEmpty())))
-        }.onSuccess { share = it.copy(shortUrl = it.shortUrl ?: initial.shortUrl); onChanged(share) }
+        // Read only: looking at a link's settings never writes to it (a write could also undo a
+        // rename made elsewhere meanwhile).
+        runCatchingCancellable { repo.shareDetails(accountId, initial.id) }
+            .onSuccess { d ->
+                share = d.share.copy(shortUrl = d.share.shortUrl ?: initial.shortUrl)
+                settingsUnread = !d.complete && d.share.layout == null
+                d.share.watermarkTemplateId?.let { templateId = it }
+                onChanged(share)
+            }
+            .onFailure { settingsUnread = initial.layout == null }
         loaded = true
         // Opening a link's settings means you care about it: notify when it's viewed.
         container.activityWatch.watchShare(accountId, projectId.orEmpty(), share.id, share.name ?: res.getString(R.string.shares_share_link))
@@ -171,6 +180,8 @@ fun ShareEditorSheet(
                 .onSuccess { updated ->
                     if (last) {
                         share = updated.copy(shortUrl = updated.shortUrl ?: share.shortUrl)
+                        // An update answers with the whole share: every setting is known from here on.
+                        settingsUnread = false
                         onChanged(share)
                     }
                 }
@@ -325,14 +336,7 @@ fun ShareEditorSheet(
                         }
                         Icon(
                             Icons.Rounded.Close, stringResource(R.string.shares_remove_reviewer), tint = Palette.TextTertiary,
-                            modifier = Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).pressable({
-                                val before = reviewers
-                                reviewers = reviewers?.filterNot { it == u }
-                                scope.launch {
-                                    runCatching { repo.removeShareReviewer(accountId, share.id, u) }
-                                        .onFailure { reviewers = before; notify(it.userMessage()) }
-                                }
-                            }).padding(6.dp),
+                            modifier = Modifier.size(30.dp).clip(RoundedCornerShape(8.dp)).pressable({ confirmRemoveReviewer = u }).padding(6.dp),
                         )
                     }
                 }
@@ -350,17 +354,23 @@ fun ShareEditorSheet(
                 Divider()
                 ToggleLine(stringResource(R.string.shares_show_captions), share.captionsEnabled == true) { patch(share.copy(captionsEnabled = it), "captions_enabled", JsonPrimitive(it)) }
             }
+            if (settingsUnread) {
+                Text(
+                    stringResource(R.string.shares_settings_unread), style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp),
+                )
+            }
 
             Label(stringResource(R.string.shares_label_layout))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf("grid" to R.string.shares_layout_grid, "list" to R.string.shares_layout_list, "reel" to R.string.shares_layout_reel).forEach { (key, label) ->
-                    Chip(stringResource(label), (share.layout ?: "grid") == key) { patch(share.copy(layout = key), "layout", JsonPrimitive(key)) }
+                    Chip(stringResource(label), (share.layout ?: "grid".takeUnless { settingsUnread }) == key) { patch(share.copy(layout = key), "layout", JsonPrimitive(key)) }
                 }
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf("dark" to R.string.shares_theme_dark, "light" to R.string.shares_theme_light, "neutral" to R.string.shares_theme_neutral).forEach { (key, label) ->
-                    Chip(stringResource(label), (share.theme ?: "dark") == key) { patch(share.copy(theme = key), "theme", JsonPrimitive(key)) }
+                    Chip(stringResource(label), (share.theme ?: "dark".takeUnless { settingsUnread }) == key) { patch(share.copy(theme = key), "theme", JsonPrimitive(key)) }
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -518,13 +528,7 @@ fun ShareEditorSheet(
                         Text(a.name, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
                         Icon(
                             Icons.Rounded.Close, stringResource(R.string.shares_remove), tint = Palette.TextTertiary,
-                            modifier = Modifier.size(32.dp).clip(RoundedCornerShape(8.dp)).pressable({
-                                removedAssetIds = removedAssetIds + a.id
-                                scope.launch {
-                                    runCatchingCancellable { repo.removeFromShare(accountId, share.id, a.id) }
-                                        .onFailure { removedAssetIds = removedAssetIds - a.id; notify(it.userMessage()) }
-                                }
-                            }).padding(6.dp),
+                            modifier = Modifier.size(32.dp).clip(RoundedCornerShape(8.dp)).pressable({ confirmRemoveAsset = a }).padding(6.dp),
                         )
                     }
                 }
@@ -585,6 +589,35 @@ fun ShareEditorSheet(
                 if (publishesFolderContents(share, picked)) confirmPublicFolder = picked else addPicked(picked)
             },
         )
+    }
+    confirmRemoveReviewer?.let { u ->
+        ConfirmRemoveDialog(
+            name = u.displayName,
+            body = stringResource(R.string.shares_remove_reviewer_body),
+            onDismiss = { confirmRemoveReviewer = null },
+        ) {
+            confirmRemoveReviewer = null
+            val before = reviewers
+            reviewers = reviewers?.filterNot { it == u }
+            scope.launch {
+                runCatching { repo.removeShareReviewer(accountId, share.id, u) }
+                    .onFailure { reviewers = before; notify(it.userMessage()) }
+            }
+        }
+    }
+    confirmRemoveAsset?.let { a ->
+        ConfirmRemoveDialog(
+            name = a.name,
+            body = stringResource(R.string.shares_remove_file_body),
+            onDismiss = { confirmRemoveAsset = null },
+        ) {
+            confirmRemoveAsset = null
+            removedAssetIds = removedAssetIds + a.id
+            scope.launch {
+                runCatchingCancellable { repo.removeFromShare(accountId, share.id, a.id) }
+                    .onFailure { removedAssetIds = removedAssetIds - a.id; notify(it.userMessage()) }
+            }
+        }
     }
     confirmPublicFolder?.let { picked ->
         androidx.compose.material3.AlertDialog(
@@ -859,5 +892,20 @@ private fun AppSwitch(checked: Boolean, onChange: (Boolean) -> Unit) {
         checked = checked, onCheckedChange = onChange,
         colors = SwitchDefaults.colors(checkedTrackColor = track, checkedThumbColor = Color.White),
         modifier = Modifier.padding(end = 6.dp),
+    )
+}
+
+/** "Remove [name]?" before a reviewer or a file leaves a link: it takes effect at once, with no undo. */
+@Composable
+internal fun ConfirmRemoveDialog(name: String, body: String, onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = Palette.Surface2,
+        title = { Text(stringResource(R.string.members_remove_title, name), maxLines = 2, overflow = TextOverflow.Ellipsis) },
+        text = { Text(body, color = Palette.TextSecondary) },
+        confirmButton = {
+            androidx.compose.material3.TextButton(onClick = onConfirm) { Text(stringResource(R.string.shares_remove), color = Palette.Red) }
+        },
+        dismissButton = { androidx.compose.material3.TextButton(onClick = onDismiss) { Text(stringResource(R.string.shares_cancel)) } },
     )
 }
