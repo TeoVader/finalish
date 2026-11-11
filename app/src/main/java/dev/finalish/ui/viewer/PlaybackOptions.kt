@@ -225,7 +225,7 @@ fun PlaybackOptionsSheet(
                         MenuRow(Icons.Rounded.ZoomIn, stringResource(R.string.viewer_opt_zoom), value = stringResource(options.zoom.labelRes), chevron = true) { page = Page.Zoom }
                         MenuRow(Icons.Rounded.Visibility, stringResource(R.string.viewer_opt_view_on_asset), chevron = true) { page = Page.View }
                         HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(vertical = 4.dp))
-                        MenuRow(Icons.Rounded.Image, stringResource(R.string.viewer_opt_download_still)) { onDownloadStill(); onDismiss() }
+                        if (file.mediaLinks?.original?.downloadUrl != null) MenuRow(Icons.Rounded.Image, stringResource(R.string.viewer_opt_download_still)) { onDownloadStill(); onDismiss() }
                         extraToggles?.let { t ->
                             HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(vertical = 4.dp))
                             ToggleRow(stringResource(R.string.viewer_opt_loop), t.loop, Icons.Rounded.Repeat, t.onLoop)
@@ -319,6 +319,9 @@ private fun ToolsMain(
                 }
             }
         }
+        if (video && file.mediaLinks?.original?.downloadUrl == null) {
+            Text(stringResource(R.string.viewer_msg_downloads_disabled))
+        }
         val tiles = buildList {
             if (video) {
                 add(Tile(stringResource(R.string.viewer_opt_guides), Icons.Rounded.CropFree, options.anyGuide) { onPage(Page.Guides) })
@@ -328,7 +331,7 @@ private fun ToolsMain(
                 add(Tile(stringResource(R.string.viewer_opt_loop), Icons.Rounded.Repeat, c.loop) { c.onLoop(!c.loop) })
                 c.onCompare?.let { add(Tile(stringResource(R.string.viewer_compare), Icons.AutoMirrored.Rounded.CompareArrows, false, it)) }
             }
-            if (video) add(Tile(stringResource(R.string.viewer_action_save_frame), Icons.Rounded.Image, false, onStill))
+            if (video && file.mediaLinks?.original?.downloadUrl != null) add(Tile(stringResource(R.string.viewer_action_save_frame), Icons.Rounded.Image, false, onStill))
             controls?.onPip?.let { if (video) add(Tile(stringResource(R.string.viewer_opt_pip), Icons.Rounded.PictureInPictureAlt, false, it)) }
         }
         tiles.chunked(3).forEach { rowTiles ->

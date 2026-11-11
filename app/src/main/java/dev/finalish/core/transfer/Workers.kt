@@ -200,7 +200,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
         return try {
             store.updateOwn(fileId) { it.copy(state = TransferState.Running, error = null) }
             val asset = c.repository.fileNow(account, fileId)
-            val url = pickUrl(asset) ?: error(applicationContext.getString(R.string.core_transfer_no_rendition))
+            val url = offlineDownloadUrl(asset) ?: error(applicationContext.getString(R.string.viewer_msg_downloads_disabled))
             val ext = asset.name.substringAfterLast('.', "").takeIf { it.length in 1..5 && asset.kind != MediaKind.Video } ?: when (asset.kind) {
                 MediaKind.Video -> "mp4"
                 MediaKind.Image -> "jpg"
@@ -259,16 +259,6 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
                 discardPartials(fileId)
                 Result.failure()
             }
-        }
-    }
-
-    private fun pickUrl(a: Asset): String? {
-        val l = a.mediaLinks ?: return null
-        return when (a.kind) {
-            MediaKind.Video -> l.highQuality?.downloadUrl ?: l.highQuality?.url ?: l.efficient?.downloadUrl ?: l.efficient?.url ?: l.original?.downloadUrl
-            MediaKind.Image -> l.original?.downloadUrl ?: l.highQuality?.downloadUrl ?: l.thumbnailHq?.url
-            MediaKind.Audio -> l.highQuality?.downloadUrl ?: l.efficient?.downloadUrl ?: l.original?.downloadUrl
-            else -> l.original?.downloadUrl ?: l.original?.inlineUrl
         }
     }
 

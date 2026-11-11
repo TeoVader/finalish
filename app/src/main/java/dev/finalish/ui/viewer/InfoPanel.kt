@@ -103,7 +103,7 @@ fun InfoPanel(
     LazyColumn(modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                QuickAction(
+                if (offline || file.mediaLinks?.original?.downloadUrl != null) QuickAction(
                     if (offline) Icons.Rounded.DownloadDone else Icons.Rounded.DownloadForOffline,
                     if (offline) stringResource(R.string.viewer_action_offline) else stringResource(R.string.viewer_save_offline),
                     Modifier.weight(1f),
@@ -116,6 +116,10 @@ fun InfoPanel(
                     }
                 }
             }
+        }
+
+        if (file.mediaLinks?.original?.downloadUrl == null) item {
+            Text(stringResource(R.string.viewer_msg_downloads_disabled))
         }
 
         technicalSummary(file).takeIf { it.isNotEmpty() }?.let { cells -> item { SummaryStrip(cells) } }

@@ -422,8 +422,16 @@ class FolderViewModel(
     }
 
     fun download(assets: List<Asset>) {
-        assets.filterNot { it.isFolder }.forEach { transferManager.download(account, it) }
-        _messages.tryEmit(plural(R.plurals.browser_msg_saving_offline, assets.size))
+        viewModelScope.launch {
+            assets.filterNot { it.isFolder }.forEach { asset ->
+                dev.finalish.core.util.runCatchingCancellable {
+                    val fresh = repo.fileNow(account, asset.media.id)
+                    if (fresh.mediaLinks?.original?.downloadUrl == null) error(str(R.string.viewer_msg_downloads_disabled))
+                    transferManager.download(account, fresh)
+                }.onSuccess { _messages.emit(plural(R.plurals.browser_msg_saving_offline, 1)) }
+                    .onFailure { _messages.emit(it.message ?: it.userMessage()) }
+            }
+        }
         clearSelection()
     }
 
