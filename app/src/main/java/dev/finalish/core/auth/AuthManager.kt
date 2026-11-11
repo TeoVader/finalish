@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import dev.finalish.BuildConfig
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -58,9 +60,13 @@ class AuthManager(
     context: Context,
     private val http: OkHttpClient,
     private val json: Json,
+    /** Runs the best-effort token revocation after sign-out, which must outlive the screen. */
+    private val scope: CoroutineScope,
 ) {
     private val store = SecureStore(context)
     private val refreshMutex = Mutex()
+    /** Guards the pending sign-in (verifier, state, redirect, start), so one redirect can consume it. */
+    private val pendingLock = Any()
 
     private val _state = MutableStateFlow<AuthState>(initialState())
     val state: StateFlow<AuthState> = _state.asStateFlow()
@@ -109,13 +115,20 @@ class AuthManager(
 
     // ---- Authorization code + PKCE ----------------------------------------
 
-    /** Builds the IMS authorize URL and remembers the PKCE verifier/state. */
+    /**
+     * Builds the IMS authorize URL and remembers this attempt (PKCE verifier, state, redirect URI and
+     * start time), replacing any earlier one.
+     */
     fun buildAuthorizeUri(): Uri {
         val cfg = config
         val verifier = randomUrlSafe(64)
         val state = randomUrlSafe(24)
-        store.put(K_PKCE, verifier)
-        store.put(K_STATE, state)
+        synchronized(pendingLock) {
+            store.put(K_PKCE, verifier)
+            store.put(K_STATE, state)
+            store.put(K_PENDING_REDIRECT, cfg.redirectUri)
+            store.put(K_PENDING_SINCE, System.currentTimeMillis().toString())
+        }
         val challenge = Base64.encodeToString(
             MessageDigest.getInstance("SHA-256").digest(verifier.toByteArray(Charsets.US_ASCII)),
             Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP,
@@ -131,39 +144,60 @@ class AuthManager(
             .build()
     }
 
-    /** True if [uri] is our OAuth redirect. */
+    /**
+     * True if [uri] is our OAuth redirect: same scheme, host, port and path as the registered redirect
+     * URI (not just the scheme), carrying a code or an error.
+     */
     fun isRedirect(uri: Uri): Boolean {
-        val redirect = config.redirectUri.toUri()
-        return uri.scheme.equals(redirect.scheme, ignoreCase = true) &&
-            (uri.getQueryParameter("code") != null || uri.getQueryParameter("error") != null)
+        val callback = uri.toString()
+        val registered = synchronized(pendingLock) { store.get(K_PENDING_REDIRECT) } ?: config.redirectUri
+        return OAuthCallback.matches(callback, registered) && OAuthCallback.carriesResult(callback)
     }
 
+    /**
+     * Completes the pending sign-in with Adobe's redirect. Each attempt completes at most once: the
+     * redirect that carries its state uses it up, whatever happens next, and an attempt older than
+     * [OAuthCallback.MAX_AGE_MS] is refused.
+     */
     suspend fun completeRedirect(uri: Uri): Result<Unit> = runCatching {
-        uri.getQueryParameter("error")?.let { err ->
-            error(uri.getQueryParameter("error_description") ?: err)
+        val callback = uri.toString()
+        when (val outcome = OAuthCallback.check(callback, takePendingSignIn(callback), System.currentTimeMillis())) {
+            is OAuthCallback.Outcome.Failed -> error(outcome.message)
+            is OAuthCallback.Outcome.Code -> exchangeCode(outcome.code, outcome.pending)
         }
-        val code = requireNotNull(uri.getQueryParameter("code")) { "Missing authorization code" }
-        val state = uri.getQueryParameter("state")
-        // Required: PKCE already stops a stolen code, and this also stops a redirect we never started.
-        check(state != null && state == store.get(K_STATE)) { "OAuth state mismatch — please retry." }
-        exchangeCode(code)
     }
 
-    suspend fun exchangeCode(code: String) {
+    /**
+     * The pending sign-in, removed from the store when [callback] carries its state (so a replayed or
+     * duplicate redirect finds nothing). A redirect with another state leaves it for the real one.
+     */
+    private fun takePendingSignIn(callback: String): PendingSignIn? = synchronized(pendingLock) {
+        val state = store.get(K_STATE) ?: return null
+        val pending = PendingSignIn(
+            state = state,
+            verifier = store.get(K_PKCE) ?: return null,
+            redirectUri = store.get(K_PENDING_REDIRECT) ?: config.redirectUri,
+            startedAt = store.get(K_PENDING_SINCE)?.toLongOrNull() ?: 0L,
+        )
+        if (OAuthCallback.stateOf(callback) == state) clearPendingSignIn()
+        pending
+    }
+
+    private fun clearPendingSignIn() = synchronized(pendingLock) {
+        listOf(K_PKCE, K_STATE, K_PENDING_REDIRECT, K_PENDING_SINCE).forEach { store.put(it, null) }
+    }
+
+    private suspend fun exchangeCode(code: String, pending: PendingSignIn) {
         // The previous session's data must be gone before the next account's arrives.
         awaitSessionCleanup()
-        val cfg = config
         val body = FormBody.Builder()
             .add("grant_type", "authorization_code")
-            .add("client_id", cfg.clientId)
+            .add("client_id", config.clientId)
             .add("code", code)
-            .add("code_verifier", requireNotNull(store.get(K_PKCE)) { "Sign-in expired, please retry." })
-            .add("redirect_uri", cfg.redirectUri)
+            .add("code_verifier", pending.verifier)
+            .add("redirect_uri", pending.redirectUri)
             .build()
-        val tokens = postToken(body)
-        saveTokens(tokens)
-        store.put(K_PKCE, null)
-        store.put(K_STATE, null)
+        saveTokens(postToken(body))
     }
 
     suspend fun signInDemo() {
@@ -204,16 +238,27 @@ class AuthManager(
     /**
      * Ends the session, by the user or because Adobe refused the refresh token: both run the same
      * [attachSessionCleanup] block, and a new sign-in waits for it (see [awaitSessionCleanup]).
+     * A user's own sign-out also revokes the tokens at Adobe, in the background and best effort:
+     * no network or an IMS error never holds sign-out up. After [expired] there is nothing to revoke.
      */
     fun signOut(expired: Boolean = false) {
         session++
+        val revoke = if (expired || isDemo) emptyList() else listOfNotNull(store.get(K_REFRESH), store.get(K_ACCESS))
+        val clientId = config.clientId
         isDemo = false
-        listOf(K_ACCESS, K_REFRESH, K_LEGACY, K_EXPIRES, K_PKCE, K_STATE).forEach { store.put(it, null) }
+        listOf(K_ACCESS, K_REFRESH, K_LEGACY, K_EXPIRES).forEach { store.put(it, null) }
+        clearPendingSignIn()
         store.put(K_EXPIRED, if (expired) "1" else null)
         // Saved first: if the app dies before the cleanup ends, the next start finishes it.
         store.put(K_CLEANUP, "1")
         _sessionExpired.value = expired
         _state.value = AuthState.SignedOut
+        if (revoke.isNotEmpty() && clientId.isNotBlank()) {
+            scope.launch(Dispatchers.IO) {
+                val revoked = revokeTokens(revokeHttp, IMS_HOST, clientId, revoke)
+                dev.finalish.core.util.AppLog.i("Sign-out: Adobe revoked $revoked of ${revoke.size} tokens")
+            }
+        }
         startCleanup()
     }
 
@@ -251,6 +296,9 @@ class AuthManager(
     suspend fun awaitSessionCleanup() {
         cleanupJob?.join()
     }
+
+    /** Revocation gets a short deadline: it only tidies up after a sign-out that already happened. */
+    private val revokeHttp: OkHttpClient by lazy { http.newBuilder().callTimeout(10, TimeUnit.SECONDS).build() }
 
     private suspend fun postToken(body: FormBody): TokenResponse = withContext(Dispatchers.IO) {
         val req = Request.Builder().url("$IMS_HOST/ims/token/v3").post(body).build()
@@ -311,6 +359,8 @@ class AuthManager(
         private const val K_LEGACY = "legacy"
         private const val K_PKCE = "pkce"
         private const val K_STATE = "state"
+        private const val K_PENDING_REDIRECT = "pending_redirect"
+        private const val K_PENDING_SINCE = "pending_since"
         private const val K_CLIENT_ID = "client_id"
         private const val K_REDIRECT = "redirect_uri"
         private const val K_EXPIRED = "session_expired"
