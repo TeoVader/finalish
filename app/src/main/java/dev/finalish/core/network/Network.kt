@@ -124,46 +124,6 @@ private class ErrorLogInterceptor : Interceptor {
     }
 }
 
-/**
- * Honors 429 responses as Frame.io asks: wait at least a second, then double (1 s, 2 s, 4 s).
- * Limits are per user (leaky bucket), so one person's app only competes with their own requests:
- * the wait is shared, and every call (new ones too) holds off until it's over instead of each
- * hitting the limit and sleeping on its own. A call canceled meanwhile stops waiting.
- */
-private class RateLimitRetryInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        var attempt = 0
-        while (true) {
-            awaitTurn(chain)
-            val response = chain.proceed(chain.request())
-            if (response.code != 429 || attempt >= 3) return response
-            val wait = response.header("Retry-After")?.toLongOrNull()?.times(1000) ?: (1_000L shl attempt)
-            response.close()
-            val until = System.currentTimeMillis() + wait.coerceAtMost(5_000)
-            blockedUntil.accumulateAndGet(until) { a, b -> maxOf(a, b) }
-            attempt++
-        }
-    }
-
-    private fun awaitTurn(chain: Interceptor.Chain) {
-        while (true) {
-            val left = blockedUntil.get() - System.currentTimeMillis()
-            if (left <= 0) return
-            if (chain.call().isCanceled()) throw IOException("Canceled")
-            try {
-                Thread.sleep(left.coerceAtMost(250))
-            } catch (e: InterruptedException) {
-                throw IOException(e)
-            }
-        }
-    }
-
-    companion object {
-        /** When Frame.io accepts requests again (epoch ms), for every API call of the app. */
-        private val blockedUntil = java.util.concurrent.atomic.AtomicLong(0)
-    }
-}
-
 private fun Request.withToken(token: String): Request = newBuilder()
     .header("Authorization", "Bearer $token")
     .build()

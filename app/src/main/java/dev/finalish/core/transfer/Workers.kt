@@ -769,7 +769,7 @@ private val stackGate = kotlinx.coroutines.sync.Mutex()
 /**
  * Moves an uploaded file into the target's version stack, or stacks the target file with it.
  * Rate limits and network drops are retried with a growing wait (5 s up to a minute, ~2.5 min
- * in all) on top of the HTTP client's own short retries. Returns the error if it still failed.
+ * in all) on top of the HTTP client's own short retries; server errors wait at least 30 s. Returns the error if it still failed.
  */
 internal suspend fun stackUpload(context: Context, item: UploadItem, targetId: String, uploadedId: String): Throwable? {
     val c = FinalishApp.container(context)
@@ -790,7 +790,9 @@ internal suspend fun stackUpload(context: Context, item: UploadItem, targetId: S
         }
         val e = result.exceptionOrNull() ?: return null
         if (!e.isTransient() || attempt == STACK_ATTEMPTS - 1) return e
-        kotlinx.coroutines.delay(wait)
+        // A server error: Frame.io asks for at least 30 s, with jitter, before trying again.
+        if (e is retrofit2.HttpException && e.code() >= 500) wait = maxOf(wait, 30_000L)
+        kotlinx.coroutines.delay(wait + (Math.random() * wait / 4).toLong())
         wait = (wait * 2).coerceAtMost(60_000)
     }
     return null
