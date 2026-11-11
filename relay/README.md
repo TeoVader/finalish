@@ -9,7 +9,8 @@ GitHub credential ships in the app. Same design as the relay behind bambuddy-mob
    attached images or recordings, up to 10 MB each and 20 MB in all). It retries in the background
    until it goes through.
 3. The relay stores the files on the `feedback-assets` branch (an orphan branch, never mixed with
-   the code) and opens the issue with the screenshot inline, links to the rest, the device, the
+   the code) under `reports/<date>-<id>/`, each with its own name (`clip.mp4`, `clip-2.mp4`), and
+   opens the issue with the screenshot inline, links to the rest, the device, the
    recent screens and a log excerpt, labelled `bug` or `enhancement`.
 
 `GET /health` answers `{"ok": true}` and nothing else.
@@ -27,13 +28,17 @@ The URL is inside the APK, so anyone can call the relay.
   several people behind one address share it. A ticket taken before a report was counted still has
   to respect the wait when it's used.
 - A daily cap for everyone (`DAILY_LIMIT`, 30).
+- Bounded bodies: bytes are counted while the body streams in, whatever `Content-Length` says
+  (21 MB for `/report`, 1 KB for `/challenge`). The report JSON must be the first part of the form
+  (64 KB at most); its ticket and proof of work are checked before any attachment is read.
 - Cloudflare's rate limiter, 10 requests a minute per network on `/challenge` and `/report`
   (`[[ratelimits]]` in `wrangler.toml`; the relay skips it if the binding is missing).
 
 Used tickets, counters and the daily total live in one SQLite-backed Durable Object (`Meter`), which
 checks and records them in a single step: a ticket sent twice in parallel opens one issue, and the
 cap holds under parallel reports. A ticket is used up before the GitHub calls, so a GitHub failure
-costs that ticket (the app fetches a new one). Installations and networks are stored only as HMACs
+costs that ticket (the app fetches a new one). A file GitHub refuses doesn't lose the report: the
+issue still opens and lists it under "Attachments not stored". Installations and networks are stored only as HMACs
 (keyed with `TICKET_SECRET`) of the install id and the IP.
 
 Report text is untrusted. In the issue, the description is a block quote under "What happened

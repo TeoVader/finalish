@@ -18,7 +18,9 @@
  *   per client IP (IPv6 by /64), so a fresh install id alone does not reset it;
  * - a daily cap across all installations;
  * - optionally, Cloudflare's rate limiter per client IP on /challenge and /report;
- * - attachments up to 10 MB each and 20 MB per report.
+ * - attachments up to 10 MB each and 20 MB per report, counted while the body streams in (whatever
+ *   Content-Length says); the report JSON must come first and its ticket and proof of work are
+ *   checked before the relay reads any attachment.
  * Used tickets, counters and the daily total live in one Durable Object (`Meter`), so checking and
  * recording them is atomic: the same ticket sent twice in parallel opens one issue, not two.
  *
@@ -36,6 +38,8 @@ const ASSETS_BRANCH = 'feedback-assets';
 const MAX_FILE = 10 * 1024 * 1024;
 const MAX_TOTAL = 20 * 1024 * 1024;
 const MAX_FORM = MAX_TOTAL + 1024 * 1024; // the report JSON and multipart overhead on top
+const MAX_META = 64 * 1024; // the report JSON part, read and checked before any attachment
+const MAX_CHALLENGE = 1024; // {installId}
 const TICKET_TTL = 30 * 60; // seconds
 const DAY = 24 * 60 * 60;
 const MAX_WAIT = 15 * 60; // seconds
@@ -69,7 +73,16 @@ class HttpError extends Error {
 async function challenge(request, env) {
   const who = await client(request, env);
   await rateLimit(env, who);
-  const { installId } = await request.json().catch(() => ({}));
+  const length = Number(request.headers.get('content-length') ?? 0);
+  if (length > MAX_CHALLENGE) throw new HttpError(413, 'too large');
+  const body = new LimitedBody(request.body, MAX_CHALLENGE);
+  await body.readAll();
+  let installId;
+  try {
+    ({ installId } = JSON.parse(new TextDecoder().decode(body.bytes())));
+  } catch {
+    // Handled as a missing installId below.
+  }
   if (!validInstallId(installId)) throw new HttpError(400, 'installId');
   const ih = await hmacHex(env.TICKET_SECRET, `install:${installId}`);
   const { sent, total } = await meter(env).status(meterKeys(ih, who));
@@ -96,13 +109,14 @@ async function report(request, env) {
   await rateLimit(env, who);
   const length = Number(request.headers.get('content-length') ?? 0);
   if (length > MAX_FORM) throw new HttpError(413, 'too large');
-  const form = await request.formData();
-  let meta;
-  try {
-    meta = JSON.parse(form.get('report'));
-  } catch {
-    throw new HttpError(400, 'report');
-  }
+  const contentType = request.headers.get('content-type') ?? '';
+  const boundary = multipartBoundary(contentType);
+  if (!boundary) throw new HttpError(400, 'report');
+  // Only the first part (the report JSON) is read before the ticket and proof of work are checked;
+  // the attachments come after, still within MAX_FORM.
+  const body = new LimitedBody(request.body, MAX_FORM);
+  const meta = await readReportPart(body, boundary);
+  if (!meta || typeof meta !== 'object') throw new HttpError(400, 'report');
   const { installId, ticket, powNonce } = meta;
   if (!validInstallId(installId)) throw new HttpError(400, 'installId');
 
@@ -115,6 +129,13 @@ async function report(request, env) {
   if (!(await powOk(payload.seed, powNonce, payload.bits))) throw new HttpError(403, 'pow');
 
   const r = sanitizeReport(meta);
+  await body.readAll();
+  let form;
+  try {
+    form = await new Response(body.bytes(), { headers: { 'content-type': contentType } }).formData();
+  } catch {
+    throw new HttpError(400, 'form');
+  }
   const files = collectFiles(form);
 
   // One atomic step in the Durable Object: refuse a used ticket, a full day or a report sent before
@@ -130,15 +151,32 @@ async function report(request, env) {
   const gh = github(env);
   const folder = `reports/${new Date().toISOString().slice(0, 10)}-${randomHex(4)}`;
   const stored = [];
-  if (files.length) await gh.ensureAssetsBranch();
+  const missing = [];
+  // The ticket is already used, so a file GitHub refuses doesn't cost the whole report: the issue
+  // still opens, and names the files that could not be stored.
+  let branchReady = false;
+  if (files.length) {
+    try {
+      await gh.ensureAssetsBranch();
+      branchReady = true;
+    } catch (e) {
+      console.error('assets branch', e.message);
+    }
+  }
   for (const f of files) {
     const path = `${folder}/${f.name}`;
-    await gh.putFile(path, f.bytes, `Report attachment: ${f.name}`);
-    stored.push({ ...f, path, url: `https://github.com/${env.REPO}/blob/${ASSETS_BRANCH}/${encodePath(path)}` });
+    try {
+      if (!branchReady) throw new Error('no assets branch');
+      await gh.putFile(path, f.bytes, `Report attachment: ${f.name}`);
+      stored.push({ ...f, path, url: `https://github.com/${env.REPO}/blob/${ASSETS_BRANCH}/${encodePath(path)}` });
+    } catch (e) {
+      console.error('attachment', f.name, e.message);
+      missing.push(f);
+    }
   }
   const issue = await gh.createIssue({
     title: issueTitle(r),
-    body: issueBody(r, stored),
+    body: issueBody(r, stored, missing),
     labels: [r.kind === 'bug' ? 'bug' : 'enhancement'],
   });
   return json({ url: issue.html_url, number: issue.number }, 201);
@@ -174,7 +212,119 @@ function collectFiles(form) {
     const name = safeName(value.name || field);
     out.push({ field, name, type, size: value.size, bytes: value.arrayBuffer() });
   }
-  return out;
+  return uniqueNames(out);
+}
+
+/**
+ * Gives every file of a report its own name ("clip.mp4", "clip-2.mp4"): two files that sanitise to
+ * the same name would otherwise share one path, and GitHub refuses the second after the ticket is
+ * spent. Compared without case, so a checkout on a case-insensitive disk keeps both too.
+ */
+export function uniqueNames(files) {
+  const seen = new Set();
+  return files.map((f) => {
+    const dot = f.name.lastIndexOf('.');
+    const stem = dot > 0 ? f.name.slice(0, dot) : f.name;
+    const ext = dot > 0 ? f.name.slice(dot) : '';
+    let name = f.name;
+    for (let i = 2; seen.has(name.toLowerCase()); i++) name = `${stem}-${i}${ext}`;
+    seen.add(name.toLowerCase());
+    return { ...f, name };
+  });
+}
+
+// ---- Request bodies -----------------------------------------------------------------------
+
+/**
+ * A request body read chunk by chunk, refused with 413 as soon as it passes `max` bytes: a missing
+ * or lying Content-Length can't make the relay buffer more than that.
+ */
+export class LimitedBody {
+  constructor(stream, max) {
+    this.reader = stream ? stream.getReader() : null;
+    this.max = max;
+    this.chunks = [];
+    this.size = 0;
+    this.done = !stream;
+  }
+
+  /** Reads one more chunk; false at the end of the body. */
+  async more() {
+    if (this.done) return false;
+    const { done, value } = await this.reader.read();
+    if (done) {
+      this.done = true;
+      return false;
+    }
+    this.size += value.byteLength;
+    if (this.size > this.max) {
+      this.done = true;
+      this.reader.cancel().catch(() => {});
+      throw new HttpError(413, 'too large');
+    }
+    this.chunks.push(value);
+    return true;
+  }
+
+  async readAll() {
+    while (await this.more());
+  }
+
+  bytes() {
+    if (this.chunks.length !== 1) {
+      const all = new Uint8Array(this.size);
+      let at = 0;
+      for (const c of this.chunks) {
+        all.set(c, at);
+        at += c.byteLength;
+      }
+      this.chunks = [all];
+    }
+    return this.chunks[0] ?? new Uint8Array(0);
+  }
+}
+
+export function multipartBoundary(contentType) {
+  const m = /^multipart\/form-data\s*;.*?\bboundary=(?:"([^"]{1,70})"|([^\s;]{1,70}))/i.exec(contentType ?? '');
+  return m ? (m[1] ?? m[2]) : null;
+}
+
+/**
+ * Reads the body until its first part is complete and returns that part's JSON. The first part must
+ * be the `report` field (the app sends it first) and fit in MAX_META, so a request that leads with a
+ * large file is refused after a few kilobytes.
+ */
+export async function readReportPart(body, boundary) {
+  const delimiter = enc.encode(`--${boundary}`);
+  const close = enc.encode(`\r\n--${boundary}`);
+  for (;;) {
+    const buf = body.bytes();
+    const start = indexOfBytes(buf, delimiter, 0);
+    const headersEnd = start < 0 ? -1 : indexOfBytes(buf, enc.encode('\r\n\r\n'), start);
+    const end = headersEnd < 0 ? -1 : indexOfBytes(buf, close, headersEnd + 4);
+    if (end >= 0) {
+      const headers = new TextDecoder().decode(buf.subarray(start + delimiter.length, headersEnd));
+      const disposition = /^content-disposition:(.*)$/im.exec(headers)?.[1] ?? '';
+      if (!/\bname="report"/i.test(disposition) || /\bfilename=/i.test(disposition)) throw new HttpError(400, 'report');
+      try {
+        return JSON.parse(new TextDecoder().decode(buf.subarray(headersEnd + 4, end)));
+      } catch {
+        throw new HttpError(400, 'report');
+      }
+    }
+    if (buf.length > MAX_META) throw new HttpError(400, 'report');
+    if (!(await body.more())) throw new HttpError(400, 'report');
+  }
+}
+
+export function indexOfBytes(haystack, needle, from) {
+  const first = needle[0];
+  const last = haystack.length - needle.length;
+  outer: for (let i = haystack.indexOf(first, from); i >= 0 && i <= last; i = haystack.indexOf(first, i + 1)) {
+    for (let j = 1; j < needle.length; j++) if (haystack[i + j] !== needle[j]) continue outer;
+    return i;
+  }
+  return -1;
 }
 
 // ---- Issue text ---------------------------------------------------------------------------
@@ -202,7 +352,7 @@ export function issueTitle(r) {
   return (r.kind === 'change' ? '[Improvement] ' : '') + noMentions(r.title);
 }
 
-export function issueBody(r, files) {
+export function issueBody(r, files, missing = []) {
   const lines = [];
   const section = (h) => lines.push(`### ${h}`, '');
   section(`${r.kind === 'bug' ? 'What happened' : 'What and why'} (reporter's words)`);
@@ -216,6 +366,12 @@ export function issueBody(r, files) {
   if (others.length) {
     section('Attachments');
     for (const f of others) lines.push(`- [${f.name}](${f.url}) · ${formatSize(f.size)}`);
+    lines.push('');
+  }
+  if (missing.length) {
+    section('Attachments not stored');
+    lines.push('GitHub refused these files, so they are not in the report:', '');
+    for (const f of missing) lines.push(`- \`${f.name}\` · ${formatSize(f.size)}`);
     lines.push('');
   }
   if (r.screens.length) {
@@ -269,7 +425,15 @@ function github(env) {
       await call('POST', '/git/refs', { ref: `refs/heads/${ASSETS_BRANCH}`, sha: commit.sha });
     },
     async putFile(path, bytes, message) {
-      await call('PUT', `/contents/${encodePath(path)}`, { message, branch: ASSETS_BRANCH, content: base64(await bytes) });
+      const content = base64(await bytes);
+      for (let attempt = 1; ; attempt++) {
+        try {
+          return await call('PUT', `/contents/${encodePath(path)}`, { message, branch: ASSETS_BRANCH, content });
+        } catch (e) {
+          // 409: another report moved the branch at the same moment; once more on the new head.
+          if (attempt >= 2 || e.message !== 'github 409') throw e;
+        }
+      }
     },
     createIssue: (issue) => call('POST', '/issues', issue),
   };

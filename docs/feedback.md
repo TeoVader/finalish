@@ -120,7 +120,8 @@ A Cloudflare Worker: `https://finalish-report-relay.<subdomain>.workers.dev` (`/
   doubles for each report in the same day (a fixed 24 h from that day's first report), up to 15 minutes. The app shows
   "Waiting to send · around <time>" meanwhile and sends on its own.
 - 30 reports a day across everyone (`DAILY_LIMIT` in `relay/wrangler.toml`).
-- Files: 10 MB each, 20 MB per report.
+- Files: 10 MB each, 20 MB per report, counted while the request streams in; the ticket and proof
+  of work are checked before any file is read.
 - Tickets and counters live in one Durable Object (`Meter`), so parallel requests can't reuse a
   ticket or pass the daily cap; plus 10 requests a minute per network (`RATE_LIMITER`).
 - The issue body quotes the user's text and fences every block so it can't fake app-generated
