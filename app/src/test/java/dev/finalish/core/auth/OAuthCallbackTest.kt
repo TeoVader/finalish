@@ -23,6 +23,15 @@ class OAuthCallbackTest {
         assertTrue(OAuthCallback.matches("FINALISH-IMS://AUTH/callback?code=c", custom))
     }
 
+    // The OAuth Native App redirect Adobe hands out: adobe+<hash>://callback, with no path.
+    @Test fun matchesTheAdobeNativeRedirect() {
+        val adobe = "adobe+0a1b2c3d4e5f://callback"
+        assertTrue(OAuthCallback.matches("$adobe?code=c&state=s", adobe))
+        assertTrue(OAuthCallback.matches("adobe+0a1b2c3d4e5f://callback/?code=c", adobe))
+        assertFalse(OAuthCallback.matches("adobe+ffffffffffff://callback?code=c", adobe))
+        assertFalse(OAuthCallback.matches("adobe+0a1b2c3d4e5f://other?code=c", adobe))
+    }
+
     @Test fun loopbackHostsAreTheSame() {
         assertTrue(OAuthCallback.matches("http://127.0.0.1:8765/callback?code=c", "http://localhost:8765/callback"))
     }
