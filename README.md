@@ -120,9 +120,9 @@ doesn't expose them:
   app is opened, and the notification settings say so with a shortcut to the right setting.
 - **Guest names**: comments left through a share link show the guest's name only when the account's audit
   log has it (admins); older ones show as "Guest reviewer".
-- **Files whose media Frame.io withholds from apps open on Frame.io.** When Frame.io requires watermarking
-  for a member, or otherwise doesn't share a file's media with apps, the viewer can't play or show it and
-  offers to open the file on Frame.io in the browser instead. Comments and file info still work in the app.
+- **Viewers can't play or see files in the app.** The Frame.io API gives no media to members with the
+  Viewer role (and withholds it when watermarking is required), so for those files the viewer offers to open
+  them on Frame.io in the browser instead. Comments and file info still work in the app.
 - **Not available**: email notification settings, setting a frame as thumbnail, duplicating a project,
   Camera to Cloud devices.
 
