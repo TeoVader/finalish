@@ -939,6 +939,10 @@ class FrameioRepository(
         return dev.finalish.core.model.FileAccess.ofRole(role).also { accessByProject[key] = it }
     }
 
+    /** The [fileAccess] already read this session, without asking Frame.io; null until then. */
+    fun cachedFileAccess(account: String, projectId: String): dev.finalish.core.model.FileAccess? =
+        accessByProject["$account:$projectId"]
+
     private suspend fun myRole(account: String, projectId: String): String? {
         val accountRoles = accounts().firstOrNull { it.id == account }?.roles.orEmpty()
         if ("owner" in accountRoles || "admin" in accountRoles) return "owner"
