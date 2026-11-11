@@ -31,6 +31,7 @@ import dev.finalish.ui.report
 import java.io.File
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -178,6 +179,7 @@ class ViewerViewModel(
                         )
                     }
                     _state.update { it.copy(file = metadata.withMeta(f)) }
+                    loadAccess(f.projectId)
                     // The cached copy's signed links may have expired: play from the fresh one (or
                     // from the cache once the refresh failed). An offline copy plays at once.
                     if (!r.loading || _state.value.offlinePath != null) startPlayback(f)
@@ -217,6 +219,18 @@ class ViewerViewModel(
 
     private var preparingJob: Job? = null
 
+    private var accessProject: String? = null
+
+    /** Reads the user's role on [projectId] once, for the "⋯" menu. */
+    private fun loadAccess(projectId: String) {
+        if (projectId.isBlank() || projectId == accessProject) return
+        accessProject = projectId
+        viewModelScope.launch {
+            val access = repo.fileAccess(account, projectId)
+            _state.update { it.copy(access = access) }
+        }
+    }
+
     /** Processing is over and still no link: Frame.io withholds the media, so there's nothing to wait for. */
     private fun showUnavailable() {
         preparingJob?.cancel()
@@ -230,6 +244,9 @@ class ViewerViewModel(
         preparingJob = viewModelScope.launch {
             while (true) {
                 delay(8_000)
+                // Nobody is looking (app in the background): wait to be back before asking again.
+                androidx.lifecycle.ProcessLifecycleOwner.get().lifecycle.currentStateFlow
+                    .first { it.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED) }
                 val f = runCatching { repo.fileNow(account, fileId) }.getOrNull() ?: continue
                 if (_state.value.file?.id != fileId) return@launch
                 when (mediaState(f, hasLink = pickStreamUrl(f) != null)) {

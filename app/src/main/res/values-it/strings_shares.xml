@@ -272,4 +272,10 @@
     <string name="common_try_again">Riprova</string>
     <string name="common_offline_title">Sei offline.</string>
     <string name="common_offline_body">Viene mostrata l\'ultima copia salvata; commenti e caricamenti partono quando torni online.</string>
+    <string name="shares_settings_unread">Frame.io non ha inviato il layout e le impostazioni di visualizzazione del link, quindi risultano non impostati. Cambiane uno per caricarli tutti.</string>
+    <string name="shares_remove_reviewer_body">Non potrà più aprire questo link. La modifica è immediata.</string>
+    <string name="shares_remove_file_body">I revisori non lo vedranno più tramite questo link. Il file resta nel progetto.</string>
+    <string name="shares_opened_with_access_title">Aperto con il tuo accesso</string>
+    <string name="shares_opened_with_access_body">Questo link di condivisione è del tuo account, quindi si è aperto come file o cartella con i tuoi permessi. Scadenza, passphrase, impostazione dei download e filigrana del link qui non valgono.</string>
+    <string name="shares_open_link_in_browser">Apri il link di condivisione nel browser</string>
 </resources>

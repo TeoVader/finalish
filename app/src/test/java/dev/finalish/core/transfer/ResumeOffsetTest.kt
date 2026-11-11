@@ -24,4 +24,13 @@ class ResumeOffsetTest {
 
     @Test
     fun nothingToResume() = assertEquals(0L, resumeOffset(0, 206, "bytes 0-4999/5000", 5000))
+
+    @Test
+    fun sameValidatorContinues() = assertEquals(1000L, resumeOffset(1000, 206, "bytes 1000-4999/5000", 5000, "\"a\"", "\"a\""))
+
+    @Test
+    fun anotherValidatorStartsOver() = assertEquals(0L, resumeOffset(1000, 206, "bytes 1000-4999/5000", 5000, "\"a\"", "\"b\""))
+
+    @Test
+    fun noValidatorInTheAnswerKeepsTheOtherChecks() = assertEquals(1000L, resumeOffset(1000, 206, "bytes 1000-4999/5000", 5000, "\"a\"", null))
 }

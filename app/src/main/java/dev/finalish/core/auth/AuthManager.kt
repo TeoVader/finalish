@@ -9,7 +9,11 @@ import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -184,6 +188,8 @@ class AuthManager(
     }
 
     private suspend fun exchangeCode(code: String, pending: PendingSignIn) {
+        // The previous session's data must be gone before the next account's arrives.
+        awaitSessionCleanup()
         val body = FormBody.Builder()
             .add("grant_type", "authorization_code")
             .add("client_id", config.clientId)
@@ -194,7 +200,8 @@ class AuthManager(
         saveTokens(postToken(body))
     }
 
-    fun signInDemo() {
+    suspend fun signInDemo() {
+        awaitSessionCleanup()
         isDemo = true
         store.put(K_ACCESS, DEMO_TOKEN)
         clearExpired()
@@ -229,9 +236,10 @@ class AuthManager(
     @Volatile private var session = 0
 
     /**
-     * Signs out at once. A user's own sign-out also revokes the tokens at Adobe, in the background and
-     * best effort: no network or an IMS error never holds sign-out up. A sign-out because Adobe
-     * already rejected the refresh token ([expired]) has nothing left to revoke.
+     * Ends the session, by the user or because Adobe refused the refresh token: both run the same
+     * [attachSessionCleanup] block, and a new sign-in waits for it (see [awaitSessionCleanup]).
+     * A user's own sign-out also revokes the tokens at Adobe, in the background and best effort:
+     * no network or an IMS error never holds sign-out up. After [expired] there is nothing to revoke.
      */
     fun signOut(expired: Boolean = false) {
         session++
@@ -241,6 +249,8 @@ class AuthManager(
         listOf(K_ACCESS, K_REFRESH, K_LEGACY, K_EXPIRES).forEach { store.put(it, null) }
         clearPendingSignIn()
         store.put(K_EXPIRED, if (expired) "1" else null)
+        // Saved first: if the app dies before the cleanup ends, the next start finishes it.
+        store.put(K_CLEANUP, "1")
         _sessionExpired.value = expired
         _state.value = AuthState.SignedOut
         if (revoke.isNotEmpty() && clientId.isNotBlank()) {
@@ -249,6 +259,42 @@ class AuthManager(
                 dev.finalish.core.util.AppLog.i("Sign-out: Adobe revoked $revoked of ${revoke.size} tokens")
             }
         }
+        startCleanup()
+    }
+
+    // ---- End of session ----------------------------------------------------
+
+    private val cleanupScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    @Volatile private var cleanup: (suspend () -> Unit)? = null
+    @Volatile private var cleanupJob: Job? = null
+
+    /**
+     * Sets what an end of session deletes (transfers, caches, notifications, reports...) and runs it
+     * now if the last one was cut short by the app being closed.
+     */
+    fun attachSessionCleanup(block: suspend () -> Unit) {
+        cleanup = block
+        if (store.get(K_CLEANUP) == "1" && _state.value is AuthState.SignedOut) startCleanup()
+    }
+
+    @Synchronized
+    private fun startCleanup() {
+        val block = cleanup ?: return
+        val previous = cleanupJob
+        lateinit var job: Job
+        job = cleanupScope.launch(start = CoroutineStart.LAZY) {
+            previous?.join()
+            runCatching { block() }.onFailure { dev.finalish.core.util.AppLog.w("Session cleanup failed", it) }
+            // A sign-out during the run has queued another one, which clears the flag itself.
+            if (cleanupJob === job) store.put(K_CLEANUP, null)
+        }
+        cleanupJob = job
+        job.start()
+    }
+
+    /** Waits until the last session's data is gone: a sign-in must not start while it's being deleted. */
+    suspend fun awaitSessionCleanup() {
+        cleanupJob?.join()
     }
 
     /** Revocation gets a short deadline: it only tidies up after a sign-out that already happened. */
@@ -318,6 +364,7 @@ class AuthManager(
         private const val K_CLIENT_ID = "client_id"
         private const val K_REDIRECT = "redirect_uri"
         private const val K_EXPIRED = "session_expired"
+        private const val K_CLEANUP = "cleanup_pending"
     }
 }
 

@@ -176,6 +176,20 @@ class ActivityWatch(private val context: Context) {
 
     internal fun snapshot() = read()
 
+    /**
+     * End of session: forgets the watched files and links, the events and muted projects (watch.json),
+     * and removes the notifications already posted, so the next account sees none of them.
+     */
+    fun clearAll() {
+        synchronized(lock) {
+            file.delete()
+            _unread.value = emptyMap()
+            _events.value = emptyList()
+            _muted.value = emptySet()
+        }
+        runCatching { NotificationManagerCompat.from(context).cancelAll() }
+    }
+
     /** Files the user opened (or uploaded) lately, newest first: Search shows them as "Recently opened". */
     fun recentlyOpened(accountId: String, limit: Int = 8): List<WatchedFile> =
         read().files.filter { it.accountId == accountId }.sortedByDescending { it.touchedAt }.take(limit)

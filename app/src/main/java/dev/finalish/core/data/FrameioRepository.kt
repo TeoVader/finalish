@@ -598,6 +598,17 @@ class FrameioRepository(
     suspend fun share(account: String, shareId: String): Share = api.share(account, shareId).data
 
     /**
+     * A share with all its settings, read without changing it: the experimental "Show share" first
+     * (it documents layout, theme, versions, captions, watermark...), the stable one if that fails.
+     * [ShareDetails.complete] is false when only the stable answer came back.
+     */
+    suspend fun shareDetails(account: String, shareId: String): ShareDetails =
+        runCatchingCancellable { ShareDetails(api.shareExperimental(account, shareId).data, complete = true) }
+            .getOrElse { ShareDetails(api.share(account, shareId).data, complete = false) }
+
+    data class ShareDetails(val share: Share, val complete: Boolean)
+
+    /**
      * What a share link holds. The share listing can come back with empty media links, so files
      * without a thumbnail are re-read (at most 24, in parallel) to show their pictures. [partial]
      * gets the files read so far, before each further page and before that re-read; the returned
@@ -901,7 +912,39 @@ class FrameioRepository(
         return page.data.mapNotNull { it.toResult() } to page.links?.next?.let(::afterCursor)
     }
 
-    fun clearCache() = cache.clear()
+    fun clearCache() {
+        cache.clear()
+        accessByProject.clear()
+    }
+
+    /** The user's [FileAccess] per project, read once per session (roles rarely change meanwhile). */
+    private val accessByProject = java.util.concurrent.ConcurrentHashMap<String, dev.finalish.core.model.FileAccess>()
+
+    /**
+     * What the signed-in user may do with files in [projectId], from their role there: account
+     * owners and admins have full access; otherwise the project's member list
+     * (`GET /projects/{id}/users`), then the workspace's, gives the role. When neither lists the
+     * user (access through a group) or can't be read, the result is [FileAccess.Full] and the menus
+     * stay as they were; a failed read is tried again next time.
+     */
+    suspend fun fileAccess(account: String, projectId: String): dev.finalish.core.model.FileAccess {
+        if (projectId.isBlank()) return dev.finalish.core.model.FileAccess.Full
+        val key = "$account:$projectId"
+        accessByProject[key]?.let { return it }
+        val role = runCatchingCancellable { myRole(account, projectId) }
+            .onFailure { dev.finalish.core.util.AppLog.w("Couldn't read the project role: ${it.javaClass.simpleName}") }
+            .getOrElse { return dev.finalish.core.model.FileAccess.Full }
+        return dev.finalish.core.model.FileAccess.ofRole(role).also { accessByProject[key] = it }
+    }
+
+    private suspend fun myRole(account: String, projectId: String): String? {
+        val accountRoles = accounts().firstOrNull { it.id == account }?.roles.orEmpty()
+        if ("owner" in accountRoles || "admin" in accountRoles) return "owner"
+        val me = me().id ?: return null
+        members(account, "projects", projectId).firstOrNull { it.user.id == me }?.role?.let { return it }
+        val workspace = project(account, projectId).workspaceId.takeIf { it.isNotBlank() } ?: return null
+        return members(account, "workspaces", workspace).firstOrNull { it.user.id == me }?.role
+    }
     fun cacheSize() = cache.sizeBytes()
 
     private inline fun body(block: kotlinx.serialization.json.JsonObjectBuilder.() -> Unit): JsonObject =

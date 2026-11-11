@@ -11,7 +11,7 @@ Requirements: JDK 21, Android SDK (API 37). Gradle 9, AGP 9, Kotlin 2.4.
 ./gradlew :app:generateReleaseBaselineProfile   # with a signed-in device connected
 ```
 
-Release signing reads `finalish.keystore`, `finalish.keystorePassword`, `finalish.keyAlias` and `finalish.keyPassword` from Gradle properties or the matching `FINALISH_*` environment variables. Without a key `assembleRelease` stops with an error; `-Pfinalish.allowDebugSignedRelease=true` builds a debug-signed one for a local test. The CI workflow in `.github/workflows/android.yml` builds both variants and attaches APKs to `v*` tags.
+Release signing reads `finalish.keystore`, `finalish.keystorePassword`, `finalish.keyAlias` and `finalish.keyPassword` from Gradle properties or the matching `FINALISH_*` environment variables. Without a key `assembleRelease` stops with an error; `-Pfinalish.allowDebugSignedRelease=true` builds a debug-signed one for a local test. The CI workflow in `.github/workflows/android.yml` builds the debug APK on every run, pull requests included, without any signing secret; only `v*` tags and manual runs decode the release key, build the signed APK and App Bundle, and tags attach the APK to a GitHub release.
 
 ## Signing in
 

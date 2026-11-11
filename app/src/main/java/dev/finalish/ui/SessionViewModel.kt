@@ -89,16 +89,9 @@ class SessionViewModel(app: Application, val container: AppContainer) : AndroidV
         container.settings.update { it.copy(accountId = id) }
     }
 
+    /** The full cleanup (transfers, caches, notifications, reports, log) runs from [AppContainer.endSession]. */
     fun signOut() {
         container.auth.signOut()
-        container.transferManager.signOut()
-        // Disk work: off the main thread, and on the app scope so it finishes after this screen goes.
-        container.appScope.launch(kotlinx.coroutines.Dispatchers.IO) { container.clearCaches() }
-        // Reports, the log ring and the last crash belong to this user too.
-        container.feedback.clearAll()
-        dev.finalish.core.feedback.Breadcrumbs.clear()
-        dev.finalish.core.util.AppLog.clear()
-        container.settings.update { it.copy(accountId = null) }
     }
 
     /** The app files were shared from ("Gallery"), when Android tells us. */

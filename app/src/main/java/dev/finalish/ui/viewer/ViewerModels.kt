@@ -63,6 +63,8 @@ data class ViewerState(
     val preparing: Boolean = false,
     /** Frame.io finished processing the file but gives this user no media for it: see [mediaState]. */
     val mediaUnavailable: Boolean = false,
+    /** What the user's role on the project allows (menus hide the rest). */
+    val access: dev.finalish.core.model.FileAccess = dev.finalish.core.model.FileAccess.Full,
 ) {
     val kind: MediaKind get() = file?.kind ?: MediaKind.Other
     val visibleComments: List<Comment>

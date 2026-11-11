@@ -15,12 +15,15 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -97,6 +100,8 @@ fun AppNav(
     }
 
     val linkContext = androidx.compose.ui.platform.LocalContext.current
+    // A share link of the user's own account opened as the plain file or folder: say so once.
+    var shareNotice by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(deepLink, signedIn, state.accountId) {
         val link = deepLink ?: return@LaunchedEffect
         val account = state.accountId
@@ -109,12 +114,16 @@ fun AppNav(
         // Cleared only now: clearing the key earlier would cancel this effect mid-resolve.
         session.consumeLink()
         // A share from another of the user's accounts: switch to it, then open what it holds.
-        val t = when (target) {
+        val inAccount = when (target) {
             is dev.finalish.core.data.LinkTarget.InAccount -> { session.selectAccount(target.accountId); target.target }
             else -> target
         }
+        val t = if (inAccount is dev.finalish.core.data.LinkTarget.FromShare) {
+            shareNotice = inAccount.shareUrl
+            inAccount.target
+        } else inAccount
         when (t) {
-            is dev.finalish.core.data.LinkTarget.InAccount -> Unit
+            is dev.finalish.core.data.LinkTarget.InAccount, is dev.finalish.core.data.LinkTarget.FromShare -> Unit
             is dev.finalish.core.data.LinkTarget.File -> nav.navigate(ViewerRoute(t.assetId, type = t.type))
             is dev.finalish.core.data.LinkTarget.Folder -> nav.navigate(FolderRoute(t.projectId, t.rootFolderId, t.folderId, t.title, projectName = t.projectName))
             is dev.finalish.core.data.LinkTarget.Project -> nav.navigate(FolderRoute(t.projectId, t.rootFolderId, t.rootFolderId, t.name, isProjectRoot = true, projectName = t.name))
@@ -347,6 +356,20 @@ fun AppNav(
         }
     }
     }
+    }
+
+    shareNotice?.let { url ->
+        androidx.compose.foundation.layout.Box(
+            Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp),
+            contentAlignment = androidx.compose.ui.Alignment.BottomCenter,
+        ) {
+            dev.finalish.ui.shares.ShareAccessNotice(
+                onOpenInBrowser = { shareNotice = null; dev.finalish.core.data.FrameLinks.openInBrowserTab(linkContext, url) },
+                onDismiss = { shareNotice = null },
+            )
+        }
+        // Small and passing: it goes by itself after a while.
+        LaunchedEffect(url) { kotlinx.coroutines.delay(12_000); if (shareNotice == url) shareNotice = null }
     }
 
     // "Share to Final(ish)" opens over whatever screen is showing, not only on Home.

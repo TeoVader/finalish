@@ -312,6 +312,18 @@ interface FrameioApi {
         @Path("share") share: String,
     ): DataEnvelope<Share>
 
+    /**
+     * Experimental API: the same share with every setting, documented under "Show share" in V4
+     * Experimental (layout, theme, accent colour, versions, transcripts, captions, watermark and
+     * its template).
+     */
+    @Headers(EXPERIMENTAL)
+    @GET("accounts/{account}/shares/{share}")
+    suspend fun shareExperimental(
+        @Path("account") account: String,
+        @Path("share") share: String,
+    ): DataEnvelope<Share>
+
     @GET("accounts/{account}/shares/{share}/assets")
     suspend fun shareAssets(
         @Path("account") account: String,

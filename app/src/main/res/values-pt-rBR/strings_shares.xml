@@ -276,4 +276,10 @@
     <string name="common_try_again">Tentar novamente</string>
     <string name="common_offline_title">Você está off-line.</string>
     <string name="common_offline_body">Mostrando a última cópia salva; comentários e uploads serão enviados quando você voltar a ficar on-line.</string>
+    <string name="shares_settings_unread">O Frame.io não enviou o layout e as configurações de exibição deste link, então elas aparecem como não definidas. Altere uma para carregar todas.</string>
+    <string name="shares_remove_reviewer_body">A pessoa não poderá mais abrir este link. A mudança é imediata.</string>
+    <string name="shares_remove_file_body">Os revisores não verão mais o arquivo por este link. Ele continua no projeto.</string>
+    <string name="shares_opened_with_access_title">Aberto com o seu acesso</string>
+    <string name="shares_opened_with_access_body">Este link de compartilhamento é da sua conta, então abriu como o arquivo ou a pasta com as suas próprias permissões. A expiração, a senha, a configuração de download e a marca d\'água do link não valem aqui.</string>
+    <string name="shares_open_link_in_browser">Abrir o link de compartilhamento no navegador</string>
 </resources>

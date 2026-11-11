@@ -110,4 +110,16 @@ class PagingTest {
         assertEquals("x y", afterCursor("https://api.frame.io/v4/x?after=x%20y"))
         assertNull(afterCursor("/v4/accounts/a/shares?page_size=100"))
     }
+
+    @Test
+    fun `stops after the page cap when cursors keep changing`() = runBlocking {
+        var calls = 0
+        val all = allPages(
+            first = { PageEnvelope(listOf(0), Links("/x?after=c0")) },
+            next = { calls++; PageEnvelope(emptyList<Int>(), Links("/x?after=c$calls")) },
+            maxPages = 5,
+        )
+        assertEquals(listOf(0), all)
+        assertEquals(4, calls)
+    }
 }
