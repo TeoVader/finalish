@@ -12,3 +12,12 @@ h2 { font-size: 21px; margin-top: 2em; }
 a { color: var(--link); }
 em { color: var(--muted); }
 img { max-width: 100%; height: auto; border-radius: 12px; }
+footer { max-width: 720px; margin: 0 auto; padding: 16px 16px 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+footer a { color: var(--muted); }
+blockquote { margin: 0; padding: 4px 16px; border-left: 3px solid var(--line); }
+table.facts { width: 100%; border-collapse: collapse; font-size: 15px; }
+table.facts th, table.facts td { text-align: left; vertical-align: top; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+table.facts th { width: 34%; font-weight: 600; color: var(--muted); }
+.dodont { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 24px; }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin: 16px 0; }
+.shots img { display: block; }
