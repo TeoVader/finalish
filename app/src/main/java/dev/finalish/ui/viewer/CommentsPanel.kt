@@ -37,6 +37,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
@@ -120,6 +121,8 @@ fun CommentsList(
     onRetry: (Comment) -> Unit = {},
     pinNumberOf: (Comment) -> Int? = { null },
     onDeleteAttachment: (Comment, String) -> Unit = { _, _ -> },
+    /** False for a viewer: no marking done, no "Reply in Frame.io". */
+    canComment: Boolean = true,
 ) {
     val comments = state.visibleComments
     LazyColumn(
@@ -175,7 +178,8 @@ fun CommentsList(
                     onDelete = { onDelete(c) },
                     onRetry = { onRetry(c) },
                     pinNumber = pinNumberOf(c),
-                    replyUrl = state.file?.viewUrl,
+                    replyUrl = state.file?.viewUrl?.takeIf { canComment },
+                    canComment = canComment,
                     modifier = Modifier.animateItem(),
                     onDeleteAttachment = { onDeleteAttachment(c, it) },
                 )
@@ -200,6 +204,7 @@ private fun CommentCard(
     onDeleteAttachment: (String) -> Unit = {},
     pinNumber: Int? = null,
     replyUrl: String? = null,
+    canComment: Boolean = true,
 ) {
     val context = LocalContext.current
     // The public API can read replies but not write them: "Reply" opens the file on Frame.io.
@@ -399,7 +404,7 @@ private fun CommentCard(
                 modifier = Modifier
                     .size(26.dp)
                     .clip(CircleShape)
-                    .pressable(onToggleComplete, scaleTo = 0.8f, enabled = !comment.pending && !comment.failed),
+                    .pressable(onToggleComplete, scaleTo = 0.8f, enabled = canComment && !comment.pending && !comment.failed),
             )
         }
         if (menu) {
@@ -410,7 +415,7 @@ private fun CommentCard(
                 canDelete = mine || comment.pending || comment.failed,
                 onDismiss = { menu = false },
                 onGoTo = if (time != null || comment.page != null) ({ menu = false; onClick() }) else null,
-                onToggleComplete = if (!comment.pending && !comment.failed) ({ menu = false; onToggleComplete() }) else null,
+                onToggleComplete = if (canComment && !comment.pending && !comment.failed) ({ menu = false; onToggleComplete() }) else null,
                 onReply = onReply?.let { r -> { menu = false; r() } },
                 onCopy = { menu = false; copyToClipboard(context, comment.text) },
                 onEdit = { menu = false; onEdit() },
@@ -566,6 +571,19 @@ private fun CommentSkeleton() {
 private fun Live(content: @Composable () -> Unit) = content()
 
 private val QuickEmoji = listOf("👍", "🔥", "❤️", "👀", "✅", "😂", "🎬", "🙌")
+
+/** In place of the composer, for roles that can't comment (viewer). */
+@Composable
+fun CommentsReadOnlyNote(modifier: Modifier = Modifier) {
+    Row(
+        modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp).clip(RoundedCornerShape(14.dp)).background(Palette.Surface1).padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.Rounded.Visibility, null, tint = Palette.TextTertiary, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(10.dp))
+        Text(stringResource(R.string.viewer_comments_view_only), style = MaterialTheme.typography.bodySmall, color = Palette.TextSecondary)
+    }
+}
 
 @Composable
 fun CommentComposer(

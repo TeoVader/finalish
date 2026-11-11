@@ -142,6 +142,7 @@
     <string name="browser_no_matches_message">Nada en esta carpeta coincide con “%1$s”.</string>
     <string name="browser_empty_title">Aún no hay nada que revisar</string>
     <string name="browser_empty_message">Sube el primer archivo: vídeo, imágenes, audio o PDF. Las subidas continúan aunque cierres la aplicación.</string>
+    <string name="browser_empty_message_view_only">Los archivos que se añadan a esta carpeta aparecerán aquí. Tu rol en este proyecto permite ver, no subir.</string>
     <string name="browser_new_folder">Nueva carpeta</string>
     <string name="browser_folder_name">Nombre de la carpeta</string>
     <string name="browser_create">Crear</string>

@@ -206,6 +206,7 @@
     <!-- Home › Share to Final(ish) -->
     <string name="home_share_in_upload_to">Carica in…</string>
     <string name="home_share_in_last_used">Ultima usata</string>
+    <string name="home_share_in_cant_upload">Il tuo ruolo qui non permette di caricare</string>
     <string name="home_share_in_switch">Cambia</string>
     <string name="home_share_in_stack_on_top">Impila sopra</string>
     <string name="home_share_in_title">Carica su Frame.io</string>

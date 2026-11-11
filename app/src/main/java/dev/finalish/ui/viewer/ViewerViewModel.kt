@@ -232,6 +232,8 @@ class ViewerViewModel(
     private fun loadAccess(projectId: String) {
         if (projectId.isBlank() || projectId == accessProject) return
         accessProject = projectId
+        // Known this session: right away, so a viewer never sees the composer or menus flash in.
+        repo.cachedFileAccess(account, projectId)?.let { a -> _state.update { it.copy(access = a) }; return }
         viewModelScope.launch {
             val access = repo.fileAccess(account, projectId)
             _state.update { it.copy(access = access) }

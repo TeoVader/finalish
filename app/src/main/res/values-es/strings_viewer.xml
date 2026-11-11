@@ -50,6 +50,7 @@
     <string name="viewer_tab_info">Información</string>
     <string name="viewer_tab_versions">Versiones</string>
     <string name="viewer_comments_empty_title">Aún no hay comentarios</string>
+    <string name="viewer_comments_view_only">Tu rol en este proyecto permite leer los comentarios, pero no añadirlos.</string>
     <string name="viewer_comments_empty_filtered">No hay nada aquí</string>
     <string name="viewer_comments_empty_body">Sé el primero en dejar tu opinión.</string>
     <string name="viewer_comments_empty_body_video">Sé el primero en dejar tu opinión. Los comentarios se fijan al fotograma actual.</string>

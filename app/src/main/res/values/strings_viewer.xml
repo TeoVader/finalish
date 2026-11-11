@@ -49,6 +49,7 @@
     <string name="viewer_tab_info">Info</string>
     <string name="viewer_tab_versions">Versions</string>
     <string name="viewer_comments_empty_title">No comments yet</string>
+    <string name="viewer_comments_view_only">Your role on this project can view comments but not add them.</string>
     <string name="viewer_comments_empty_filtered">Nothing here</string>
     <string name="viewer_comments_empty_body">Be the first to leave feedback.</string>
     <string name="viewer_comments_empty_body_video">Be the first to leave feedback. Comments are pinned to the current frame.</string>

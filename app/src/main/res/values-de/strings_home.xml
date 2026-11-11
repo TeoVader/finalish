@@ -199,6 +199,7 @@
     <!-- Home › Share to Final(ish) -->
     <string name="home_share_in_upload_to">Hochladen nach…</string>
     <string name="home_share_in_last_used">Zuletzt verwendet</string>
+    <string name="home_share_in_cant_upload">Deine Rolle hier erlaubt kein Hochladen</string>
     <string name="home_share_in_switch">Ändern</string>
     <string name="home_share_in_stack_on_top">Darauf stapeln</string>
     <string name="home_share_in_title">Zu Frame.io hochladen</string>

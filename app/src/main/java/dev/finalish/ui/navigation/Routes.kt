@@ -34,7 +34,8 @@ data class CompareRoute(val leftId: String, val rightId: String)
 data class SharesRoute(val projectId: String, val projectName: String)
 
 @Serializable
-data class MembersRoute(val scope: String, val id: String, val title: String)
+/** [projectId]: the project a folder belongs to (scope "folders"), whose role decides who manages its members. */
+data class MembersRoute(val scope: String, val id: String, val title: String, val projectId: String = "")
 
 @Serializable data object MetadataFieldsRoute
 @Serializable data object LicensesRoute

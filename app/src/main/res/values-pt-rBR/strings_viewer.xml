@@ -50,6 +50,7 @@
     <string name="viewer_tab_info">Info</string>
     <string name="viewer_tab_versions">Versões</string>
     <string name="viewer_comments_empty_title">Nenhum comentário ainda</string>
+    <string name="viewer_comments_view_only">Sua função neste projeto permite ler os comentários, mas não adicioná-los.</string>
     <string name="viewer_comments_empty_filtered">Nada aqui</string>
     <string name="viewer_comments_empty_body">Seja o primeiro a deixar um feedback.</string>
     <string name="viewer_comments_empty_body_video">Seja o primeiro a deixar um feedback. Os comentários ficam fixados no frame atual.</string>

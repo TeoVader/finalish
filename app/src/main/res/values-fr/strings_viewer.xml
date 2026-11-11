@@ -50,6 +50,7 @@
     <string name="viewer_tab_info">Infos</string>
     <string name="viewer_tab_versions">Versions</string>
     <string name="viewer_comments_empty_title">Aucun commentaire pour l\'instant</string>
+    <string name="viewer_comments_view_only">Votre rôle dans ce projet permet de lire les commentaires, pas d\'en ajouter.</string>
     <string name="viewer_comments_empty_filtered">Rien ici</string>
     <string name="viewer_comments_empty_body">Soyez le premier à donner votre avis.</string>
     <string name="viewer_comments_empty_body_video">Soyez le premier à donner votre avis. Les commentaires sont épinglés à l\'image en cours.</string>

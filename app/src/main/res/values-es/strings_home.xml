@@ -206,6 +206,7 @@
     <!-- Home › Share to Final(ish) -->
     <string name="home_share_in_upload_to">Subir a…</string>
     <string name="home_share_in_last_used">Último usado</string>
+    <string name="home_share_in_cant_upload">Tu rol aquí no permite subir archivos</string>
     <string name="home_share_in_switch">Cambiar</string>
     <string name="home_share_in_stack_on_top">Apilar encima</string>
     <string name="home_share_in_title">Subir a Frame.io</string>

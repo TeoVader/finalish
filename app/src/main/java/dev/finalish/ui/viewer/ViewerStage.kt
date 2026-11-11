@@ -291,7 +291,7 @@ internal fun MediaArea(
                                 )
                                 .padding(top = 40.dp),
                         ) {
-                            if (file.kind == MediaKind.Video && !commentsOpen) {
+                            if (file.kind == MediaKind.Video && !commentsOpen && state.access.comment) {
                                 LiveText(
                                     { res.getString(R.string.viewer_comment_at, timeLabel(controller.positionMs)) },
                                     style = MaterialTheme.typography.labelLarge,

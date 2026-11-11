@@ -142,6 +142,7 @@
     <string name="browser_no_matches_message">Rien dans ce dossier ne correspond à « %1$s ».</string>
     <string name="browser_empty_title">Rien à relire pour l\'instant</string>
     <string name="browser_empty_message">Importez le premier fichier : vidéo, images, audio ou PDF. Les importations continuent même si vous fermez l\'application.</string>
+    <string name="browser_empty_message_view_only">Les fichiers ajoutés à ce dossier apparaîtront ici. Votre rôle dans ce projet permet de voir, pas d\'importer.</string>
     <string name="browser_new_folder">Nouveau dossier</string>
     <string name="browser_folder_name">Nom du dossier</string>
     <string name="browser_create">Créer</string>

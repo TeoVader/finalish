@@ -135,7 +135,7 @@ data class MembersUiState(
 )
 
 sealed interface MembersEvent {
-    data class Bind(val accountId: String, val scope: String, val id: String) : MembersEvent
+    data class Bind(val accountId: String, val scope: String, val id: String, val projectId: String = "") : MembersEvent
     data object Load : MembersEvent
     data object LoadCandidates : MembersEvent
     data class SetRole(val member: UserRole, val role: String) : MembersEvent
@@ -158,7 +158,7 @@ class MembersViewModel(app: Application, private val repo: FrameioRepository) : 
 
     fun onEvent(e: MembersEvent) {
         when (e) {
-            is MembersEvent.Bind -> bind(e.accountId, e.scope, e.id)
+            is MembersEvent.Bind -> bind(e.accountId, e.scope, e.id, e.projectId)
             MembersEvent.Load -> load()
             MembersEvent.LoadCandidates -> loadCandidates()
             is MembersEvent.SetRole -> setRole(e.member, e.role)
@@ -170,10 +170,39 @@ class MembersViewModel(app: Application, private val repo: FrameioRepository) : 
         }
     }
 
-    private fun bind(a: String, s: String, i: String) {
+    private fun bind(a: String, s: String, i: String, projectId: String) {
         if (account == a && scope == s && id == i) return
         account = a; scope = s; id = i
+        loadManage(projectId)
         load()
+    }
+
+    private val _canManage = MutableStateFlow<Boolean?>(null)
+    /**
+     * Whether the user may add members, change roles and remove them here: `full_access` on the
+     * project (or the folder's project), the workspace's `workspace_admin` or `full_access` for a
+     * workspace, account owners and admins; an unknown role too (the server decides). Null while
+     * it's read: the controls wait, the list doesn't.
+     */
+    val canManage: StateFlow<Boolean?> = _canManage.asStateFlow()
+
+    private fun loadManage(projectId: String) {
+        val cached = when (scope) {
+            "projects" -> repo.cachedFileAccess(account, id)
+            "folders" -> if (projectId.isBlank()) dev.finalish.core.model.FileAccess.Full else repo.cachedFileAccess(account, projectId)
+            "workspaces" -> repo.cachedWorkspaceAccess(account, id)
+            else -> dev.finalish.core.model.FileAccess.Full
+        }
+        _canManage.value = cached?.invite
+        if (cached != null) return
+        viewModelScope.launch {
+            val access = when (scope) {
+                "projects" -> repo.fileAccess(account, id)
+                "folders" -> repo.fileAccess(account, projectId)
+                else -> repo.workspaceAccess(account, id)
+            }
+            _canManage.value = access.invite
+        }
     }
 
     private fun updateMembers(block: (List<UserRole>) -> List<UserRole>) = _state.update { it.copy(members = it.members?.let(block)) }
@@ -271,10 +300,13 @@ fun MembersScreen(
     id: String,
     title: String,
     onBack: () -> Unit,
+    projectId: String = "",
     vm: MembersViewModel = viewModel(factory = MembersViewModel.Factory, key = "members-$scope-$id"),
 ) {
-    LaunchedEffect(accountId, scope, id) { vm.onEvent(MembersEvent.Bind(accountId, scope, id)) }
+    LaunchedEffect(accountId, scope, id) { vm.onEvent(MembersEvent.Bind(accountId, scope, id, projectId)) }
     val state by vm.state.collectAsStateWithLifecycle()
+    // Everyone sees the list; only roles that can manage members get Add and the role menus.
+    val canManage = vm.canManage.collectAsStateWithLifecycle().value == true
     val members = state.members
     val error = state.error
     val groups = state.groups
@@ -286,7 +318,7 @@ fun MembersScreen(
     Box(Modifier.fillMaxSize().background(Palette.Ink)) {
         Column(Modifier.fillMaxSize()) {
             SimpleTopBar(stringResource(R.string.members_members), title, onBack) {
-                AccentPill(Icons.Rounded.PersonAdd, stringResource(R.string.members_add)) { adding = true; vm.onEvent(MembersEvent.LoadCandidates) }
+                if (canManage) AccentPill(Icons.Rounded.PersonAdd, stringResource(R.string.members_add)) { adding = true; vm.onEvent(MembersEvent.LoadCandidates) }
             }
             val list0 = members
             val stage = when {
@@ -302,7 +334,7 @@ fun MembersScreen(
                     1 -> Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         repeat(5) { Box(Modifier.fillMaxWidth().height(52.dp).shimmer(RoundedCornerShape(14.dp))) }
                     }
-                    2 -> EmptyState(Icons.Rounded.PersonAdd, stringResource(R.string.members_no_members_title), stringResource(R.string.members_group_empty_body))
+                    2 -> EmptyState(Icons.Rounded.PersonAdd, stringResource(R.string.members_no_members_title), if (canManage) stringResource(R.string.members_group_empty_body) else null)
                     else -> LazyColumn(contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)) {
                         if (groups.isNotEmpty()) {
                             item(key = "groups-h") {
@@ -314,7 +346,7 @@ fun MembersScreen(
                                 )
                             }
                             items(groups, key = { "g-" + it.group.id }) { g ->
-                                GroupRoleRow(g, scope, onRole = { vm.onEvent(MembersEvent.SetGroupRole(g, it)) }, onRemove = { removingGroup = g }, modifier = Modifier.animateItem())
+                                GroupRoleRow(g, scope, onRole = { vm.onEvent(MembersEvent.SetGroupRole(g, it)) }, onRemove = { removingGroup = g }, modifier = Modifier.animateItem(), canManage = canManage)
                             }
                             item(key = "groups-gap") { Spacer(Modifier.height(14.dp)) }
                         }
@@ -327,9 +359,9 @@ fun MembersScreen(
                             )
                         }
                         items(list, key = { it.user.id ?: it.user.email.orEmpty() }) { m ->
-                            MemberRow(m, scope, onRole = { vm.onEvent(MembersEvent.SetRole(m, it)) }, onRemove = { removing = m }, modifier = Modifier.animateItem())
+                            MemberRow(m, scope, onRole = { vm.onEvent(MembersEvent.SetRole(m, it)) }, onRemove = { removing = m }, modifier = Modifier.animateItem(), canManage = canManage)
                         }
-                        item(key = "roles-hint") {
+                        if (canManage) item(key = "roles-hint") {
                             Text(
                                 stringResource(R.string.members_roles_hint),
                                 style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
@@ -380,22 +412,22 @@ fun MembersScreen(
 }
 
 @Composable
-private fun MemberRow(m: UserRole, scope: String, onRole: (String) -> Unit, onRemove: () -> Unit, modifier: Modifier) = RoleRow(
+internal fun MemberRow(m: UserRole, scope: String, onRole: (String) -> Unit, onRemove: () -> Unit, modifier: Modifier = Modifier, canManage: Boolean = true) = RoleRow(
     leading = { Avatar(m.user, 38.dp) },
     title = m.user.displayName,
     subtitle = listOfNotNull(m.user.email.takeIf { it != m.user.displayName }, if (m.user.active == false) stringResource(R.string.members_inactive) else null).joinToString(" · "),
     role = m.role,
-    editable = m.user.id != null && m.role !in setOf("owner", "admin"),
+    editable = canManage && m.user.id != null && m.role !in setOf("owner", "admin"),
     scope = scope, onRole = onRole, onRemove = onRemove, modifier = modifier,
 )
 
 @Composable
-internal fun GroupRoleRow(g: GroupRole, scope: String, onRole: (String) -> Unit, onRemove: () -> Unit, modifier: Modifier = Modifier) = RoleRow(
+internal fun GroupRoleRow(g: GroupRole, scope: String, onRole: (String) -> Unit, onRemove: () -> Unit, modifier: Modifier = Modifier, canManage: Boolean = true) = RoleRow(
     leading = { GroupBadge(g.group) },
     title = g.group.name,
     subtitle = stringResource(R.string.members_group_subtitle, g.group.membersLabel),
     role = g.role,
-    editable = g.role !in setOf("owner", "admin"),
+    editable = canManage && g.role !in setOf("owner", "admin"),
     scope = scope, onRole = onRole, onRemove = onRemove, modifier = modifier,
 )
 

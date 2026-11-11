@@ -315,6 +315,12 @@ data class Asset(
 
     /** Frame.io's built-in "Comment Count" field (sent as a decimal, e.g. 7.0). */
     val commentCount: Int? get() = media.metadata.firstOrNull { it.name.equals("Comment Count", ignoreCase = true) }?.doubleValue?.toInt()
+
+    /** This file with every metadata field read-only (also on its head version): for roles that can't edit them. */
+    fun readOnlyMetadata(): Asset = copy(
+        metadata = metadata.map { if (it.mutable) it.copy(mutable = false) else it },
+        headVersion = headVersion?.readOnlyMetadata(),
+    )
 }
 
 enum class MediaKind {
@@ -708,28 +714,36 @@ data class GroupRole(
  * What the signed-in user may do with the files of a project, from their role there (Frame.io's
  * "Managing user permissions" guide): `viewer` only views, `commenter` also comments, `edit_only`
  * also uploads and manages files but can't share or download, `editor` can do all that and share and
- * download, and only `full_access` (and account owners and admins) also "manage settings and invite
- * users", i.e. rename, restrict, archive and delete the project. An unknown role keeps every action:
- * the server still has the last word.
+ * download, and only `full_access` (and account owners and admins, and workspace admins) also "manage
+ * settings and invite users", i.e. rename, restrict, archive and delete the project and add, remove
+ * or change the role of its members. An unknown role keeps every action: the server still has the
+ * last word. Read from a workspace role, the same flags describe the workspace (see
+ * [dev.finalish.core.data.FrameioRepository.workspaceAccess]).
  */
 @Immutable
 data class FileAccess(
+    /** Write comments, reply, mark them done. */
     val comment: Boolean = true,
-    /** Rename, move, copy, duplicate, delete, upload (also a new version), stack; restore deleted files. */
+    /**
+     * Rename, move, copy, duplicate, delete, upload (also a new version, a new folder), stack;
+     * restore deleted files; set status, rating and other metadata fields.
+     */
     val manage: Boolean = true,
     val share: Boolean = true,
     val download: Boolean = true,
     /** The project itself: rename, restrict, archive, delete. */
     val projectSettings: Boolean = true,
+    /** Add members, change their role, remove them. */
+    val invite: Boolean = true,
 ) {
     companion object {
         val Full = FileAccess()
 
         fun ofRole(role: String?): FileAccess = when (role) {
-            "viewer" -> FileAccess(comment = false, manage = false, share = false, download = false, projectSettings = false)
-            "commenter" -> FileAccess(comment = true, manage = false, share = false, download = false, projectSettings = false)
-            "edit_only" -> FileAccess(comment = true, manage = true, share = false, download = false, projectSettings = false)
-            "editor" -> FileAccess(projectSettings = false)
+            "viewer" -> FileAccess(comment = false, manage = false, share = false, download = false, projectSettings = false, invite = false)
+            "commenter" -> FileAccess(comment = true, manage = false, share = false, download = false, projectSettings = false, invite = false)
+            "edit_only" -> FileAccess(comment = true, manage = true, share = false, download = false, projectSettings = false, invite = false)
+            "editor" -> FileAccess(projectSettings = false, invite = false)
             else -> Full
         }
     }

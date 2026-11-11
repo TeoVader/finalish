@@ -142,6 +142,7 @@
     <string name="browser_no_matches_message">Nada nesta pasta corresponde a “%1$s”.</string>
     <string name="browser_empty_title">Nada para revisar ainda</string>
     <string name="browser_empty_message">Envie o primeiro arquivo: vídeo, imagens, áudio ou PDF. Os uploads continuam mesmo se você fechar o app.</string>
+    <string name="browser_empty_message_view_only">Os arquivos adicionados a esta pasta aparecem aqui. Sua função neste projeto permite ver, não enviar.</string>
     <string name="browser_new_folder">Nova pasta</string>
     <string name="browser_folder_name">Nome da pasta</string>
     <string name="browser_create">Criar</string>

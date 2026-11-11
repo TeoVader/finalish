@@ -59,6 +59,7 @@ import dev.finalish.ui.components.pressable
 import dev.finalish.ui.theme.Palette
 import dev.finalish.ui.transfers.LocalFileThumb
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /** A file another app shared with us. */
@@ -83,6 +84,18 @@ internal fun ShareInFlow(accountId: String, uris: List<Uri>, source: String?, pr
     var destination by remember { mutableStateOf(last) }
     var version by remember { mutableStateOf<Asset?>(null) }
     var step by remember { mutableStateOf<Step>(Step.Main) }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    // Projects whose role turned out not to allow uploads, and the one being checked.
+    var blocked by remember { mutableStateOf(emptySet<String>()) }
+    var checking by remember { mutableStateOf<String?>(null) }
+    // Last time's folder is the default, unless the role there no longer allows uploads.
+    LaunchedEffect(last?.projectId) {
+        val p = last?.projectId ?: return@LaunchedEffect
+        if (!container.repository.fileAccess(accountId, p).manage && destination?.projectId == p) {
+            destination = null
+            version = null
+        }
+    }
     var files by remember { mutableStateOf(uris.map { SharedFile(it.toString(), "", -1) }) }
     LaunchedEffect(uris) {
         files = withContext(Dispatchers.IO) {
@@ -123,22 +136,21 @@ internal fun ShareInFlow(accountId: String, uris: List<Uri>, source: String?, pr
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             containerColor = Palette.Surface1,
         ) {
-            Column(Modifier.navigationBarsPadding().padding(bottom = 16.dp)) {
-                Text(stringResource(R.string.home_share_in_upload_to), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
-                LazyColumn(Modifier.heightIn(max = 480.dp)) {
-                    items(projects, key = { it.id }) { pr ->
-                        Row(
-                            Modifier.fillMaxWidth().pressable({ step = Step.Folder(pr) }, scaleTo = 0.98f).padding(horizontal = 20.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Box(Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(projectGradient(pr.id)))
-                            Spacer(Modifier.width(14.dp))
-                            Text(pr.name, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                            if (pr.id == destination?.projectId) Text(stringResource(R.string.home_share_in_last_used), style = MaterialTheme.typography.labelMedium, color = Palette.TextTertiary)
-                        }
+            ShareInProjects(
+                projects = projects,
+                lastUsed = destination?.projectId,
+                // Roles already read this session that can't upload; the rest are checked on tap.
+                readOnly = projects.filter { container.repository.cachedFileAccess(accountId, it.id)?.manage == false }.mapTo(mutableSetOf()) { it.id } + blocked,
+                checking = checking,
+                onPick = { pr ->
+                    if (checking == null) scope.launch {
+                        checking = pr.id
+                        val access = container.repository.fileAccess(accountId, pr.id)
+                        checking = null
+                        if (access.manage) step = Step.Folder(pr) else blocked = blocked + pr.id
                     }
-                }
-            }
+                },
+            )
         }
         is Step.Folder -> FolderPickerSheet(
             accountId = accountId,
@@ -163,6 +175,47 @@ internal fun ShareInFlow(accountId: String, uris: List<Uri>, source: String?, pr
                 onPick = { picked -> version = picked.firstOrNull(); step = Step.Main },
                 onDismiss = { step = Step.Main },
             )
+        }
+    }
+}
+
+/**
+ * The "Upload to" project list. Projects in [readOnly] (the role there can't upload: viewer or
+ * commenter) are dimmed with a note and can't be picked; [checking] shows a spinner while that
+ * project's role is read.
+ */
+@Composable
+internal fun ShareInProjects(
+    projects: List<Project>,
+    lastUsed: String?,
+    readOnly: Set<String>,
+    checking: String?,
+    onPick: (Project) -> Unit,
+) {
+    Column(Modifier.navigationBarsPadding().padding(bottom = 16.dp)) {
+        Text(stringResource(R.string.home_share_in_upload_to), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
+        LazyColumn(Modifier.heightIn(max = 480.dp)) {
+            items(projects, key = { it.id }) { pr ->
+                val locked = pr.id in readOnly
+                Row(
+                    Modifier.fillMaxWidth()
+                        .alpha(if (locked) 0.5f else 1f)
+                        .pressable({ onPick(pr) }, enabled = !locked, scaleTo = 0.98f)
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(projectGradient(pr.id)))
+                    Spacer(Modifier.width(14.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(pr.name, style = MaterialTheme.typography.bodyLarge)
+                        if (locked) Text(stringResource(R.string.home_share_in_cant_upload), style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary)
+                    }
+                    when {
+                        pr.id == checking -> androidx.compose.material3.CircularProgressIndicator(Modifier.size(18.dp), color = Palette.TextTertiary, strokeWidth = 2.dp)
+                        pr.id == lastUsed && !locked -> Text(stringResource(R.string.home_share_in_last_used), style = MaterialTheme.typography.labelMedium, color = Palette.TextTertiary)
+                    }
+                }
+            }
         }
     }
 }

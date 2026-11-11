@@ -126,6 +126,7 @@ internal fun SidePanel(
                         rangeOf = { c -> c.duration?.takeIf { it > 0 }?.let { d -> String.format(java.util.Locale.US, "%.1fs", d / fps) } },
                         onSelect = vm::selectComment,
                         onToggleComplete = vm::toggleComplete,
+                        canComment = state.access.comment,
                         onEdit = vm::startEdit,
                         onDelete = vm::deleteComment,
                         onFilter = vm::setFilter,
@@ -133,13 +134,22 @@ internal fun SidePanel(
                         pinNumberOf = if (file.kind == MediaKind.Image) { pinNumbers(state.comments).let { m -> { c: Comment -> m[c.id] } } } else { { null } },
                         onDeleteAttachment = vm::deleteAttachment,
                     )
-                    PanelTab.Info -> InfoPanel(file, state.offlinePath != null, vm, onShare)
-                    PanelTab.Versions -> VersionsPanel(state.versions, file.id, vm::selectVersion, onCompare, onReorder = vm::reorderVersion, onNewVersion = onNewVersion)
+                    // Status, rating and fields stay visible but read-only for roles that can't edit them.
+                    PanelTab.Info -> InfoPanel(if (state.access.manage) file else remember(file) { file.readOnlyMetadata() }, state.offlinePath != null, vm, onShare)
+                    PanelTab.Versions -> VersionsPanel(
+                        state.versions, file.id, vm::selectVersion, onCompare,
+                        onReorder = if (state.access.manage) vm::reorderVersion else null,
+                        onNewVersion = if (state.access.manage) onNewVersion else null,
+                    )
                 }
             }
         }
+        // A viewer reads comments but can't write them: a note instead of the composer.
+        if (!state.access.comment) AnimatedVisibility(state.tab == PanelTab.Comments) {
+            CommentsReadOnlyNote(Modifier.navigationBarsPadding())
+        }
         AnimatedVisibility(
-            state.tab == PanelTab.Comments,
+            state.tab == PanelTab.Comments && state.access.comment,
             enter = slideInVertically { it } + fadeIn(),
             exit = slideOutVertically { it } + fadeOut(),
         ) {
