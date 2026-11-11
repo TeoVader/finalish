@@ -165,6 +165,8 @@ fun TransportBar(
     onToggleFullscreen: () -> Unit,
     overlay: Boolean = false,
 ) {
+    // Frame.io gave no media to play: no controls that do nothing (the stage shows why).
+    if (state.mediaUnavailable) return
     val view by vm.view.collectAsStateWithLifecycle()
     val markers = remember(state.comments, fps, view.showMarkers) {
         if (!view.showMarkers) emptyList() else state.comments.mapNotNull { c ->

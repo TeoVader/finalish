@@ -263,6 +263,9 @@
     <string name="viewer_preparing_audio">Frame.io sta preparando l\'audio</string>
     <string name="viewer_preparing_video">Frame.io sta preparando il video</string>
     <string name="viewer_preparing_body">Partirà da solo appena è pronto</string>
+    <string name="viewer_media_unavailable_title">Anteprima non disponibile in Final(ish)</string>
+    <string name="viewer_media_unavailable_body">Frame.io non condivide con le app i contenuti di questo file per il tuo account, per esempio con il ruolo Viewer o quando va mostrato con il watermark. Puoi vederlo su Frame.io.</string>
+    <string name="viewer_open_on_frameio">Apri su Frame.io</string>
 
     <!-- Viewer messages (snackbars) -->
     <string name="viewer_msg_offline_comment_queued">Sei offline: il commento verrà inviato quando ti riconnetti</string>

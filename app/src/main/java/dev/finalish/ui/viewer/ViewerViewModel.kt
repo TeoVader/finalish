@@ -160,6 +160,7 @@ class ViewerViewModel(
                 commentsLoading = true,
                 selectedCommentId = null,
                 preparing = false,
+                mediaUnavailable = false,
             )
         }
         comments.resetComposer()
@@ -196,19 +197,31 @@ class ViewerViewModel(
                 scrub.prepare(f.id, f.mediaLinks?.video180?.streamUrl ?: f.mediaLinks?.efficient?.streamUrl)
             }
         }
-        if (f.kind != MediaKind.Video && f.kind != MediaKind.Audio) return
         val local = _state.value.offlinePath
+        if (f.kind == MediaKind.Image) {
+            val unavailable = mediaState(f, hasLink = local != null || imageStreamUrl(f) != null) == MediaState.Unavailable
+            if (unavailable) dev.finalish.core.util.AppLog.i("No image link although ${f.media.status}: media withheld")
+            _state.update { it.copy(mediaUnavailable = unavailable) }
+            return
+        }
+        if (f.kind != MediaKind.Video && f.kind != MediaKind.Audio) return
         val url = local?.let { "file://$it" } ?: pickStreamUrl(f) ?: run {
             dev.finalish.core.util.AppLog.i("No playable link (${f.media.mediaType}, status=${f.media.status})")
-            waitForRendition(f.id)
+            if (mediaState(f, hasLink = false) == MediaState.Unavailable) showUnavailable() else waitForRendition(f.id)
             return
         }
         preparingJob?.cancel()
-        _state.update { it.copy(preparing = false) }
+        _state.update { it.copy(preparing = false, mediaUnavailable = false) }
         player.load(url, autoplay = settings.value.autoplay && f.kind == MediaKind.Video)
     }
 
     private var preparingJob: Job? = null
+
+    /** Processing is over and still no link: Frame.io withholds the media, so there's nothing to wait for. */
+    private fun showUnavailable() {
+        preparingJob?.cancel()
+        _state.update { it.copy(preparing = false, mediaUnavailable = true) }
+    }
 
     /** Polls the file until Frame.io has a playable rendition, then starts playback by itself. */
     private fun waitForRendition(fileId: String) {
@@ -219,10 +232,18 @@ class ViewerViewModel(
                 delay(8_000)
                 val f = runCatching { repo.fileNow(account, fileId) }.getOrNull() ?: continue
                 if (_state.value.file?.id != fileId) return@launch
-                if (pickStreamUrl(f) != null) {
-                    _state.update { it.copy(file = metadata.withMeta(f), preparing = false) }
-                    startPlayback(f)
-                    return@launch
+                when (mediaState(f, hasLink = pickStreamUrl(f) != null)) {
+                    MediaState.Ready -> {
+                        _state.update { it.copy(file = metadata.withMeta(f), preparing = false) }
+                        startPlayback(f)
+                        return@launch
+                    }
+                    // Transcoding finished without a link for this user: stop polling.
+                    MediaState.Unavailable -> {
+                        _state.update { it.copy(file = metadata.withMeta(f), preparing = false, mediaUnavailable = true) }
+                        return@launch
+                    }
+                    MediaState.Preparing -> Unit
                 }
             }
         }
