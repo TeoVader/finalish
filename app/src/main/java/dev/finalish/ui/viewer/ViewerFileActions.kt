@@ -34,7 +34,9 @@ internal class ViewerFileActions(private val session: ViewerSession, private val
                 val bitmap = player.captureFrame() ?: error(session.str(R.string.viewer_msg_no_frame))
                 val tc = Format.timecode(player.currentPositionMs, session.fps()).replace(':', '-')
                 val name = "${f.name.substringBeforeLast('.')}_$tc.png"
-                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { saveImage(bitmap, name) }
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    runCatching { saveImage(bitmap, name) }.getOrElse { error(session.str(R.string.viewer_msg_still_failed)) }
+                }
             }.onSuccess { messages.emit(session.str(R.string.viewer_msg_still_saved)) }
                 .onFailure { messages.emit(it.message ?: it.userMessage()) }
         }

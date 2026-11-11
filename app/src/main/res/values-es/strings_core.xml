@@ -40,7 +40,6 @@
     </plurals>
     <string name="core_transfer_uploading_to_frameio">Subiendo a Frame.io</string>
     <string name="core_transfer_downloading_offline">Descargando para usar sin conexión</string>
-    <string name="core_transfer_no_rendition">No hay ninguna versión descargable disponible para este archivo.</string>
     <string name="core_transfer_not_stacked">Se subió, pero no se añadió como nueva versión: %1$s</string>
     <string name="core_transfer_import_failed">Frame.io no pudo obtener el archivo desde el enlace</string>
     <string name="core_transfer_import_timeout">Aún sin importar después de un día</string>
