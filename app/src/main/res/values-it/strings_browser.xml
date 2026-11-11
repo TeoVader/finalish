@@ -141,6 +141,7 @@
     <string name="browser_no_matches_message">Niente in questa cartella corrisponde a “%1$s”.</string>
     <string name="browser_empty_title">Ancora niente da revisionare</string>
     <string name="browser_empty_message">Carica il primo file: video, immagini, audio o PDF. I caricamenti continuano anche se chiudi l\'app.</string>
+    <string name="browser_empty_message_view_only">I file aggiunti a questa cartella compaiono qui. Il tuo ruolo in questo progetto permette di vedere, non di caricare.</string>
     <string name="browser_new_folder">Nuova cartella</string>
     <string name="browser_folder_name">Nome cartella</string>
     <string name="browser_create">Crea</string>

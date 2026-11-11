@@ -240,7 +240,7 @@ fun AppNav(
                 onOpenShares = { name -> nav.navigate(SharesRoute(r.projectId, name)) },
                 onOpenMembers = { name -> nav.navigate(MembersRoute("projects", r.projectId, name)) },
                 onOpenTrash = { name -> nav.navigate(TrashRoute(r.projectId, name)) },
-                onOpenFolderMembers = { id, name -> nav.navigate(MembersRoute("folders", id, name)) },
+                onOpenFolderMembers = { id, name -> nav.navigate(MembersRoute("folders", id, name, projectId = r.projectId)) },
                 onOpenTransfers = {
                     session.showHomeTab(dev.finalish.ui.home.HomeTab.Transfers.ordinal)
                     nav.popBackStack(HomeRoute, inclusive = false)
@@ -293,7 +293,7 @@ fun AppNav(
         }
         composable<MembersRoute> { entry ->
             val r = entry.toRoute<MembersRoute>()
-            ReadableScreen { dev.finalish.ui.members.MembersScreen(account, r.scope, r.id, r.title, onBack = { nav.popBackStack() }) }
+            ReadableScreen { dev.finalish.ui.members.MembersScreen(account, r.scope, r.id, r.title, onBack = { nav.popBackStack() }, projectId = r.projectId) }
         }
         composable<LicensesRoute> {
             ReadableScreen { dev.finalish.ui.settings.LicensesScreen(onBack = { nav.popBackStack() }) }

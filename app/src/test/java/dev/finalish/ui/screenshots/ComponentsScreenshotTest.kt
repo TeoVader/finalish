@@ -611,4 +611,52 @@ class ComponentsScreenshotTest {
             )
         }
     }
+
+    /** A viewer's Members screen: the list and roles, no Add, no role menus. */
+    @Test fun membersViewer() = snap("members_viewer") {
+        val editors = dev.finalish.core.model.UserGroup("1", "Editors", "✂️", 4)
+        dev.finalish.ui.members.GroupRoleRow(dev.finalish.core.model.GroupRole(editors, "editor"), "projects", {}, {}, canManage = false)
+        listOf(
+            dev.finalish.core.model.UserRole("full_access", User("u1", name = "Noa Lindqvist", email = "noa@example.com")),
+            dev.finalish.core.model.UserRole("commenter", User("u2", name = "Mira Solberg", email = "mira@example.com")),
+            dev.finalish.core.model.UserRole("viewer", User("u3", name = "Teo Varga", email = "teo@example.com")),
+        ).forEach { dev.finalish.ui.members.MemberRow(it, "projects", {}, {}, canManage = false) }
+    }
+
+    /** A viewer's comments: no marking done, and a note where the composer would be. */
+    @Test fun commentsViewer() = snap("comments_viewer") {
+        val noa = User(id = "1", name = "Noa Lindqvist")
+        val comment = dev.finalish.core.model.Comment(
+            id = "c1", text = "Can we hold the wide shot a beat longer?", owner = noa,
+            timestamp = kotlinx.serialization.json.JsonPrimitive(290),
+        )
+        androidx.compose.foundation.layout.Box(Modifier.height(260.dp)) {
+            dev.finalish.ui.viewer.CommentsList(
+                state = dev.finalish.ui.viewer.ViewerState(
+                    file = dev.finalish.core.model.Asset("f1", name = "Saltmarsh_cut_v3.mp4", viewUrl = "https://next.frame.io/project/p1/view/f1"),
+                    loading = false, comments = listOf(comment), commentsLoading = false, me = User(id = "3", name = "Teo Varga"),
+                    access = dev.finalish.core.model.FileAccess.ofRole("viewer"),
+                ),
+                listState = androidx.compose.foundation.lazy.rememberLazyListState(),
+                timeOf = { "00:00:12:02" },
+                onSelect = {}, onToggleComplete = {}, onEdit = {}, onDelete = {}, onFilter = {},
+                canComment = false,
+            )
+        }
+        dev.finalish.ui.viewer.CommentsReadOnlyNote()
+    }
+
+    /** "Share to Final(ish)" → Upload to: a project where the role can't upload is dimmed with a note. */
+    @Test fun shareInProjectsViewer() = snap("share_in_projects_viewer") {
+        Column(Modifier.background(Palette.Surface1).padding(top = 20.dp)) {
+            dev.finalish.ui.home.ShareInProjects(
+                projects = listOf(
+                    dev.finalish.core.model.Project("p1", name = "Saltmarsh"),
+                    dev.finalish.core.model.Project("p2", name = "Client review (shared)"),
+                    dev.finalish.core.model.Project("p3", name = "Mosswood promo"),
+                ),
+                lastUsed = "p1", readOnly = setOf("p2"), checking = null, onPick = {},
+            )
+        }
+    }
 }

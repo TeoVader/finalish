@@ -237,7 +237,7 @@ fun ProjectsTab(
                     if (!showArchived && (workspaceFilter == null || groups.size == 1)) {
                         item(span = { GridItemSpan(maxLineSpan) }, key = "ws-${group.workspace.id}") {
                             WorkspaceHeader(
-                                group,
+                                group, accountId,
                                 onRename = { renamingWs = group.workspace },
                                 onMembers = { onOpenMembers("workspaces", group.workspace.id, group.workspace.name) },
                                 onDelete = { deletingWs = group },
@@ -376,9 +376,18 @@ fun ProjectsTab(
 }
 
 @Composable
-private fun WorkspaceHeader(group: WorkspaceProjects, onRename: () -> Unit, onMembers: () -> Unit, onDelete: () -> Unit) {
+private fun WorkspaceHeader(group: WorkspaceProjects, accountId: String?, onRename: () -> Unit, onMembers: () -> Unit, onDelete: () -> Unit) {
     var menu by remember { mutableStateOf(false) }
     val invited = group.workspace.id == dev.finalish.core.data.INVITED_WORKSPACE
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val repo = remember { dev.finalish.FinalishApp.container(context).repository }
+    // The workspace role decides Rename and Delete; read only once the menu opens, then kept for the session.
+    val access by androidx.compose.runtime.produceState(
+        if (accountId == null) dev.finalish.core.model.FileAccess.Full else repo.cachedWorkspaceAccess(accountId, group.workspace.id),
+        accountId, group.workspace.id, menu,
+    ) {
+        if (value == null && menu && accountId != null) value = repo.workspaceAccess(accountId, group.workspace.id)
+    }
     Row(Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(group.workspace.name, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
         Text("${group.projects.size}", style = MaterialTheme.typography.labelMedium, color = Palette.TextTertiary)
@@ -389,8 +398,8 @@ private fun WorkspaceHeader(group: WorkspaceProjects, onRename: () -> Unit, onMe
             )
             DropdownMenu(menu, onDismissRequest = { menu = false }, shape = dev.finalish.ui.theme.MenuShape) {
                 DropdownMenuItem(text = { Text(stringResource(R.string.home_members)) }, leadingIcon = { Icon(Icons.Rounded.Group, null) }, onClick = { menu = false; onMembers() })
-                DropdownMenuItem(text = { Text(stringResource(R.string.home_rename)) }, leadingIcon = { Icon(Icons.Rounded.Edit, null) }, onClick = { menu = false; onRename() })
-                DropdownMenuItem(
+                if (access?.projectSettings == true) DropdownMenuItem(text = { Text(stringResource(R.string.home_rename)) }, leadingIcon = { Icon(Icons.Rounded.Edit, null) }, onClick = { menu = false; onRename() })
+                if (access?.projectSettings == true) DropdownMenuItem(
                     text = { Text(stringResource(R.string.home_delete_workspace), color = Palette.Red) },
                     leadingIcon = { Icon(Icons.Rounded.Delete, null, tint = Palette.Red) },
                     onClick = { menu = false; onDelete() },

@@ -134,6 +134,7 @@
     <string name="browser_no_matches_message">Nothing in this folder matches “%1$s”.</string>
     <string name="browser_empty_title">Nothing to review yet</string>
     <string name="browser_empty_message">Upload the first file: video, images, audio or PDF. Uploads keep going even if you close the app.</string>
+    <string name="browser_empty_message_view_only">Files added to this folder show up here. Your role on this project can view, not upload.</string>
     <string name="browser_new_folder">New folder</string>
     <string name="browser_folder_name">Folder name</string>
     <string name="browser_create">Create</string>

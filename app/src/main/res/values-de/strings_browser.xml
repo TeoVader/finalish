@@ -134,6 +134,7 @@
     <string name="browser_no_matches_message">Nichts in diesem Ordner passt zu „%1$s“.</string>
     <string name="browser_empty_title">Noch nichts zu prüfen</string>
     <string name="browser_empty_message">Lade die erste Datei hoch: Video, Bilder, Audio oder PDF. Uploads laufen weiter, auch wenn du die App schließt.</string>
+    <string name="browser_empty_message_view_only">Dateien, die zu diesem Ordner hinzugefügt werden, erscheinen hier. Deine Rolle in diesem Projekt erlaubt Ansehen, nicht Hochladen.</string>
     <string name="browser_new_folder">Neuer Ordner</string>
     <string name="browser_folder_name">Ordnername</string>
     <string name="browser_create">Erstellen</string>

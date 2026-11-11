@@ -49,6 +49,7 @@
     <string name="viewer_tab_info">Info</string>
     <string name="viewer_tab_versions">Versionen</string>
     <string name="viewer_comments_empty_title">Noch keine Kommentare</string>
+    <string name="viewer_comments_view_only">Deine Rolle in diesem Projekt erlaubt es, Kommentare zu lesen, aber nicht zu schreiben.</string>
     <string name="viewer_comments_empty_filtered">Hier ist nichts</string>
     <string name="viewer_comments_empty_body">Schreib den ersten Kommentar.</string>
     <string name="viewer_comments_empty_body_video">Schreib den ersten Kommentar. Kommentare werden an das aktuelle Frame geheftet.</string>

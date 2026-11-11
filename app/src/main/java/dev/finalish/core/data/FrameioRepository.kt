@@ -943,6 +943,31 @@ class FrameioRepository(
     fun cachedFileAccess(account: String, projectId: String): dev.finalish.core.model.FileAccess? =
         accessByProject["$account:$projectId"]
 
+    /**
+     * What the signed-in user may do with a workspace, from their workspace role: account owners and
+     * admins and `workspace_admin` have full access; `full_access` too (the guide gives it "manage
+     * settings, and invite users"); other roles can't rename or delete the workspace or manage its
+     * members ([FileAccess.projectSettings], [FileAccess.invite]). Not listed or unreadable: full
+     * access, the server decides. Cached per session like [fileAccess].
+     */
+    suspend fun workspaceAccess(account: String, workspaceId: String): dev.finalish.core.model.FileAccess {
+        if (workspaceId.isBlank() || workspaceId == INVITED_WORKSPACE) return dev.finalish.core.model.FileAccess.Full
+        val key = "$account:ws:$workspaceId"
+        accessByProject[key]?.let { return it }
+        val role = runCatchingCancellable {
+            val accountRoles = accounts().firstOrNull { it.id == account }?.roles.orEmpty()
+            if ("owner" in accountRoles || "admin" in accountRoles) "owner"
+            else me().id?.let { me -> members(account, "workspaces", workspaceId).firstOrNull { it.user.id == me }?.role }
+        }
+            .onFailure { dev.finalish.core.util.AppLog.w("Couldn't read the workspace role: ${it.javaClass.simpleName}") }
+            .getOrElse { return dev.finalish.core.model.FileAccess.Full }
+        return dev.finalish.core.model.FileAccess.ofRole(role).also { accessByProject[key] = it }
+    }
+
+    /** The [workspaceAccess] already read this session; null until then. */
+    fun cachedWorkspaceAccess(account: String, workspaceId: String): dev.finalish.core.model.FileAccess? =
+        if (workspaceId == INVITED_WORKSPACE) dev.finalish.core.model.FileAccess.Full else accessByProject["$account:ws:$workspaceId"]
+
     private suspend fun myRole(account: String, projectId: String): String? {
         val accountRoles = accounts().firstOrNull { it.id == account }?.roles.orEmpty()
         if ("owner" in accountRoles || "admin" in accountRoles) return "owner"

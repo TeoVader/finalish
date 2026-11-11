@@ -260,8 +260,12 @@ fun FolderScreen(
         }
     }
 
-    val fileAccess by vm.access.collectAsStateWithLifecycle()
-    // Menus offer only what the user's role on the project allows.
+    val knownAccess by vm.access.collectAsStateWithLifecycle()
+    // Menus offer only what the user's role on the project allows (every action while it loads,
+    // as before; the server still refuses). Upload and new folder wait for the role instead: a
+    // viewer shouldn't see the big button appear and then vanish.
+    val fileAccess = knownAccess ?: dev.finalish.core.model.FileAccess.Full
+    val canUpload = knownAccess?.manage == true
     androidx.compose.runtime.CompositionLocalProvider(LocalFileAccess provides fileAccess) {
     Scaffold(
         containerColor = Palette.Ink,
@@ -306,7 +310,7 @@ fun FolderScreen(
             }
         },
         floatingActionButton = {
-            AnimatedVisibility(!selecting, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
+            AnimatedVisibility(!selecting && canUpload, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
                 Box {
                     Row(
                         Modifier
@@ -469,7 +473,8 @@ fun FolderScreen(
                     }
                 }
 
-                if (isProjectRoot && filter.isBlank()) {
+                // Share links are for roles that can share; while the role loads the strip stays, so it doesn't jump.
+                if (isProjectRoot && filter.isBlank() && knownAccess?.share != false) {
                     item(span = { GridItemSpan(maxLineSpan) }, key = "shares") {
                         dev.finalish.ui.shares.ProjectSharesStrip(
                             shares = projectShares,
@@ -498,11 +503,11 @@ fun FolderScreen(
                         } else {
                             EmptyState(
                                 Icons.Rounded.FolderOpen, stringResource(R.string.browser_empty_title),
-                                stringResource(R.string.browser_empty_message),
-                                actionLabel = stringResource(R.string.browser_upload),
+                                stringResource(if (knownAccess != null && !canUpload) R.string.browser_empty_message_view_only else R.string.browser_empty_message),
+                                actionLabel = if (canUpload) stringResource(R.string.browser_upload) else null,
                                 brand = true,
                                 // Same menu as the + button: the text promises audio and PDF too.
-                                onAction = { addMenu = true },
+                                onAction = if (canUpload) ({ addMenu = true }) else null,
                             )
                         }
                     }

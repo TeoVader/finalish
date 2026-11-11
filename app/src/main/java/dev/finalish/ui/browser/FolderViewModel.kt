@@ -315,12 +315,16 @@ class FolderViewModel(
     private var sharesJob: Job? = null
 
     /** Project-level share links, shown at the project root. */
-    private val _access = MutableStateFlow(dev.finalish.core.model.FileAccess.Full)
-    /** What the user's role on the project allows; menus hide the rest. Full until known. */
-    val access: StateFlow<dev.finalish.core.model.FileAccess> = _access.asStateFlow()
+    private val _access = MutableStateFlow<dev.finalish.core.model.FileAccess?>(null)
+    /**
+     * What the user's role on the project allows; menus hide the rest. Null while it's read (the
+     * session's cached value, if any, comes first), [FileAccess.Full] when the role is unknown.
+     */
+    val access: StateFlow<dev.finalish.core.model.FileAccess?> = _access.asStateFlow()
 
     fun loadAccess(projectId: String) {
         if (account.isBlank()) return
+        repo.cachedFileAccess(account, projectId)?.let { _access.value = it; return }
         viewModelScope.launch { _access.value = repo.fileAccess(account, projectId) }
     }
 

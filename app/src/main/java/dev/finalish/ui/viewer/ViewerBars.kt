@@ -102,15 +102,17 @@ internal fun ViewerTopBar(
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 3.dp)) {
-                if (status != null) {
+                // Roles that can't edit metadata (viewer, commenter) see the status, not a menu; no status, no chip.
+                val statusEditable = status != null && status.mutable && state.access.manage
+                if (status != null && (statusEditable || status.textValue != null)) {
                     Box {
                         val label = status.textValue
                         Row(
                             Modifier
                                 .clip(RoundedCornerShape(50))
                                 .background(dev.finalish.ui.theme.statusColor(label).copy(alpha = if (label == null) 0.12f else 0.16f))
-                                .pressable({ statusMenu = true }, enabled = status.mutable, scaleTo = 0.95f)
-                                .padding(start = 8.dp, end = 4.dp, top = 2.dp, bottom = 2.dp),
+                                .pressable({ statusMenu = true }, enabled = statusEditable, scaleTo = 0.95f)
+                                .padding(start = 8.dp, end = if (statusEditable) 4.dp else 8.dp, top = 2.dp, bottom = 2.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Box(Modifier.size(6.dp).clip(RoundedCornerShape(50)).background(dev.finalish.ui.theme.statusColor(label)))
@@ -120,7 +122,7 @@ internal fun ViewerTopBar(
                                 style = MaterialTheme.typography.labelMedium,
                                 color = if (label == null) Palette.TextSecondary else dev.finalish.ui.theme.statusColor(label),
                             )
-                            Icon(Icons.Rounded.KeyboardArrowDown, null, tint = Palette.TextTertiary, modifier = Modifier.size(14.dp))
+                            if (statusEditable) Icon(Icons.Rounded.KeyboardArrowDown, null, tint = Palette.TextTertiary, modifier = Modifier.size(14.dp))
                         }
                         DropdownMenu(statusMenu, onDismissRequest = { statusMenu = false }, shape = dev.finalish.ui.theme.MenuShape, containerColor = Palette.Surface3) {
                             DropdownMenuItem(
