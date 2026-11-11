@@ -201,8 +201,7 @@ class FolderDownloadWorker(context: Context, params: WorkerParameters) : Corouti
                 } else {
                     val dmId = dm.enqueue(
                         DownloadManager.Request(url.toUri())
-                            .setTitle(item.path.substringAfterLast('/'))
-                            .setDescription(job.folderName)
+                            .setTitle(applicationContext.getString(R.string.core_notify_public_transfer))
                             .setAllowedOverMetered(job.allowMetered)
                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Finalish/${item.path}"),
