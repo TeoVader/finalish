@@ -31,6 +31,7 @@ internal class ViewerFileActions(private val session: ViewerSession, private val
         scope.launch {
             runCatching {
                 requireDownload(f.id)
+                if (state.value.file?.id != f.id) return@launch
                 val bitmap = player.captureFrame() ?: error(session.str(R.string.viewer_msg_no_frame))
                 val tc = Format.timecode(player.currentPositionMs, session.fps()).replace(':', '-')
                 val name = "${f.name.substringBeforeLast('.')}_$tc.png"
@@ -162,14 +163,15 @@ internal class ViewerFileActions(private val session: ViewerSession, private val
 
     /** Hands the file to another app: the offline copy if there is one, else the original's link. */
     fun openWith(activityContext: android.content.Context) {
-        val f = state.value.file ?: return
+        val snapshot = state.value
+        val f = snapshot.file ?: return
         val type = f.media.mediaType ?: "*/*"
         // The link may need a network call: don't keep the Activity alive across it.
         val context = activityContext.applicationContext
         scope.launch {
             runCatching {
                 val downloadUrl = requireDownload(f.id)
-                val uri = state.value.offlinePath?.let { File(it) }?.takeIf { it.exists() }?.let {
+                val uri = snapshot.offlinePath?.let { File(it) }?.takeIf { it.exists() }?.let {
                     androidx.core.content.FileProvider.getUriForFile(context, context.packageName + ".files", it)
                 } ?: downloadUrl.toUri()
                 val view = android.content.Intent(android.content.Intent.ACTION_VIEW).setDataAndType(uri, type)
