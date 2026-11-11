@@ -39,7 +39,7 @@ import okhttp3.OkHttpClient
 class AppContainer(val context: Context) {
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val baseHttp: OkHttpClient = Network.baseClient()
-    val auth = AuthManager(context, baseHttp, AppJson)
+    val auth = AuthManager(context, baseHttp, AppJson, appScope)
     private val apiHttp = Network.apiClient(baseHttp, auth)
     val api: FrameioApi = Network.api(apiHttp)
     val settings = SettingsStore(context, appScope)
