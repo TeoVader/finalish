@@ -119,13 +119,16 @@ fun AssetActionsSheet(
                         // Mockup: three quick actions as tiles, everything else in grouped rows.
                         Row(Modifier.padding(horizontal = 16.dp, vertical = 6.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
                             QuickTile(Icons.Rounded.Link, stringResource(R.string.viewer_action_share), Modifier.weight(1f)) { onDismiss(); onNewShare() }
-                            QuickTile(Icons.Rounded.FileDownload, stringResource(R.string.viewer_action_download), Modifier.weight(1f)) { vm.saveToDevice(); onDismiss() }
-                            QuickTile(
+                            if (file.mediaLinks?.original?.downloadUrl != null) QuickTile(Icons.Rounded.FileDownload, stringResource(R.string.viewer_action_download), Modifier.weight(1f)) { vm.saveToDevice(); onDismiss() }
+                            if (state.offlinePath != null || file.mediaLinks?.original?.downloadUrl != null) QuickTile(
                                 Icons.Rounded.DownloadForOffline, if (state.offlinePath != null) stringResource(R.string.viewer_action_offline_done) else stringResource(R.string.viewer_action_offline), Modifier.weight(1f),
                             ) {
                                 if (state.offlinePath != null) vm.removeOffline() else vm.downloadForOffline()
                                 onDismiss()
                             }
+                        }
+                        if (file.mediaLinks?.original?.downloadUrl == null) {
+                            Text(stringResource(R.string.viewer_msg_downloads_disabled), Modifier.padding(16.dp))
                         }
                         Group {
                             ActionRow(Icons.Rounded.AddLink, stringResource(R.string.viewer_action_add_to_existing_share), chevron = true) { page = ActionsPage.Shares }
@@ -140,7 +143,7 @@ fun AssetActionsSheet(
                             onCompareTake?.let { ActionRow(Icons.AutoMirrored.Rounded.CompareArrows, stringResource(R.string.viewer_action_compare_take)) { onDismiss(); it() } }
                         }
                         Group {
-                            if (file.kind == MediaKind.Video) {
+                            if (file.kind == MediaKind.Video && file.mediaLinks?.original?.downloadUrl != null) {
                                 ActionRow(Icons.Rounded.Image, stringResource(R.string.viewer_action_save_frame)) { vm.downloadStill(); onDismiss() }
                             }
                             ActionRow(Icons.AutoMirrored.Rounded.DriveFileMove, stringResource(R.string.viewer_action_move_to)) { onDismiss(); onMove() }

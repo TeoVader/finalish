@@ -39,7 +39,6 @@
     </plurals>
     <string name="core_transfer_uploading_to_frameio">Importation vers Frame.io</string>
     <string name="core_transfer_downloading_offline">Téléchargement pour une utilisation hors connexion</string>
-    <string name="core_transfer_no_rendition">Aucun rendu téléchargeable n\'est disponible pour ce fichier.</string>
     <string name="core_transfer_not_stacked">Importé, mais non ajouté comme nouvelle version : %1$s</string>
     <string name="core_transfer_import_failed">Frame.io n\'a pas pu récupérer le fichier depuis le lien</string>
     <string name="core_transfer_import_timeout">Toujours pas importé après une journée</string>

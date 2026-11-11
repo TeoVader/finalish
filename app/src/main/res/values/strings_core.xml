@@ -39,7 +39,6 @@
     </plurals>
     <string name="core_transfer_uploading_to_frameio">Uploading to Frame.io</string>
     <string name="core_transfer_downloading_offline">Downloading for offline</string>
-    <string name="core_transfer_no_rendition">No downloadable rendition is available for this file.</string>
     <string name="core_transfer_not_stacked">Uploaded, but not added as a new version: %1$s</string>
     <string name="core_transfer_import_failed">Frame.io couldn\'t fetch the file from the link</string>
     <string name="core_transfer_import_timeout">Still not imported after a day</string>

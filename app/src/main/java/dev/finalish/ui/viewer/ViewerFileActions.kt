@@ -27,18 +27,26 @@ internal class ViewerFileActions(private val session: ViewerSession, private val
 
     /** Saves the current frame as a full-resolution PNG in Pictures/Finalish. */
     fun downloadStill() {
-        val bitmap = player.captureFrame() ?: run {
-            messages.tryEmit(session.str(R.string.viewer_msg_no_frame))
-            return
-        }
-        val f = state.value.file
-        val tc = Format.timecode(player.currentPositionMs, session.fps()).replace(':', '-')
-        val name = "${f?.name?.substringBeforeLast('.') ?: "frame"}_$tc.png"
-        scope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            val ok = runCatching { saveImage(bitmap, name) }.isSuccess
-            messages.emit(if (ok) session.str(R.string.viewer_msg_still_saved) else session.str(R.string.viewer_msg_still_failed))
+        val f = state.value.file ?: return
+        scope.launch {
+            runCatching {
+                requireDownload(f.id)
+                if (state.value.file?.id != f.id) return@launch
+                val bitmap = player.captureFrame() ?: error(session.str(R.string.viewer_msg_no_frame))
+                val tc = Format.timecode(player.currentPositionMs, session.fps()).replace(':', '-')
+                val name = "${f.name.substringBeforeLast('.')}_$tc.png"
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    runCatching { saveImage(bitmap, name) }.getOrElse { error(session.str(R.string.viewer_msg_still_failed)) }
+                }
+            }.onSuccess { messages.emit(session.str(R.string.viewer_msg_still_saved)) }
+                .onFailure { messages.emit(it.message ?: it.userMessage()) }
         }
     }
+
+    /** Export always needs a fresh online grant, even when an offline copy already exists. */
+    private suspend fun requireDownload(fileId: String): String =
+        repo.fileNow(account, fileId).mediaLinks?.original?.downloadUrl
+            ?: error(session.str(R.string.viewer_msg_downloads_disabled))
 
     private fun saveImage(bitmap: android.graphics.Bitmap, name: String) {
         if (android.os.Build.VERSION.SDK_INT >= 29) {
@@ -155,15 +163,17 @@ internal class ViewerFileActions(private val session: ViewerSession, private val
 
     /** Hands the file to another app: the offline copy if there is one, else the original's link. */
     fun openWith(activityContext: android.content.Context) {
-        val f = state.value.file ?: return
+        val snapshot = state.value
+        val f = snapshot.file ?: return
         val type = f.media.mediaType ?: "*/*"
         // The link may need a network call: don't keep the Activity alive across it.
         val context = activityContext.applicationContext
         scope.launch {
             runCatching {
-                val uri = state.value.offlinePath?.let { File(it) }?.takeIf { it.exists() }?.let {
+                val downloadUrl = requireDownload(f.id)
+                val uri = snapshot.offlinePath?.let { File(it) }?.takeIf { it.exists() }?.let {
                     androidx.core.content.FileProvider.getUriForFile(context, context.packageName + ".files", it)
-                } ?: (repo.fileNow(account, f.id).mediaLinks?.original?.downloadUrl ?: error(session.str(R.string.viewer_msg_downloads_disabled))).toUri()
+                } ?: downloadUrl.toUri()
                 val view = android.content.Intent(android.content.Intent.ACTION_VIEW).setDataAndType(uri, type)
                     .addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 context.startActivity(
@@ -176,8 +186,14 @@ internal class ViewerFileActions(private val session: ViewerSession, private val
 
     fun downloadForOffline() {
         val f = state.value.file ?: return
-        transferManager.download(account, f)
-        scope.launch { messages.emit(session.str(R.string.viewer_msg_saving_offline, f.name)) }
+        scope.launch {
+            runCatching {
+                val fresh = repo.fileNow(account, f.id)
+                if (fresh.mediaLinks?.original?.downloadUrl == null) error(session.str(R.string.viewer_msg_downloads_disabled))
+                transferManager.download(account, fresh)
+            }.onSuccess { messages.emit(session.str(R.string.viewer_msg_saving_offline, f.name)) }
+                .onFailure { messages.emit(it.message ?: it.userMessage()) }
+        }
     }
 
     /** "+ New version": upload [uri] next to this file and stack it on top (of the stack, or of this file). */

@@ -64,6 +64,20 @@ class ComponentsScreenshotTest {
         compose.onRoot().captureRoboImage("src/test/screenshots/$name.png")
     }
 
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    @Test fun downloadsDisabledTools() = snap("downloads_disabled_tools") {
+        dev.finalish.ui.viewer.PlaybackOptionsSheet(
+            file = dev.finalish.core.model.Asset("restricted", name = "Review.mp4", mediaType = "video/mp4"),
+            quality = dev.finalish.core.data.PlaybackQuality.Auto,
+            active = null,
+            renditions = emptyList(),
+            playingHeight = 720,
+            offline = false,
+            options = dev.finalish.ui.viewer.ViewOptions(),
+            onQuality = {}, onOptions = {}, onDownloadStill = {}, onDismiss = {},
+        )
+    }
+
     @Test fun brand() = snap("brand") {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             BrandMark(72.dp)
