@@ -115,51 +115,58 @@ fun AssetActionsSheet(
             Column(scroll.navigationBarsPadding().padding(bottom = 12.dp)) {
                 when (p) {
                     ActionsPage.Main -> {
+                        // Actions the user's role on the project can't do aren't offered (the server would refuse).
+                        val access = state.access
+                        val downloadable = access.download && file.mediaLinks?.original?.downloadUrl != null
                         Header(file, state)
                         // Mockup: three quick actions as tiles, everything else in grouped rows.
                         Row(Modifier.padding(horizontal = 16.dp, vertical = 6.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
-                            QuickTile(Icons.Rounded.Link, stringResource(R.string.viewer_action_share), Modifier.weight(1f)) { onDismiss(); onNewShare() }
-                            if (file.mediaLinks?.original?.downloadUrl != null) QuickTile(Icons.Rounded.FileDownload, stringResource(R.string.viewer_action_download), Modifier.weight(1f)) { vm.saveToDevice(); onDismiss() }
-                            if (state.offlinePath != null || file.mediaLinks?.original?.downloadUrl != null) QuickTile(
+                            if (access.share) QuickTile(Icons.Rounded.Link, stringResource(R.string.viewer_action_share), Modifier.weight(1f)) { onDismiss(); onNewShare() }
+                            if (downloadable) QuickTile(Icons.Rounded.FileDownload, stringResource(R.string.viewer_action_download), Modifier.weight(1f)) { vm.saveToDevice(); onDismiss() }
+                            if (state.offlinePath != null || downloadable) QuickTile(
                                 Icons.Rounded.DownloadForOffline, if (state.offlinePath != null) stringResource(R.string.viewer_action_offline_done) else stringResource(R.string.viewer_action_offline), Modifier.weight(1f),
                             ) {
                                 if (state.offlinePath != null) vm.removeOffline() else vm.downloadForOffline()
                                 onDismiss()
                             }
                         }
-                        if (file.mediaLinks?.original?.downloadUrl == null) {
+                        if (!downloadable) {
                             Text(stringResource(R.string.viewer_msg_downloads_disabled), Modifier.padding(16.dp))
                         }
-                        Group {
+                        if (access.share) Group {
                             ActionRow(Icons.Rounded.AddLink, stringResource(R.string.viewer_action_add_to_existing_share), chevron = true) { page = ActionsPage.Shares }
                         }
-                        Group {
+                        if (state.versions.size > 1 || access.manage || onCompareTake != null) Group {
                             if (state.versions.size > 1) {
                                 ActionRow(Icons.Rounded.Layers, stringResource(R.string.viewer_action_versions), value = "${state.versions.size}", chevron = true) {
                                     onDismiss(); onVersions()
                                 }
                             }
-                            ActionRow(Icons.Rounded.Upload, stringResource(R.string.viewer_action_upload_new_version)) { onDismiss(); onNewVersion() }
+                            if (access.manage) ActionRow(Icons.Rounded.Upload, stringResource(R.string.viewer_action_upload_new_version)) { onDismiss(); onNewVersion() }
                             onCompareTake?.let { ActionRow(Icons.AutoMirrored.Rounded.CompareArrows, stringResource(R.string.viewer_action_compare_take)) { onDismiss(); it() } }
                         }
                         Group {
-                            if (file.kind == MediaKind.Video && file.mediaLinks?.original?.downloadUrl != null) {
+                            if (file.kind == MediaKind.Video && downloadable) {
                                 ActionRow(Icons.Rounded.Image, stringResource(R.string.viewer_action_save_frame)) { vm.downloadStill(); onDismiss() }
                             }
-                            ActionRow(Icons.AutoMirrored.Rounded.DriveFileMove, stringResource(R.string.viewer_action_move_to)) { onDismiss(); onMove() }
-                            ActionRow(Icons.Rounded.ContentCopy, stringResource(R.string.viewer_action_copy_to)) { onDismiss(); onCopy() }
-                            ActionRow(Icons.Rounded.LibraryAdd, stringResource(R.string.viewer_action_duplicate)) { vm.duplicate(); onDismiss() }
+                            if (access.manage) {
+                                ActionRow(Icons.AutoMirrored.Rounded.DriveFileMove, stringResource(R.string.viewer_action_move_to)) { onDismiss(); onMove() }
+                                ActionRow(Icons.Rounded.ContentCopy, stringResource(R.string.viewer_action_copy_to)) { onDismiss(); onCopy() }
+                                ActionRow(Icons.Rounded.LibraryAdd, stringResource(R.string.viewer_action_duplicate)) { vm.duplicate(); onDismiss() }
+                            }
                             ActionRow(Icons.Rounded.FolderOpen, stringResource(R.string.viewer_action_show_in_project)) { onDismiss(); onViewInProject() }
                             ActionRow(Icons.AutoMirrored.Rounded.Send, stringResource(R.string.viewer_action_send_link)) {
                                 file.viewUrl?.let { shareText(context, it, file.name) }
                                 onDismiss()
                             }
                         }
-                        Group {
-                            ActionRow(Icons.Rounded.DriveFileRenameOutline, stringResource(R.string.viewer_action_rename)) { onDismiss(); onRename() }
-                        }
-                        Group {
-                            ActionRow(Icons.Rounded.DeleteOutline, stringResource(R.string.viewer_action_delete), danger = true) { onDismiss(); onDelete() }
+                        if (access.manage) {
+                            Group {
+                                ActionRow(Icons.Rounded.DriveFileRenameOutline, stringResource(R.string.viewer_action_rename)) { onDismiss(); onRename() }
+                            }
+                            Group {
+                                ActionRow(Icons.Rounded.DeleteOutline, stringResource(R.string.viewer_action_delete), danger = true) { onDismiss(); onDelete() }
+                            }
                         }
                         Group {
                             val activity = androidx.activity.compose.LocalActivity.current

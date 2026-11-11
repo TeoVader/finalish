@@ -90,7 +90,7 @@ fun OfficeStage(
     when (val d = doc?.getOrNull()) {
         null -> if (doc == null) {
             Box(modifier, contentAlignment = Alignment.Center) { CircularProgressIndicator(Modifier.size(32.dp), strokeWidth = 2.dp) }
-        } else OtherStage(file, modifier, onOpenWith, onDownload)
+        } else OtherStage(file, modifier, onOpenWith, onDownload, downloadsDisabled = onDownload == null)
         is OfficeDoc.Document -> DocumentView(d, modifier)
         is OfficeDoc.Sheet -> SheetView(d, modifier)
         is OfficeDoc.Slides -> SlidesView(d, modifier)

@@ -92,7 +92,7 @@ fun ViewerScreen(
     val settings by vm.settings.collectAsStateWithLifecycle()
     val view by vm.view.collectAsStateWithLifecycle()
     val controller = vm.player
-    AutoRefresh(assetId, intervalMs = { 10_000 }) { vm.refreshComments() }
+    AutoRefresh(assetId, intervalMs = { 10_000 }, content = { vm.state.value.comments }) { vm.refreshComments() }
     LaunchedEffect(controller.failureCount) { if (controller.failureCount > 0) vm.onPlaybackFailure(controller.failureCount) }
     val snackbar = dev.finalish.ui.components.rememberMessageSnackbar(vm.messages)
     LaunchedEffect(Unit) { vm.closed.collect { onBack() } }

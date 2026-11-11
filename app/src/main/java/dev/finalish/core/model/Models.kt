@@ -632,3 +632,30 @@ data class GroupRole(
     val group: UserGroup,
     val role: String? = null,
 )
+
+/**
+ * What the signed-in user may do with the files of a project, from their role there (Frame.io's
+ * "Managing user permissions" guide): `viewer` only views, `commenter` also comments, `edit_only`
+ * also uploads and manages files but can't share or download, `editor` and `full_access` (and
+ * account owners and admins) can do everything. An unknown role keeps every action: the server
+ * still has the last word.
+ */
+@Immutable
+data class FileAccess(
+    val comment: Boolean = true,
+    /** Rename, move, copy, duplicate, delete, upload (also a new version), stack. */
+    val manage: Boolean = true,
+    val share: Boolean = true,
+    val download: Boolean = true,
+) {
+    companion object {
+        val Full = FileAccess()
+
+        fun ofRole(role: String?): FileAccess = when (role) {
+            "viewer" -> FileAccess(comment = false, manage = false, share = false, download = false)
+            "commenter" -> FileAccess(comment = true, manage = false, share = false, download = false)
+            "edit_only" -> FileAccess(comment = true, manage = true, share = false, download = false)
+            else -> Full
+        }
+    }
+}
