@@ -25,7 +25,7 @@ suspend fun saveToDevice(context: Context, repo: FrameioRepository, account: Str
     // The name comes from the server: keep it one plain file name inside Finalish/.
     val path = "Finalish/${Format.safeFileName(file.name)}"
     val req = DownloadManager.Request(url.toUri())
-        .setTitle(file.name)
+        .setTitle(context.getString(R.string.core_notify_public_transfer))
         .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
         .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, path)
     val dmId = context.getSystemService(DownloadManager::class.java).enqueue(req)

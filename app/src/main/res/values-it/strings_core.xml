@@ -202,4 +202,6 @@
     </plurals>
     <string name="core_folder_upload_creating">Creazione delle cartelle su Frame.io…</string>
     <string name="core_folder_upload_failed">Impossibile caricare “%1$s”</string>
+    <string name="core_notify_public_activity">Nuova attività in Final(ish)</string>
+    <string name="core_notify_public_transfer">Trasferimento in Final(ish)</string>
 </resources>

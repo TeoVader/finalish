@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.os.Build
+import dev.finalish.core.notify.privateOnLockscreen
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.scale
 import androidx.core.net.toUri
@@ -76,6 +77,7 @@ internal object TransferNotifications {
             destination?.let { context.getString(if (upload) R.string.core_transfer_to_destination else R.string.core_transfer_from_source, it) },
         ).joinToString(" · ").ifEmpty { null }
         val b = NotificationCompat.Builder(context, CHANNEL)
+            .privateOnLockscreen(context, CHANNEL, R.string.core_notify_public_transfer)
             .setSmallIcon(if (upload) android.R.drawable.stat_sys_upload else android.R.drawable.stat_sys_download)
             .setContentTitle(title)
             .setContentText(text)

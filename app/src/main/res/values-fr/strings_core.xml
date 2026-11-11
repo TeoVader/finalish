@@ -202,4 +202,6 @@
     </plurals>
     <string name="core_folder_upload_creating">Création des dossiers sur Frame.io…</string>
     <string name="core_folder_upload_failed">Impossible d’importer « %1$s »</string>
+    <string name="core_notify_public_activity">Nouvelle activité dans Final(ish)</string>
+    <string name="core_notify_public_transfer">Transfert dans Final(ish)</string>
 </resources>

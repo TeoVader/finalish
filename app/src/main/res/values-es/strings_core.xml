@@ -206,4 +206,6 @@
     </plurals>
     <string name="core_folder_upload_creating">Creando carpetas en Frame.io…</string>
     <string name="core_folder_upload_failed">No se pudo subir «%1$s»</string>
+    <string name="core_notify_public_activity">Nueva actividad en Final(ish)</string>
+    <string name="core_notify_public_transfer">Transferencia en Final(ish)</string>
 </resources>
