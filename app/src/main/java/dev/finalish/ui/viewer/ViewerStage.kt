@@ -25,10 +25,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Fullscreen
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.MoreHoriz
@@ -55,6 +58,7 @@ import androidx.compose.material.icons.rounded.ChatBubbleOutline
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -196,7 +200,12 @@ internal fun MediaArea(
         SeekFlash(seekFlash == -1, left = true, modifier = Modifier.align(Alignment.CenterStart).padding(32.dp))
         SeekFlash(seekFlash == 1, left = false, modifier = Modifier.align(Alignment.CenterEnd).padding(32.dp))
 
-        if (state.preparing) {
+        if (state.mediaUnavailable && file.kind in WITHHELD_KINDS) {
+            MediaUnavailableCard(
+                onOpenOnFrameio = file.viewUrl?.let { url -> { dev.finalish.core.data.FrameLinks.openInBrowserTab(viewerContext, url) } },
+                modifier = Modifier.align(Alignment.Center).padding(24.dp),
+            )
+        } else if (state.preparing) {
             PreparingCard(file.kind == MediaKind.Audio, Modifier.align(Alignment.Center).padding(24.dp))
         } else if (!immersive && !controller.isPlaying && file.kind == MediaKind.Video && !composer.drawing && !controller.isBuffering && frameComments.isEmpty() && composer.shapes.isEmpty()) {
             Box(Modifier.align(Alignment.Center)) {
@@ -297,7 +306,8 @@ internal fun MediaArea(
                             }
                             TransportBar(controller, state, vm, timeLabel, fps, onToggleFullscreen, overlay = true)
                         }
-                        Box(Modifier.align(Alignment.Center)) {
+                        // Nothing to play: keep the centre for the card that says so.
+                        if (!state.mediaUnavailable) Box(Modifier.align(Alignment.Center)) {
                             GlassIconButton(
                                 if (controller.isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                                 stringResource(R.string.viewer_play_pause), controller::toggle, size = 68.dp,
@@ -391,6 +401,48 @@ private fun PreparingCard(audio: Boolean, modifier: Modifier = Modifier) {
                 color = Palette.Text,
             )
             Text(stringResource(R.string.viewer_preparing_body), style = MaterialTheme.typography.bodySmall, color = Palette.TextSecondary)
+        }
+    }
+}
+
+private val WITHHELD_KINDS = setOf(MediaKind.Video, MediaKind.Audio, MediaKind.Image)
+
+/**
+ * Frame.io finished processing the file but shares no media of it with apps for this user (it
+ * doesn't say why), so the app can't show it: [onOpenOnFrameio] opens it on the web instead.
+ */
+@Composable
+internal fun MediaUnavailableCard(onOpenOnFrameio: (() -> Unit)?, modifier: Modifier = Modifier) {
+    Column(
+        modifier
+            .widthIn(max = 380.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(Palette.Surface2.copy(alpha = 0.92f))
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(Icons.Rounded.VisibilityOff, null, tint = Palette.TextSecondary, modifier = Modifier.size(28.dp))
+        Text(
+            stringResource(R.string.viewer_media_unavailable_title),
+            style = MaterialTheme.typography.titleSmall,
+            color = Palette.Text,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 12.dp),
+        )
+        Text(
+            stringResource(R.string.viewer_media_unavailable_body),
+            style = MaterialTheme.typography.bodySmall,
+            color = Palette.TextSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 4.dp),
+        )
+        onOpenOnFrameio?.let {
+            dev.finalish.ui.components.SecondaryButton(
+                stringResource(R.string.viewer_open_on_frameio),
+                onClick = it,
+                icon = Icons.AutoMirrored.Rounded.OpenInNew,
+                modifier = Modifier.padding(top = 16.dp),
+            )
         }
     }
 }

@@ -571,4 +571,15 @@ class ComponentsScreenshotTest {
             dev.finalish.ui.shares.SharesPicker(shares = shares, onPick = {})
         }
     }
+
+    /** Frame.io finished the file but gives this user no media: the viewer stage offers the web instead. */
+    @Test fun mediaUnavailable() = snap("media_unavailable") {
+        androidx.compose.foundation.layout.Box(
+            Modifier.fillMaxWidth().aspectRatio(16f / 9f).clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+                .background(androidx.compose.ui.graphics.Color.Black),
+            contentAlignment = androidx.compose.ui.Alignment.Center,
+        ) {
+            dev.finalish.ui.viewer.MediaUnavailableCard(onOpenOnFrameio = {}, modifier = Modifier.padding(16.dp))
+        }
+    }
 }

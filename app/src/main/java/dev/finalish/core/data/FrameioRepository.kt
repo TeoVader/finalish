@@ -311,21 +311,21 @@ class FrameioRepository(
         api.versionStack(account, stackId).data.parentId
 
     fun file(account: String, fileId: String): Flow<Remote<Asset>> =
-        swr("file:$account:$fileId", Asset.serializer()) { _ ->
-            // Including `original` 403s when downloads are disabled — retry without it.
-            runCatchingCancellable { api.file(account, fileId).data }.getOrElse { err ->
-                if (err is retrofit2.HttpException && err.code() == 403) {
-                    api.file(account, fileId, FrameioApi.INCLUDE_PLAYBACK_NO_ORIGINAL).data
-                } else throw err
-            }
-        }
+        swr("file:$account:$fileId", Asset.serializer()) { _ -> fileNow(account, fileId) }
 
-    suspend fun fileNow(account: String, fileId: String): Asset =
-        runCatchingCancellable { api.file(account, fileId).data }.getOrElse { err ->
+    /** Files whose `original` link 403s for this user: asked for without it for the rest of the session. */
+    private val originalForbidden: MutableSet<String> = java.util.concurrent.ConcurrentHashMap.newKeySet()
+
+    suspend fun fileNow(account: String, fileId: String): Asset {
+        val key = "$account:$fileId"
+        if (key in originalForbidden) return api.file(account, fileId, FrameioApi.INCLUDE_PLAYBACK_NO_ORIGINAL).data
+        // Including `original` 403s when downloads are disabled — retry without it.
+        return runCatchingCancellable { api.file(account, fileId).data }.getOrElse { err ->
             if (err is retrofit2.HttpException && err.code() == 403) {
-                api.file(account, fileId, FrameioApi.INCLUDE_PLAYBACK_NO_ORIGINAL).data
+                api.file(account, fileId, FrameioApi.INCLUDE_PLAYBACK_NO_ORIGINAL).data.also { originalForbidden += key }
             } else throw err
         }
+    }
 
     fun versions(account: String, stackId: String): Flow<Remote<List<Asset>>> =
         swr("versions:$account:$stackId", ListSerializer(Asset.serializer())) { _ ->

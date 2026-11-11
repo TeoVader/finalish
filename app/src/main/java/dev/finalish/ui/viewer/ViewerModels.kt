@@ -61,6 +61,8 @@ data class ViewerState(
     val pdfPage: Int = 1,
     /** Frame.io is still transcoding: no playable link yet (polled until there is one). */
     val preparing: Boolean = false,
+    /** Frame.io finished processing the file but gives this user no media for it: see [mediaState]. */
+    val mediaUnavailable: Boolean = false,
 ) {
     val kind: MediaKind get() = file?.kind ?: MediaKind.Other
     val visibleComments: List<Comment>
@@ -70,4 +72,19 @@ data class ViewerState(
             CommentFilter.Completed -> comments.filter { it.isCompleted }
         }
     val versionNumber: Int get() = versions.indexOfFirst { it.id == file?.id }.let { if (it < 0) 0 else it + 1 }
+}
+
+/** What the stage can do with a file's media. */
+enum class MediaState { Ready, Preparing, Unavailable }
+
+/**
+ * [hasLink]: a usable media link (or an offline copy) exists. Without one, a file Frame.io is still
+ * processing gets one later, so it is worth waiting for. A file it has finished ("transcoded") won't:
+ * Frame.io answers such a request but leaves out the links it won't serve this user (for example
+ * when watermarking is required), so waiting would spin forever.
+ */
+internal fun mediaState(file: Asset, hasLink: Boolean): MediaState = when {
+    hasLink -> MediaState.Ready
+    file.media.status == "transcoded" -> MediaState.Unavailable
+    else -> MediaState.Preparing
 }

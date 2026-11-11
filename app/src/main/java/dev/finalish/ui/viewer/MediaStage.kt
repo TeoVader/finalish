@@ -440,6 +440,14 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.drawWaveform(
     }
 }
 
+/** The best link to show an image from, or null when Frame.io gave none. */
+internal fun imageStreamUrl(file: Asset): String? =
+    file.mediaLinks?.highQuality?.streamUrl
+        ?: file.mediaLinks?.original?.inlineUrl
+        ?: file.mediaLinks?.thumbnailHq?.streamUrl
+        // Frame.io makes no picture of an SVG: draw the (tiny) original itself.
+        ?: file.mediaLinks?.original?.downloadUrl?.takeIf { file.media.name.endsWith(".svg", ignoreCase = true) }
+
 /** Full-resolution image with overlays; reports its aspect once known. */
 @Composable
 fun ImageStage(
@@ -451,12 +459,7 @@ fun ImageStage(
 ) {
     val context = LocalContext.current
     var aspect by remember(file.id) { mutableFloatStateOf(0f) }
-    val url = offlinePath?.let { File(it) }
-        ?: file.mediaLinks?.highQuality?.streamUrl
-        ?: file.mediaLinks?.original?.inlineUrl
-        ?: file.mediaLinks?.thumbnailHq?.streamUrl
-        // Frame.io makes no picture of an SVG: draw the (tiny) original itself.
-        ?: file.mediaLinks?.original?.downloadUrl?.takeIf { file.media.name.endsWith(".svg", ignoreCase = true) }
+    val url = offlinePath?.let { File(it) } ?: imageStreamUrl(file)
     val placeholder = file.thumbnailUrl
     Box(modifier, contentAlignment = Alignment.Center) {
         Box(
