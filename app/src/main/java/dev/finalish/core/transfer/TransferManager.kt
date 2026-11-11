@@ -353,12 +353,16 @@ class TransferManager(
      * Signing out: stops every transfer and offline-comment sync and forgets them, so the next
      * account never sends the previous one's uploads or comments, nor sees its offline files.
      */
+    // Blocking (disk and DownloadManager): called off the main thread by the end-of-session cleanup.
     fun signOut() {
         wm.cancelAllWorkByTag(TAG_UPLOAD)
         wm.cancelAllWorkByTag(TAG_DOWNLOAD)
         wm.cancelUniqueWork(COMMENT_SYNC)
-        // Deleting the offline copies can take a while: off the main thread.
-        scope.launch(kotlinx.coroutines.Dispatchers.IO) { store.clearAll() }
+        // Downloads already handed to the system would go on without us: stop the unfinished ones
+        // while their ids are still known. Finished files stay in Download (removing those deletes them).
+        cancelSystemDownloads(context, store.deviceDownloads.value.flatMap { it.systemIds })
+        runCatching { folderJobDir(context).deleteRecursively() }
+        store.clearAll()
     }
 
     private fun enqueueUpload(id: String) {
