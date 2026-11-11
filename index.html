@@ -5,63 +5,222 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Final(ish): unofficial Android app for Frame.io, free and open source</title>
 <meta name="description" content="Final(ish) is a free, open-source, unofficial Android app for Frame.io, on Google Play: review videos, leave timecoded comments and approve versions from your phone or tablet.">
+<meta name="theme-color" content="#111015">
 <link rel="canonical" href="https://teovader.github.io/finalish/">
 <link rel="alternate" hreflang="en" href="https://teovader.github.io/finalish/">
 <link rel="alternate" hreflang="it" href="https://teovader.github.io/finalish/it/">
 <link rel="alternate" hreflang="x-default" href="https://teovader.github.io/finalish/">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="img/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" as="image" href="img/hero-phones-730.avif" type="image/avif" imagesrcset="img/hero-phones-730.avif 730w, img/hero-phones-1460.avif 1460w" imagesizes="(min-width: 860px) 520px, 100vw">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="it_IT">
 <meta property="og:site_name" content="Final(ish)">
 <meta property="og:title" content="Final(ish): unofficial Android app for Frame.io, free and open source">
-<meta property="og:description" content="Final(ish) is a free, open-source, unofficial Android app for Frame.io, on Google Play: review videos, leave timecoded comments and approve versions from your phone or tablet.">
+<meta property="og:description" content="Review videos, leave time-coded comments and drawings, compare and approve versions from your Android phone or tablet. Free, open source, no ads, no tracking.">
 <meta property="og:url" content="https://teovader.github.io/finalish/">
 <meta property="og:image" content="https://teovader.github.io/finalish/img/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="Final(ish), an unofficial Android app for Frame.io: two phones showing the projects screen and the video player with time-coded comments">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Final(ish)","operatingSystem":"Android 8.0+","applicationCategory":"MultimediaApplication","description":"Free, open-source, unofficial Android app for Frame.io.","url":"https://teovader.github.io/finalish/","inLanguage":"en","downloadUrl":"https://play.google.com/store/apps/details?id=dev.finalish","installUrl":"https://play.google.com/store/apps/details?id=dev.finalish","image":"https://teovader.github.io/finalish/img/hero.png","screenshot":"https://teovader.github.io/finalish/img/hero.png","sameAs":["https://play.google.com/store/apps/details?id=dev.finalish","https://github.com/TeoVader/finalish"],"license":"https://www.gnu.org/licenses/gpl-3.0.html","author":{"@type":"Person","name":"Matteo Maraffio","url":"https://github.com/TeoVader"},"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is there a Frame.io app for Android?","acceptedAnswer":{"@type":"Answer","text":"Frame.io has no official Android app (as of November 2026). Final(ish) is a free, open-source, unofficial Android app for Frame.io, for phones and tablets, available on Google Play. It uses the official Frame.io V4 API."}},{"@type":"Question","name":"Which Frame.io accounts work with Final(ish)?","acceptedAnswer":{"@type":"Answer","text":"Frame.io V4 accounts that sign in with an Adobe ID, on every plan including Free. Personal Adobe IDs work; company or school accounts (Enterprise or Federated ID) may be blocked until Adobe reviews the app or their admin allows third-party apps. Legacy (V3) accounts are not supported."}},{"@type":"Question","name":"Is Final(ish) made by Adobe or Frame.io?","acceptedAnswer":{"@type":"Answer","text":"No. Final(ish) is an independent open-source project and is not affiliated with, endorsed or sponsored by Adobe or Frame.io."}}]}</script>
+<meta name="twitter:title" content="Final(ish): unofficial Android app for Frame.io, free and open source">
+<meta name="twitter:description" content="Review videos, leave time-coded comments and drawings, compare and approve versions from your Android phone or tablet. Free, open source, no ads, no tracking.">
+<meta name="twitter:image" content="https://teovader.github.io/finalish/img/social-preview.png">
+<meta name="twitter:image:alt" content="Final(ish), an unofficial Android app for Frame.io: two phones showing the projects screen and the video player with time-coded comments">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Final(ish)","alternateName":"Finalish","operatingSystem":"Android 8.0 or later","applicationCategory":"MultimediaApplication","applicationSubCategory":"Video review","description":"Free, open-source, unofficial Android app for Frame.io: review videos, leave time-coded comments and drawings, compare and approve versions, and manage share links from an Android phone or tablet.","url":"https://teovader.github.io/finalish/","inLanguage":"en","softwareVersion":"0.2.2","datePublished":"2026-10","dateModified":"2026-11-11","releaseNotes":"https://github.com/TeoVader/finalish/releases/tag/v0.2.2","downloadUrl":"https://play.google.com/store/apps/details?id=dev.finalish","installUrl":"https://play.google.com/store/apps/details?id=dev.finalish","image":"https://teovader.github.io/finalish/press/assets/finalish-icon-512.png","screenshot":["https://teovader.github.io/finalish/press/assets/screenshot-viewer.png","https://teovader.github.io/finalish/press/assets/screenshot-folder.png","https://teovader.github.io/finalish/press/assets/screenshot-share.png","https://teovader.github.io/finalish/press/assets/screenshot-projects.png"],"sameAs":["https://play.google.com/store/apps/details?id=dev.finalish","https://github.com/TeoVader/finalish"],"license":"https://www.gnu.org/licenses/gpl-3.0.html","isAccessibleForFree":true,"availableLanguage":["en","it","de","fr","es","pt-BR"],"author":{"@type":"Person","name":"Matteo Maraffio","url":"https://github.com/TeoVader"},"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is there a Frame.io app for Android?","acceptedAnswer":{"@type":"Answer","text":"Frame.io has no official Android app (as of November 2026). Final(ish) is a free, open-source, unofficial Android app for Frame.io, for phones and tablets, available on Google Play. It uses the official Frame.io V4 API."}},
+{"@type":"Question","name":"Which Frame.io accounts work with Final(ish)?","acceptedAnswer":{"@type":"Answer","text":"Frame.io V4 accounts that sign in with an Adobe ID, on every plan including Free. Personal Adobe IDs work; company or school accounts (Enterprise or Federated ID) may be blocked until Adobe reviews the app or their admin allows third-party apps. Legacy (V3) accounts are not supported. If your account is still managed by Frame.io rather than Adobe, sign in to Frame.io once with an Adobe ID that uses the same email."}},
+{"@type":"Question","name":"Is Final(ish) made by Adobe or Frame.io?","acceptedAnswer":{"@type":"Answer","text":"No. Final(ish) is an independent open-source project and is not affiliated with, endorsed or sponsored by Adobe or Frame.io."}},
+{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes. There is no paid version, no ads, no analytics and no tracking. The source code is on GitHub under the GNU GPL v3.0 licence."}},
+{"@type":"Question","name":"Can I try it without a Frame.io account?","acceptedAnswer":{"@type":"Answer","text":"Yes. Demo mode opens the whole app with made-up projects, people and comments, without signing in."}},
+{"@type":"Question","name":"Can I open a review link someone sent me?","acceptedAnswer":{"@type":"Answer","text":"Links to files, folders and share links from accounts you belong to open in Final(ish). A review link from someone else's account opens in a browser tab, because the Frame.io API does not give apps access to it. On Android 12 and later, turn on Settings › Permissions › Frame.io links in the app once."}},
+{"@type":"Question","name":"Does Final(ish) see my password or my files?","acceptedAnswer":{"@type":"Answer","text":"You sign in on Adobe's own page, so the app never sees your password. Your projects, files and comments travel only between your device and Adobe/Frame.io. The developer receives data only if you choose to send a bug report."}}
+]}</script>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<header><a class="brand" href="./">Final(ish)</a>
-<nav><a href="./privacy-policy">Privacy</a> <a href="./terms">Terms</a> <a href="it/">Italiano</a></nav></header>
-<main>
-<h1 id="finalish-an-unofficial-frame.io-client-for-android">Final(ish): an unofficial Frame.io client for Android</h1>
-<p><strong>Final(ish) is a free, open-source, unofficial Frame.io client for Android phones and tablets.</strong> Review videos, leave time-coded comments and drawings, approve versions and share links from your phone. Frame.io has no official Android app (as of November 2026): Final(ish) uses the official Frame.io V4 API and signs in with your Adobe ID.</p>
-<figure>
-<img src="img/hero.png" alt="Final(ish): video review on Android, an unofficial Frame.io client" />
-<figcaption aria-hidden="true">Final(ish): video review on Android, an unofficial Frame.io client</figcaption>
+<body class="home">
+<a class="skip" href="#main">Skip to content</a>
+<header>
+<a class="brand" href="./"><img src="img/favicon-32.png" alt="" width="28" height="28"><span>Final<span class="ish">(ish)</span></span></a>
+<nav aria-label="Main"><a href="#what-it-does">Features</a><a href="#faq">FAQ</a><a href="press/">Press</a><a href="it/" hreflang="it" lang="it">Italiano</a></nav>
+</header>
+<main id="main">
+
+<section class="hero" aria-labelledby="title">
+<div>
+<h1 id="title"><span class="wordmark">Final<span class="ish">(ish)</span></span><span class="tagline">An unofficial Android app for Frame.io</span></h1>
+<p class="lede"><strong>Review cuts away from the edit bay.</strong> Play videos frame by frame with timecode, leave time-coded comments and drawings, compare versions and approve them from your Android phone or tablet. Free and open source, with no ads and no tracking.</p>
+<div class="get">
+<a class="badge" href="https://play.google.com/store/apps/details?id=dev.finalish"><img src="img/google-play-badge-en.png" alt="Get it on Google Play" width="200" height="77"></a>
+<ul>
+<li>Android 8.0 or later, phones and tablets</li>
+<li>Or <a href="https://github.com/TeoVader/finalish/releases/latest">download the APK from GitHub</a></li>
+</ul>
+</div>
+<p class="attrib">Google Play and the Google Play logo are trademarks of Google LLC.</p>
+<p class="note"><strong>Unofficial.</strong> Final(ish) is made by an independent developer, not by Adobe or Frame.io. It works with Frame.io through the official V4 API, and you sign in with your Adobe ID on Adobe’s own page.</p>
+</div>
+<figure class="hero-art">
+<picture>
+<source type="image/avif" srcset="img/hero-phones-730.avif 730w, img/hero-phones-1460.avif 1460w" sizes="(min-width: 860px) 520px, 100vw">
+<source type="image/webp" srcset="img/hero-phones-730.webp 730w, img/hero-phones-1460.webp 1460w" sizes="(min-width: 860px) 520px, 100vw">
+<img src="img/hero-phones-730.png" alt="Two phones running Final(ish) with demo data: the projects screen, and a video in the player with time-coded comments below it" width="730" height="640" fetchpriority="high">
+</picture>
 </figure>
-<p><a href="https://play.google.com/store/apps/details?id=dev.finalish"><img src="img/google-play-badge-en.png" alt="Get it on Google Play" width="200" height="77"></a></p>
-<ul>
-<li><a href="https://play.google.com/store/apps/details?id=dev.finalish">Get it on Google Play</a> (Android 8.0 or later)</li>
-<li>Or <a href="https://github.com/TeoVader/finalish/releases/latest">download the APK</a> from GitHub</li>
-<li><a href="https://github.com/TeoVader/finalish">Source code and documentation on GitHub</a></li>
-</ul>
+</section>
+
+<p class="new"><strong>New in 0.2.2</strong> (November 11, 2026): downloads and offline copies follow the download permission set in Frame.io, files Frame.io doesn’t share with apps are explained instead of loading forever, and lock-screen notifications hide file names and comments. <a href="https://github.com/TeoVader/finalish/releases">All release notes</a></p>
+
+<section class="section" aria-labelledby="what-it-does">
 <h2 id="what-it-does">What it does</h2>
+<p class="intro">The review side of Frame.io, in your pocket. Every screenshot below uses the app’s demo mode, with made-up projects, people and comments.</p>
+
+<div class="feature">
+<figure class="shot"><img src="img/shots/viewer.webp" alt="Video player in Final(ish) with timecode, a timeline with comment markers, and three time-coded comments below" width="390" height="844" loading="lazy"></figure>
+<div>
+<h3>Watch and comment on the frame</h3>
+<p>A frame-accurate player that speaks timecode, built for giving notes.</p>
 <ul>
-<li>Browse workspaces, projects, folders, version stacks and collections</li>
-<li>Frame-accurate video player with timecode, speed, loop, aspect masks and picture-in-picture</li>
-<li>Time-coded and range comments, on-frame drawings, mark as done</li>
-<li>Images, PDFs, audio and Word, Excel and PowerPoint files</li>
-<li>Status, rating and metadata fields; compare versions side by side or with a wipe</li>
-<li>Share links, background uploads that resume, offline files and comments</li>
-<li>Notifications with no server, six languages, demo mode with no account</li>
+<li>Step frame by frame; timecode, standard or frame count display</li>
+<li>0.25–2× speed, loop, real resolutions up to 4K</li>
+<li>Aspect-ratio masks (2.39, 1.85, 4:5, 9:16…) and safe-area guides</li>
+<li>Time-coded and range comments, drawings on the frame, mark as done</li>
+<li>Picture-in-picture, and comments beside the video in landscape</li>
 </ul>
+</div>
+</div>
+
+<div class="feature flip">
+<figure class="shot"><img src="img/shots/folder.webp" alt="A project folder in Final(ish) with share links, subfolders and files with status labels" width="390" height="844" loading="lazy"></figure>
+<div>
+<h3>Find the right version</h3>
+<p>Your workspaces, projects, folders, version stacks and collections, browsable in a grid or a list.</p>
+<ul>
+<li>Switch versions, or compare two side by side or with a wipe, in sync</li>
+<li>Set status, rating and custom metadata fields to approve a cut</li>
+<li>Images, PDFs, audio, and Word, Excel and PowerPoint files</li>
+<li>Search across the whole account</li>
+</ul>
+</div>
+</div>
+
+<div class="feature">
+<figure class="shot"><img src="img/shots/share.webp" alt="Share link settings in Final(ish): link visibility, view and comment counts, and permission switches" width="390" height="844" loading="lazy"></figure>
+<div>
+<h3>Send it to the client</h3>
+<p>Create share links and change every setting from the phone: visibility, comments, downloads, passphrase, expiry and watermark. Each link shows how many times it was viewed.</p>
+<p>Features your Frame.io plan doesn’t include are greyed out, so nothing fails halfway. Every plan works, Free included.</p>
+</div>
+</div>
+
+<div class="feature flip">
+<figure class="shot"><img src="img/shots/projects.webp" alt="Projects screen in Final(ish) with project cards and a notification bell" width="390" height="844" loading="lazy"></figure>
+<div>
+<h3>Upload from set, keep working offline</h3>
+<ul>
+<li>Upload files or whole folders from the phone; uploads run in the background and resume after a network drop</li>
+<li>Download files, or whole folders, to the phone</li>
+<li>Keep files offline; comments written offline sync when you’re back</li>
+<li>Notifications for new comments, finished uploads and opened links, with no server in between</li>
+</ul>
+</div>
+</div>
+
+<h3>Also</h3>
+<ul class="also">
+<li>Demo mode: try every screen without an account</li>
+<li>Tablet layout with a side bar</li>
+<li>Frame.io links open straight in the app</li>
+<li>Workspace and project members, roles and user groups</li>
+<li>Shake the phone to report a bug</li>
+<li>English, Italian, German, French, Spanish, Portuguese (Brazil)</li>
+</ul>
+<p><a href="https://github.com/TeoVader/finalish/blob/main/docs/features.md">Full feature list on GitHub</a></p>
+</section>
+
+<section class="section" aria-labelledby="who">
+<h2 id="who">Who it’s for</h2>
+<p class="intro">People who already work in Frame.io and carry an Android phone or tablet.</p>
+<ul class="who">
+<li><h3>Editors</h3><p>Read the client’s notes on the train, jump to the timecode, and mark them done when they’re fixed.</p></li>
+<li><h3>Producers and directors</h3><p>Watch the new cut, compare it with the last one, set the status and send the link without opening a laptop.</p></li>
+<li><h3>Crews on set</h3><p>Upload clips and stills from the phone in the background, and check comments between takes.</p></li>
+<li><h3>Clients and reviewers in the account</h3><p>If you’re a member of a Frame.io account, review and approve from your phone. Only received a review link? It opens in your browser; you don’t need an app.</p></li>
+</ul>
+</section>
+
+<section class="section" aria-labelledby="limitations">
+<h2 id="limitations">Known limitations</h2>
+<p class="intro">Final(ish) can only do what the public Frame.io API allows. Today that means:</p>
+<ul class="limits">
+<li><strong>Company or school Adobe accounts</strong> (Enterprise or Federated ID) may not be able to sign in yet, until Adobe reviews the app or their admin allows third-party apps. Personal Adobe IDs work.</li>
+<li><strong>Legacy (V3) Frame.io accounts</strong> are not supported. Accounts still managed by Frame.io need an Adobe ID with the same email.</li>
+<li><strong>Viewer role:</strong> Frame.io gives apps no media for these members, so files open on Frame.io in the browser.</li>
+<li><strong>Replies and @mentions:</strong> replies are shown and existing mentions are highlighted, but you can’t write them yet: “Reply” opens the file on Frame.io.</li>
+<li><strong>Review links from other accounts</strong> open in a browser tab.</li>
+<li><strong>Notifications</strong> come from a check about every 15 minutes, not instant push.</li>
+<li><strong>Not available:</strong> Camera to Cloud device management, email notification settings, setting a frame as thumbnail.</li>
+</ul>
+</section>
+
+<section class="section faq" aria-labelledby="faq">
 <h2 id="faq">Questions</h2>
-<h3>Is there a Frame.io app for Android?</h3>
-<p>Frame.io has no official Android app (as of November 2026). Final(ish) is a free, open-source, unofficial Android app for Frame.io, for phones and tablets, available on Google Play. It uses the official Frame.io V4 API.</p>
-<h3>Which Frame.io accounts work with Final(ish)?</h3>
-<p>Frame.io V4 accounts that sign in with an Adobe ID, on every plan including Free. Personal Adobe IDs work; company or school accounts (Enterprise or Federated ID) may be blocked until Adobe reviews the app or their admin allows third-party apps. Legacy (V3) accounts are not supported.</p>
-<h3>Is Final(ish) made by Adobe or Frame.io?</h3>
-<p>No. Final(ish) is an independent open-source project and is not affiliated with, endorsed or sponsored by Adobe or Frame.io.</p>
-<p>Free, with no ads and no tracking. Licensed under the GNU GPL v3.0.</p>
+<details>
+<summary><h3>Is there a Frame.io app for Android?</h3></summary>
+<div><p>Frame.io has no official Android app (as of November 2026). Final(ish) is a free, open-source, unofficial Android app for Frame.io, for phones and tablets, available on Google Play. It uses the official Frame.io V4 API.</p></div>
+</details>
+<details>
+<summary><h3>Which Frame.io accounts work with Final(ish)?</h3></summary>
+<div><p>Frame.io V4 accounts that sign in with an Adobe ID, on every plan including Free. Personal Adobe IDs work; company or school accounts (Enterprise or Federated ID) may be blocked until Adobe reviews the app or their admin allows third-party apps. Legacy (V3) accounts are not supported.</p>
+<p>If your account is still managed by Frame.io rather than Adobe, sign in to Frame.io once with an Adobe ID that uses the same email. Details are in the <a href="https://github.com/TeoVader/finalish#readme">README</a>.</p></div>
+</details>
+<details>
+<summary><h3>Is Final(ish) made by Adobe or Frame.io?</h3></summary>
+<div><p>No. Final(ish) is an independent open-source project and is not affiliated with, endorsed or sponsored by Adobe or Frame.io.</p></div>
+</details>
+<details>
+<summary><h3>Is it really free?</h3></summary>
+<div><p>Yes. There is no paid version, no ads, no analytics and no tracking. The source code is <a href="https://github.com/TeoVader/finalish">on GitHub</a> under the GNU GPL v3.0 licence.</p></div>
+</details>
+<details>
+<summary><h3>Can I try it without a Frame.io account?</h3></summary>
+<div><p>Yes. Demo mode opens the whole app with made-up projects, people and comments, without signing in.</p></div>
+</details>
+<details>
+<summary><h3>Can I open a review link someone sent me?</h3></summary>
+<div><p>Links to files, folders and share links from accounts you belong to open in Final(ish). A review link from someone else’s account opens in a browser tab, because the Frame.io API does not give apps access to it. On Android 12 and later, turn on Settings › Permissions › Frame.io links in the app once.</p></div>
+</details>
+<details>
+<summary><h3>Does Final(ish) see my password or my files?</h3></summary>
+<div><p>You sign in on Adobe’s own page, so the app never sees your password. Your projects, files and comments travel only between your device and Adobe/Frame.io. The developer receives data only if you choose to send a bug report. See the <a href="privacy-policy">Privacy Policy</a>.</p></div>
+</details>
+</section>
+
+<section class="section" aria-labelledby="open-source">
+<h2 id="open-source">Open source and support</h2>
+<div class="os">
+<p>Final(ish) is built in the open by one independent developer in Italy, under the GNU GPL v3.0. Read the code, build it yourself or suggest a change.</p>
 <ul>
-<li><a href="privacy-policy">Privacy Policy</a></li>
-<li><a href="terms">Terms of Use</a></li>
+<li><a href="https://github.com/TeoVader/finalish">Source code and documentation</a></li>
+<li><a href="https://github.com/TeoVader/finalish/releases">Release notes</a></li>
+<li>Bug or idea? Shake the phone in the app, or write to <a href="mailto:finalish@matteomaraffio.com">finalish@matteomaraffio.com</a></li>
+<li>Writing about the app? See the <a href="press/">press kit</a></li>
 </ul>
+</div>
+</section>
+
+<div class="legal-lines">
 <p>Final(ish) is not affiliated with, endorsed or sponsored by Adobe or Frame.io. Adobe and Frame.io are either registered trademarks or trademarks of Adobe in the United States and/or other countries.</p>
 <p>Google Play and the Google Play logo are trademarks of Google LLC.</p>
+</div>
 </main>
-<footer><a href="press/">Press kit</a></footer>
+<footer>
+<div class="links"><a href="privacy-policy">Privacy Policy</a><a href="terms">Terms of Use</a><a href="press/">Press kit</a><a href="https://github.com/TeoVader/finalish">GitHub</a><a href="it/" hreflang="it" lang="it">Italiano</a></div>
+<p>Free, with no ads and no tracking. Licensed under the GNU GPL v3.0.</p>
+</footer>
 </body>
 </html>
