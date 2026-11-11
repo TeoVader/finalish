@@ -115,7 +115,7 @@ internal fun ProjectMenuSheet(
                 ) {
                     // The project's image, else its latest file (same cover as the card).
                     val cover by androidx.compose.runtime.produceState(
-                        project.image?.let { dev.finalish.core.model.ImageRef(dev.finalish.ui.components.stableImageKey(it), it) },
+                        project.imageRef,
                         project.id,
                     ) {
                         if (value == null && accountId != null) value = runCatching { repo.projectCover(accountId, project).thumbnails.firstOrNull() }.getOrNull()

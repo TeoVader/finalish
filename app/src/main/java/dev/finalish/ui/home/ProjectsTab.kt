@@ -430,7 +430,7 @@ internal fun AccountBadge(account: Account?, size: androidx.compose.ui.unit.Dp) 
         contentAlignment = Alignment.Center,
     ) {
         Text(Format.initials(account?.displayName ?: "·"), style = MaterialTheme.typography.labelSmall, color = Color.White)
-        account?.image?.let { RemoteImage(it, Modifier.matchParentSizeCompat(), fallback = {}) }
+        account?.imageRef?.let { RemoteImage(it, Modifier.matchParentSizeCompat(), fallback = {}) }
     }
 }
 

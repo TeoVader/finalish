@@ -130,8 +130,12 @@ class JsonCache(private val root: File) {
         const val MAX_AGE_MS = 30L * 24 * 60 * 60 * 1000
         const val TRIM_EVERY = 200
 
-        /** Next to the cache folder (not in it, so the trim never removes it). */
-        private const val LEGACY_SCRUBBED_MARKER = "api.links-scrubbed"
+        /**
+         * Next to the cache folder (not in it, so the trim never removes it). Renamed whenever
+         * [DiskScrub] learns to drop more, so files written before are scrubbed again (the
+         * project and avatar images came after the media links).
+         */
+        private const val LEGACY_SCRUBBED_MARKER = "api.links-scrubbed.2"
 
         /** Leftover temp files older than this come from a write that never finished. */
         private const val STALE_TMP_MS = 60L * 60 * 1000

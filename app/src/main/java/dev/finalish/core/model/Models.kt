@@ -41,7 +41,12 @@ data class User(
     val email: String? = null,
     @SerialName("avatar_url") val avatarUrl: String? = null,
     val active: Boolean? = null,
+    /** [linkImageKey] of [avatarUrl], left by the disk cache when it drops the signed link. Never sent by the API. */
+    @SerialName("avatar_key") val avatarKey: String? = null,
 ) {
+    /** The avatar: its signed link when there is one, else only its key in the image cache. */
+    val avatar: ImageRef? get() = linkImageRef(avatarUrl, avatarKey)
+
     val displayName: String get() = name?.takeIf { it.isNotBlank() } ?: email ?: "Unknown"
 
     /** [displayName] with the fallback in the app's language. */
@@ -57,7 +62,11 @@ data class Account(
     val roles: List<String> = emptyList(),
     @SerialName("storage_limit") val storageLimit: Long? = null,
     @SerialName("storage_usage") val storageUsage: Long = 0,
-)
+    /** [linkImageKey] of [image], left by the disk cache when it drops the signed link. Never sent by the API. */
+    @SerialName("image_key") val imageKey: String? = null,
+) {
+    val imageRef: ImageRef? get() = linkImageRef(image, imageKey)
+}
 
 @Immutable
 @Serializable
@@ -67,7 +76,11 @@ data class Workspace(
     val name: String = "",
     val image: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null,
-)
+    /** [linkImageKey] of [image], left by the disk cache when it drops the signed link. Never sent by the API. */
+    @SerialName("image_key") val imageKey: String? = null,
+) {
+    val imageRef: ImageRef? get() = linkImageRef(image, imageKey)
+}
 
 @Immutable
 @Serializable
@@ -84,7 +97,12 @@ data class Project(
     @SerialName("updated_at") val updatedAt: String? = null,
     @SerialName("view_url") val viewUrl: String? = null,
     val owner: User? = null,
-)
+    /** [linkImageKey] of [image], left by the disk cache when it drops the signed link. Never sent by the API. */
+    @SerialName("image_key") val imageKey: String? = null,
+) {
+    /** The project's own image (set in Frame.io), if any. */
+    val imageRef: ImageRef? get() = linkImageRef(image, imageKey)
+}
 
 @Immutable
 @Serializable
@@ -150,6 +168,20 @@ data class ImageRef(
 
 /** The image cache key of an asset's rendition: stable across the signed links Frame.io rotates. */
 fun imageKey(assetId: String, rendition: String): String = "frameio:$assetId:$rendition"
+
+/**
+ * The image cache key of a signed image link (project, account or workspace image, avatar): a hash
+ * of the link without its rotating query string, so the key is stable across signatures and the
+ * disk cache can keep it without keeping anything that looks like (or works as) the link.
+ */
+fun linkImageKey(url: String): String =
+    "link:" + java.security.MessageDigest.getInstance("SHA-256")
+        .digest(url.substringBefore('?').toByteArray())
+        .take(16).joinToString("") { "%02x".format(it) }
+
+/** An image given as a bare signed [url] (in memory) or, once read back from disk, only its [key]. */
+internal fun linkImageRef(url: String?, key: String?): ImageRef? =
+    url?.takeIf { it.isNotBlank() }?.let { ImageRef(linkImageKey(it), it) } ?: key?.let { ImageRef(it) }
 
 @Immutable
 @Serializable

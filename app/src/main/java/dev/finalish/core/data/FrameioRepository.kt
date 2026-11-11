@@ -401,8 +401,9 @@ class FrameioRepository(
         val ser = kotlinx.serialization.builtins.MapSerializer(String.serializer(), User.serializer())
         val known = (cache.get(key, ser) ?: emptyMap()).toMutableMap()
         // Avatars are signed links: a known author whose picture expired is looked up again. The old entry
-        // stays in [known] until replaced, so a failed or empty lookup still names the comment.
-        fun avatarExpired(u: User) = u.avatarUrl?.let(::signedUrlExpired) == true
+        // stays in [known] until replaced, so a failed or empty lookup still names the comment. A copy read
+        // back from disk has the avatar's key but no link (see DiskScrub): it counts as expired too.
+        fun avatarExpired(u: User) = u.avatarUrl?.let(::signedUrlExpired) ?: (u.avatarKey != null)
         val wanted = ownerless.map { it.id }
             .filterNot { id -> known[id]?.let { !avatarExpired(it) } == true || id in authorsNotLogged }.toMutableSet()
         val asked = wanted.toSet()
