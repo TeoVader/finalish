@@ -31,6 +31,7 @@ import dev.finalish.ui.report
 import java.io.File
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -230,6 +231,9 @@ class ViewerViewModel(
         preparingJob = viewModelScope.launch {
             while (true) {
                 delay(8_000)
+                // Nobody is looking (app in the background): wait to be back before asking again.
+                androidx.lifecycle.ProcessLifecycleOwner.get().lifecycle.currentStateFlow
+                    .first { it.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED) }
                 val f = runCatching { repo.fileNow(account, fileId) }.getOrNull() ?: continue
                 if (_state.value.file?.id != fileId) return@launch
                 when (mediaState(f, hasLink = pickStreamUrl(f) != null)) {

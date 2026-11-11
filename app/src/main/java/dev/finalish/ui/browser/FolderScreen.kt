@@ -181,7 +181,13 @@ fun FolderScreen(
     var appearance by remember { mutableStateOf(false) }
     var foldersOpen by rememberSaveable { mutableStateOf(true) }
     var filesOpen by rememberSaveable { mutableStateOf(true) }
-    AutoRefresh(folderId, intervalMs = { if (vm.hasProcessing) 5_000 else 15_000 }) {
+    AutoRefresh(
+        folderId,
+        intervalMs = { if (vm.hasProcessing) 5_000 else 15_000 },
+        // Quiet folders are checked less and less often (up to a minute); any change resets the wait.
+        content = { vm.remote.value.data to vm.hasProcessing },
+        maxIntervalMs = 60_000,
+    ) {
         vm.refresh()
         if (isProjectRoot) vm.loadShares(projectId)
     }
