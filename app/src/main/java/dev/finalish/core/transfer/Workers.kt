@@ -267,7 +267,10 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
     /** This run's partial file for [target]: one per run, so a stopping run can't write into a newer run's. */
     private fun partOf(target: File) = File(target.parentFile, "${target.name}.$id.part")
 
-    /** Takes over the largest partial file earlier runs left for [target]; the others are deleted. */
+    /**
+     * Takes over the largest partial file earlier runs left for [target], with its saved identity;
+     * the others are deleted.
+     */
     private fun adoptPartial(target: File) {
         val now = System.currentTimeMillis()
         val parts = target.parentFile?.listFiles { f -> f.name.startsWith("${target.name}.") && f.name.endsWith(".part") }.orEmpty()
@@ -275,59 +278,32 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
             .filter { now - it.lastModified() > 10_000 }
             .sortedByDescending { it.length() }
         val mine = partOf(target)
-        parts.firstOrNull()?.takeIf { it != mine }?.renameTo(mine)
-        parts.drop(1).forEach { it.delete() }
+        parts.firstOrNull()?.takeIf { it != mine }?.let { part ->
+            partIdentity(mine).delete()
+            if (part.renameTo(mine)) partIdentity(part).renameTo(partIdentity(mine))
+        }
+        parts.drop(1).forEach {
+            it.delete()
+            partIdentity(it).delete()
+        }
     }
 
     private fun discardPartials(fileId: String) {
-        c.transfers.offlineDir.listFiles { f -> f.name.startsWith("$fileId.") && f.name.endsWith(".part") }?.forEach { it.delete() }
+        c.transfers.offlineDir.listFiles { f -> f.name.startsWith("$fileId.") && (f.name.endsWith(".part") || f.name.endsWith(".part.id")) }
+            ?.forEach { it.delete() }
     }
 
     /**
      * Downloads [url] into [target], continuing this run's partial file with a Range request when
-     * there is one. The partial file stays when the run stops, so the next run can continue it.
+     * it is still the same rendition (see [fetchResumable]). The partial file stays when the run
+     * stops, so the next run can continue it.
      */
     private suspend fun download(url: String, target: File, expectedTotal: Long = -1, onProgress: (Long, Long) -> Unit) = withContext(Dispatchers.IO) {
         val tmp = partOf(target)
-        fetch(url, tmp, expectedTotal, onProgress)
+        val start = fetchResumable(c.baseHttp, url, tmp, expectedTotal, onProgress)
+        if (start > 0) dev.finalish.core.util.AppLog.i("Download resumed at $start bytes")
         if (!tmp.renameTo(target)) throw IOException("Could not save file")
-    }
-
-    private suspend fun fetch(url: String, tmp: File, expectedTotal: Long, onProgress: (Long, Long) -> Unit) {
-        val have = if (tmp.exists()) tmp.length() else 0L
-        val request = Request.Builder().url(url).apply { if (have > 0) header("Range", "bytes=$have-") }.build()
-        c.baseHttp.newCall(request).execute().use { resp ->
-            if (!resp.isSuccessful) throw IOException("HTTP ${resp.code}")
-            val start = resumeOffset(have, resp.code, resp.header("Content-Range"), expectedTotal)
-            if (resp.code == 206 && start == 0L) {
-                // Part of a different file (the rendition changed): start over with the whole file.
-                tmp.delete()
-                return fetch(url, tmp, expectedTotal, onProgress)
-            }
-            if (have > 0 && start > 0) dev.finalish.core.util.AppLog.i("Download resumed at $start bytes")
-            val body = resp.body
-            val length = body.contentLength()
-            val total = if (length >= 0) start + length else -1
-            var done = start
-            var lastReport = 0L
-            body.byteStream().use { input ->
-                java.io.FileOutputStream(tmp, start > 0).use { out ->
-                    val buf = ByteArray(256 * 1024)
-                    while (true) {
-                        kotlinx.coroutines.currentCoroutineContext().ensureActive()
-                        val n = input.read(buf)
-                        if (n < 0) break
-                        out.write(buf, 0, n)
-                        done += n
-                        val now = System.currentTimeMillis()
-                        if (now - lastReport > 250) {
-                            lastReport = now
-                            onProgress(done, total)
-                        }
-                    }
-                }
-            }
-        }
+        partIdentity(tmp).delete()
     }
 
     companion object {
@@ -748,20 +724,6 @@ private fun saveThumbnail(source: File, mimeType: String, target: File): File? =
     bitmap.recycle()
     target
 }.getOrNull()
-
-/**
- * Where to continue a partial download of [have] bytes, given the answer to `Range: bytes=have-`:
- * [have] when the server sent exactly the rest of the same file (206 from that byte, and the full
- * size matches [expectedTotal] when both are known), 0 to start over otherwise.
- */
-internal fun resumeOffset(have: Long, code: Int, contentRange: String?, expectedTotal: Long): Long {
-    if (have <= 0 || code != 206 || contentRange == null) return 0
-    val m = Regex("""bytes\s+(\d+)-(\d+)/(\d+|\*)""").find(contentRange) ?: return 0
-    if (m.groupValues[1].toLong() != have) return 0
-    val full = m.groupValues[3].toLongOrNull()
-    if (full != null && expectedTotal > 0 && full != expectedTotal) return 0
-    return have
-}
 
 /** One stacking request at a time across uploads: a merged folder can finish dozens together. */
 private val stackGate = kotlinx.coroutines.sync.Mutex()
