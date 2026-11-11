@@ -44,6 +44,7 @@ object Network {
         .build()
 
     fun apiClient(base: OkHttpClient, auth: AuthManager): OkHttpClient = base.newBuilder()
+        .addInterceptor(UserAgentInterceptor())
         .addInterceptor(DemoInterceptor { auth.isDemo })
         .addInterceptor(AuthInterceptor(auth))
         .addInterceptor(RateLimitRetryInterceptor())
