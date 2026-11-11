@@ -348,3 +348,160 @@ test('the report count starts over a day after the first report', async () => {
   assert.equal(v.count, 1);
   assert.ok(v.since > twoDaysAgo);
 });
+
+// ---- Request bodies, attachment names ---------------------------------------------------------
+
+const BOUNDARY = 'relayTestBoundary123';
+
+/** A multipart body as a stream with no Content-Length; `pulled()` says how many bytes were read. */
+function streamedForm(firstPart, then = () => null) {
+  const enc = new TextEncoder();
+  let pulled = 0;
+  let sentFirst = false;
+  const stream = new ReadableStream({
+    pull(controller) {
+      const chunk = sentFirst ? then() : enc.encode(firstPart);
+      sentFirst = true;
+      if (!chunk) return controller.close();
+      pulled += chunk.byteLength;
+      controller.enqueue(chunk);
+    },
+  });
+  return { stream, pulled: () => pulled };
+}
+
+const part = (name, value, filename) =>
+  `--${BOUNDARY}\r\nContent-Disposition: form-data; name="${name}"${filename ? `; filename="${filename}"` : ''}\r\n` +
+  `Content-Type: ${filename ? 'image/png' : 'text/plain'}\r\n\r\n${value}\r\n`;
+
+const streamedReport = (e, stream) => worker.fetch(new Request('https://relay.test/report', {
+  method: 'POST', body: stream, duplex: 'half',
+  headers: { 'content-type': `multipart/form-data; boundary=${BOUNDARY}`, 'cf-connecting-ip': IP },
+}), e);
+
+const MB = new Uint8Array(1024 * 1024);
+
+test('a forged ticket is refused before any attachment is read', async () => {
+  const e = env();
+  mockGitHub();
+  const meta = JSON.stringify({ installId: INSTALL, ticket: 'forged.ticket', powNonce: '1', title: 'x' });
+  const body = streamedForm(part('report', meta) + part('screenshot', '', 'a.png'), () => MB);
+  const res = await streamedReport(e, body.stream);
+  assert.equal(res.status, 403);
+  assert.ok(body.pulled() < 64 * 1024, `read ${body.pulled()} bytes`);
+});
+
+test('a body without Content-Length stops at the size limit while it streams', async () => {
+  const e = env();
+  const calls = mockGitHub();
+  const t = await ticketFor(e);
+  await later(10_000, async () => {
+    const meta = JSON.stringify({ installId: INSTALL, ticket: t.ticket, powNonce: await solve(t.seed, t.bits), title: 'x' });
+    const body = streamedForm(part('report', meta) + part('screenshot', '', 'a.png'), () => MB);
+    const res = await streamedReport(e, body.stream);
+    assert.equal(res.status, 413);
+    assert.ok(body.pulled() <= 22 * 1024 * 1024, `read ${body.pulled()} bytes`);
+    assert.equal(calls.length, 0);
+    // The ticket was not spent: the same report, small enough, still goes through.
+    const ok = await sendReport(e, reportForm(t, await solve(t.seed, t.bits)));
+    assert.equal(ok.status, 201);
+  });
+});
+
+test('a body that does not start with the report is refused after a few kilobytes', async () => {
+  const e = env();
+  const body = streamedForm(`--${BOUNDARY}\r\nContent-Disposition: form-data; name="screenshot"; filename="a.png"\r\n\r\n`, () => MB);
+  const res = await streamedReport(e, body.stream);
+  assert.equal(res.status, 400);
+  assert.ok(body.pulled() < 2 * 1024 * 1024, `read ${body.pulled()} bytes`);
+});
+
+test('a report part larger than its limit is refused', async () => {
+  const e = env();
+  const big = 'a'.repeat(1024);
+  const body = streamedForm(`--${BOUNDARY}\r\nContent-Disposition: form-data; name="report"\r\n\r\n{"x":"`, () => new TextEncoder().encode(big));
+  const res = await streamedReport(e, body.stream);
+  assert.equal(res.status, 400);
+  assert.ok(body.pulled() < 70 * 1024, `read ${body.pulled()} bytes`);
+});
+
+test('a Content-Length over the limit is refused without reading', async () => {
+  const e = env();
+  const res = await worker.fetch(post('/report', 'x', { 'content-length': String(30 * 1024 * 1024), 'content-type': `multipart/form-data; boundary=${BOUNDARY}` }), e);
+  assert.equal(res.status, 413);
+});
+
+test('/challenge bodies are limited too', async () => {
+  const e = env();
+  const body = streamedForm(`{"installId":"${INSTALL}","pad":"`, () => MB);
+  const res = await worker.fetch(new Request('https://relay.test/challenge', {
+    method: 'POST', body: body.stream, duplex: 'half', headers: { 'content-type': 'application/json', 'cf-connecting-ip': IP },
+  }), e);
+  assert.equal(res.status, 413);
+  assert.ok(body.pulled() < 2 * 1024 * 1024);
+  const declared = await worker.fetch(post('/challenge', JSON.stringify({ installId: INSTALL }), { 'content-length': '5000', 'cf-connecting-ip': IP }), e);
+  assert.equal(declared.status, 413);
+});
+
+test('files with the same name get their own paths', async () => {
+  const e = env();
+  const calls = mockGitHub();
+  const t = await ticketFor(e);
+  await later(10_000, async () => {
+    const form = reportForm(t, await solve(t.seed, t.bits));
+    form.append('attachment-0', new Blob([new Uint8Array([1])], { type: 'image/png' }), 'Screenshot.png');
+    form.append('attachment-1', new Blob([new Uint8Array([2])], { type: 'image/png' }), 'screen shot.png');
+    form.append('attachment-2', new Blob([new Uint8Array([3])], { type: 'image/png' }), 'screen?shot.png');
+    const res = await sendReport(e, form);
+    assert.equal(res.status, 201);
+    const paths = calls.filter((c) => c.method === 'PUT').map((c) => c.url.split('/').pop());
+    assert.deepEqual(paths, ['screenshot.png', 'logs.txt', 'Screenshot-2.png', 'screen_shot.png', 'screen_shot-2.png']);
+    const issue = calls.find((c) => c.url.endsWith('/issues')).body;
+    for (const p of paths) assert.ok(issue.body.includes(`/${p}`), p);
+  });
+});
+
+test('unique names keep the extension and ignore case', async () => {
+  const { uniqueNames } = await import('../src/worker.js');
+  const names = uniqueNames(['a.png', 'A.png', 'a.png', 'a-2.png', 'logs', 'logs'].map((name) => ({ name }))).map((f) => f.name);
+  assert.deepEqual(names, ['a.png', 'A-2.png', 'a-3.png', 'a-2-2.png', 'logs', 'logs-2']);
+});
+
+test('a file GitHub refuses still opens the issue, which names it', async () => {
+  const e = env();
+  const calls = mockGitHub();
+  const base = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    if (init.method === 'PUT' && url.endsWith('/logs.txt')) {
+      calls.push({ url, method: init.method });
+      return new Response('nope', { status: 422 });
+    }
+    return base(url, init);
+  };
+  const t = await ticketFor(e);
+  await later(10_000, async () => {
+    const res = await sendReport(e, reportForm(t, await solve(t.seed, t.bits)));
+    assert.equal(res.status, 201);
+    const issue = calls.find((c) => c.url.endsWith('/issues')).body;
+    assert.match(issue.body, /!\[screenshot\.png\]/);
+    assert.match(issue.body, /### Attachments not stored[\s\S]*`logs\.txt`/);
+    assert.doesNotMatch(issue.body, /\[logs\.txt\]\(/);
+  });
+});
+
+test('a branch moved by another report is retried once', async () => {
+  const e = env();
+  const calls = mockGitHub();
+  const base = globalThis.fetch;
+  let conflicts = 0;
+  globalThis.fetch = async (url, init) => {
+    if (init.method === 'PUT' && url.endsWith('/screenshot.png') && conflicts++ === 0) return new Response('', { status: 409 });
+    return base(url, init);
+  };
+  const t = await ticketFor(e);
+  await later(10_000, async () => {
+    const res = await sendReport(e, reportForm(t, await solve(t.seed, t.bits)));
+    assert.equal(res.status, 201);
+    assert.doesNotMatch(calls.find((c) => c.url.endsWith('/issues')).body.body, /not stored/);
+  });
+});
