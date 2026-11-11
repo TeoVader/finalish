@@ -52,7 +52,7 @@
     <string name="settings_open_source_licenses">Licenças de código aberto</string>
     <string name="settings_sign_in_method">Método de login</string>
     <string name="settings_sign_in_demo">Demonstração</string>
-    <string name="settings_demo_media_credits">Sintel e Tears of Steel © Blender Foundation, CC BY 3.0 (durian.blender.org, mango.blender.org). Fotos de exemplo do Unsplash via picsum.photos.</string>
+    <string name="settings_demo_media_credits">Big Buck Bunny © 2008 Blender Foundation (bigbuckbunny.org), Sintel © Blender Foundation (durian.blender.org), Tears of Steel (CC) Blender Foundation (mango.blender.org), todos sob CC BY 3.0. Fotos de exemplo do Unsplash via picsum.photos.</string>
     <string name="settings_demo_media">Mídia de demonstração: %1$s</string>
     <string name="settings_trademarks_notice">Adobe e Frame.io são marcas registradas ou marcas comerciais da Adobe nos Estados Unidos e/ou em outros países. Mídia de demonstração: %1$s</string>
     <string name="settings_sign_out">Sair</string>
