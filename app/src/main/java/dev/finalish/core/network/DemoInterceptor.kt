@@ -184,11 +184,10 @@ class DemoInterceptor(private val enabled: () -> Boolean) : Interceptor {
     }
 
     private companion object {
-        const val TV = "https://test-videos.co.uk/vids/"
+        const val DEMO_MEDIA = "https://teovader.github.io/finalish/demo/"
         val CLIPS = mapOf(
-            "bunny" to "${TV}bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
-            "jelly" to "${TV}jellyfish/mp4/h264/720/Jellyfish_720_10s_1MB.mp4",
-            "sintel" to "${TV}sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4",
+            "bunny" to "${DEMO_MEDIA}Big_Buck_Bunny_720_10s_1MB.mp4",
+            "sintel" to "${DEMO_MEDIA}Sintel_720_10s_1MB.mp4",
             "sintelTrailer" to "https://download.blender.org/durian/trailer/sintel_trailer-720p.mp4",
             "tos" to "https://download.blender.org/demo/movies/ToS/tears_of_steel_720p.mov",
         )
@@ -283,10 +282,10 @@ class DemoInterceptor(private val enabled: () -> Boolean) : Interceptor {
         val FILES: List<JsonElement> = listOf(
             video("v1", "Saltmarsh_Hero_30s_v4.mp4", "tos", "root-campaign", 1, 4, 734.0, 2),
             video("v2", "Saltmarsh_Cutdown_15s.mp4", "bunny", "root-campaign", 2, 3, 10.0, 6),
-            video("v3", "BTS_Montage.mp4", "jelly", "root-campaign", 0, null, 10.0, 30),
+            video("v3", "BTS_Montage.mp4", "bunny", "root-campaign", 0, null, 10.0, 30),
             image("i1", "Key_Visual_Final.jpg", 1015, "root-campaign", 2, 20),
             video("d1", "A001_C004_0412.mov", "bunny", "f-dailies", null, null, 10.0, 48),
-            video("d2", "A001_C007_0412.mov", "jelly", "f-dailies", null, 5, 10.0, 48),
+            video("d2", "A001_C007_0412.mov", "bunny", "f-dailies", null, 5, 10.0, 48),
             video("d3", "B002_C001_0413.mov", "sintel", "f-dailies", 0, null, 10.0, 26),
             image("g1", "Storyboard_01.jpg", 1039, "f-gfx", null, 70),
             image("g2", "Storyboard_02.jpg", 1043, "f-gfx", null, 70),
@@ -300,7 +299,7 @@ class DemoInterceptor(private val enabled: () -> Boolean) : Interceptor {
             image("r2", "Palette_Board.jpg", 1036, "root-p3", null, 216, project = "p3"),
             video("c1", "Coast_Rough_Cut_v1.mov", "tos", "root-p4", 0, null, 734.0, 25, project = "p4"),
             image("c2", "Location_Scout_North.jpg", 1040, "root-p4", null, 40, project = "p4"),
-            video("n1", "Interview_Ep3_CamA.mov", "jelly", "root-p5", null, null, 10.0, 360, project = "p5"),
+            video("n1", "Interview_Ep3_CamA.mov", "bunny", "root-p5", null, null, 10.0, 360, project = "p5"),
             video("n2", "Interview_Ep3_CamB.mov", "sintel", "root-p5", null, 3, 10.0, 362, project = "p5"),
         )
 
