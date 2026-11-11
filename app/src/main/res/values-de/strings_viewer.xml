@@ -258,7 +258,7 @@
     <string name="viewer_preparing_video">Frame.io bereitet das Video vor</string>
     <string name="viewer_preparing_body">Die Wiedergabe startet automatisch, sobald es bereit ist</string>
     <string name="viewer_media_unavailable_title">Vorschau in Final(ish) nicht verfügbar</string>
-    <string name="viewer_media_unavailable_body">Frame.io gibt die Medien dieser Datei für dein Konto nicht an Apps weiter (zum Beispiel, wenn sie mit Wasserzeichen angezeigt werden müssen). Du kannst sie auf Frame.io ansehen.</string>
+    <string name="viewer_media_unavailable_body">Frame.io gibt die Medien dieser Datei für dein Konto nicht an Apps weiter, zum Beispiel mit der Rolle „Viewer“ oder wenn sie mit Wasserzeichen angezeigt werden müssen. Du kannst sie auf Frame.io ansehen.</string>
     <string name="viewer_open_on_frameio">Auf Frame.io öffnen</string>
 
     <!-- Viewer messages (snackbars) -->

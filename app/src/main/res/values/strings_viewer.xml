@@ -258,7 +258,7 @@
     <string name="viewer_preparing_video">Frame.io is preparing the video</string>
     <string name="viewer_preparing_body">It starts on its own as soon as it\'s ready</string>
     <string name="viewer_media_unavailable_title">Preview not available in Final(ish)</string>
-    <string name="viewer_media_unavailable_body">Frame.io doesn\'t share this file\'s media with apps for your account (for example when it must be watermarked). You can view it on Frame.io.</string>
+    <string name="viewer_media_unavailable_body">Frame.io doesn\'t share this file\'s media with apps for your account, for example with the Viewer role or when it must be watermarked. You can view it on Frame.io.</string>
     <string name="viewer_open_on_frameio">Open on Frame.io</string>
 
     <!-- Viewer messages (snackbars) -->

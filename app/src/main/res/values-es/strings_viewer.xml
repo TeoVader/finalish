@@ -264,7 +264,7 @@
     <string name="viewer_preparing_video">Frame.io está preparando el vídeo</string>
     <string name="viewer_preparing_body">Se iniciará automáticamente en cuanto esté listo</string>
     <string name="viewer_media_unavailable_title">Vista previa no disponible en Final(ish)</string>
-    <string name="viewer_media_unavailable_body">Frame.io no comparte el contenido de este archivo con apps para tu cuenta (por ejemplo, cuando debe llevar marca de agua). Puedes verlo en Frame.io.</string>
+    <string name="viewer_media_unavailable_body">Frame.io no comparte el contenido de este archivo con apps para tu cuenta, por ejemplo con el rol Viewer o cuando debe llevar marca de agua. Puedes verlo en Frame.io.</string>
     <string name="viewer_open_on_frameio">Abrir en Frame.io</string>
 
     <!-- Viewer messages (snackbars) -->

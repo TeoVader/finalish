@@ -264,7 +264,7 @@
     <string name="viewer_preparing_video">Frame.io prépare la vidéo</string>
     <string name="viewer_preparing_body">La lecture démarrera automatiquement dès que ce sera prêt</string>
     <string name="viewer_media_unavailable_title">Aperçu non disponible dans Final(ish)</string>
-    <string name="viewer_media_unavailable_body">Frame.io ne partage pas les médias de ce fichier avec les applications pour votre compte (par exemple quand il doit être filigrané). Vous pouvez le voir sur Frame.io.</string>
+    <string name="viewer_media_unavailable_body">Frame.io ne partage pas les médias de ce fichier avec les applications pour votre compte, par exemple avec le rôle Viewer ou quand il doit être filigrané. Vous pouvez le voir sur Frame.io.</string>
     <string name="viewer_open_on_frameio">Ouvrir sur Frame.io</string>
 
     <!-- Viewer messages (snackbars) -->
