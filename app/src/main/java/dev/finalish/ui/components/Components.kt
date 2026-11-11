@@ -75,7 +75,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import dev.finalish.core.model.ImageRef
 import dev.finalish.core.model.MediaKind
 import dev.finalish.core.model.User
 import dev.finalish.core.util.Format
@@ -141,51 +143,77 @@ private const val SHIMMER_MS = 1400L
 /** Signed media URLs rotate their query string; cache by path instead. */
 fun stableImageKey(url: String): String = url.substringBefore('?')
 
+/**
+ * A request for [url] cached under [key]. Without a URL (a value read back from the disk cache,
+ * which keeps no signed links) only the image cache can answer: the image shows offline if it was
+ * seen before, and the request fails otherwise, with no network call.
+ */
+fun cachedImageRequest(context: android.content.Context, url: String?, key: String): ImageRequest =
+    ImageRequest.Builder(context)
+        // A host that never resolves (RFC 2606): the request only exists to reach the cache by key.
+        .data(url ?: "https://image-cache.invalid/${android.net.Uri.encode(key)}")
+        .memoryCacheKey(key)
+        .diskCacheKey(key)
+        .apply { if (url == null) networkCachePolicy(CachePolicy.DISABLED) }
+        .build()
+
+/**
+ * A remote image. [cacheKey] names it in the image cache (by default the URL without its signed
+ * query); with a key and no [url] it shows the cached copy, if any.
+ */
 @Composable
 fun RemoteImage(
     url: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     contentDescription: String? = null,
+    cacheKey: String? = null,
     fallback: @Composable () -> Unit = { Box(Modifier.fillMaxSize().background(Palette.Surface2)) },
 ) {
-    if (url == null) {
+    val key = cacheKey ?: url?.let(::stableImageKey)
+    if (key == null) {
         Box(modifier) { fallback() }
         return
     }
     val context = LocalContext.current
-    // Keyed on the stable part: a refresh that only rotated the signature keeps the image (and its
-    // loading state) instead of starting over.
-    val key = stableImageKey(url)
-    val request = remember(key) {
-        ImageRequest.Builder(context).data(url).memoryCacheKey(key).diskCacheKey(key).build()
-    }
+    // Keyed on the stable key: a refresh that only rotated the signature keeps the image (and its
+    // loading state) instead of starting over. A link arriving for a cache-only request does restart it.
+    val request = remember(key, url == null) { cachedImageRequest(context, url, key) }
     LoadingImage(request, modifier, contentScale, contentDescription, onError = { fallback() })
 }
 
-/** Tries each URL in turn until one loads (signed renditions can fail server-side). */
+/** [RemoteImage] for an [ImageRef]: its key, and its signed link when there is one. */
+@Composable
+fun RemoteImage(
+    image: ImageRef?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+    contentDescription: String? = null,
+    fallback: @Composable () -> Unit = { Box(Modifier.fillMaxSize().background(Palette.Surface2)) },
+) = RemoteImage(image?.url, modifier, contentScale, contentDescription, cacheKey = image?.key, fallback = fallback)
+
+/** Tries each image in turn until one loads (signed renditions can fail server-side). */
 @Composable
 fun RemoteImageChain(
-    urls: List<String>,
+    images: List<ImageRef>,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     fallback: @Composable () -> Unit = { Box(Modifier.fillMaxSize().background(Palette.Surface2)) },
 ) {
-    // Keyed on the stable parts of the URLs, so rotated signatures don't restart the chain.
-    val keys = remember(urls) { urls.map(::stableImageKey) }
-    var index by remember(keys) { androidx.compose.runtime.mutableIntStateOf(0) }
-    val url = urls.getOrNull(index)
-    if (url == null) {
+    // Keyed on the stable keys, so rotated signatures don't restart the chain; links arriving for
+    // a chain that only had the cache to go on do.
+    val keys = remember(images) { images.map { it.key } }
+    val linked = remember(images) { images.map { it.url != null } }
+    var index by remember(keys, linked) { androidx.compose.runtime.mutableIntStateOf(0) }
+    val image = images.getOrNull(index)
+    if (image == null) {
         Box(modifier) { fallback() }
         return
     }
     val context = LocalContext.current
-    val key = stableImageKey(url)
-    val request = remember(key) {
-        ImageRequest.Builder(context).data(url).memoryCacheKey(key).diskCacheKey(key).build()
-    }
+    val request = remember(image.key, image.url == null) { cachedImageRequest(context, image.url, image.key) }
     LoadingImage(request, modifier, contentScale, contentDescription = null, onError = {
-        if (index < urls.lastIndex) androidx.compose.runtime.SideEffect { index++ } else fallback()
+        if (index < images.lastIndex) androidx.compose.runtime.SideEffect { index++ } else fallback()
     })
 }
 

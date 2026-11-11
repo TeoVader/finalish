@@ -103,7 +103,7 @@ fun InfoPanel(
     LazyColumn(modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                if (offline || file.mediaLinks?.original?.downloadUrl != null) QuickAction(
+                if (offline || file.mediaLinks?.original?.hasDownload == true) QuickAction(
                     if (offline) Icons.Rounded.DownloadDone else Icons.Rounded.DownloadForOffline,
                     if (offline) stringResource(R.string.viewer_action_offline) else stringResource(R.string.viewer_save_offline),
                     Modifier.weight(1f),
@@ -118,7 +118,7 @@ fun InfoPanel(
             }
         }
 
-        if (file.mediaLinks?.original?.downloadUrl == null) item {
+        if (file.mediaLinks?.original?.hasDownload != true) item {
             Text(stringResource(R.string.viewer_msg_downloads_disabled))
         }
 
@@ -276,8 +276,10 @@ fun InfoPanel(
 @Composable
 private fun ExifCard(file: Asset) {
     val context = LocalContext.current
-    val rows by androidx.compose.runtime.produceState<List<Pair<String, String>>>(emptyList(), file.id) {
-        val url = file.mediaLinks?.original?.let { it.downloadUrl ?: it.inlineUrl } ?: return@produceState
+    // Keyed on the link too: a copy without links (the listing's, or the disk cache's) is followed by one with them.
+    val original = file.mediaLinks?.original?.let { it.downloadUrl ?: it.inlineUrl }
+    val rows by androidx.compose.runtime.produceState<List<Pair<String, String>>>(emptyList(), file.id, original != null) {
+        val url = original ?: return@produceState
         val http = dev.finalish.FinalishApp.container(context).baseHttp
         value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
             runCatching { dev.finalish.core.media.ExifPeek.read(http, url) }.getOrDefault(emptyList())
@@ -467,7 +469,7 @@ fun VersionsPanel(
                         .clip(RoundedCornerShape(10.dp))
                         .background(Palette.Surface3),
                 ) {
-                    RemoteImage(v.thumbnailUrl, Modifier.fillMaxSize(), fallback = {})
+                    RemoteImage(v.thumbnail, Modifier.fillMaxSize(), fallback = {})
                     Text(
                         stringResource(R.string.viewer_version_short, number),
                         style = MaterialTheme.typography.labelSmall,

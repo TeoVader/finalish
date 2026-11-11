@@ -119,15 +119,15 @@ fun AssetActionsSheet(
                         // Mockup: three quick actions as tiles, everything else in grouped rows.
                         Row(Modifier.padding(horizontal = 16.dp, vertical = 6.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
                             QuickTile(Icons.Rounded.Link, stringResource(R.string.viewer_action_share), Modifier.weight(1f)) { onDismiss(); onNewShare() }
-                            if (file.mediaLinks?.original?.downloadUrl != null) QuickTile(Icons.Rounded.FileDownload, stringResource(R.string.viewer_action_download), Modifier.weight(1f)) { vm.saveToDevice(); onDismiss() }
-                            if (state.offlinePath != null || file.mediaLinks?.original?.downloadUrl != null) QuickTile(
+                            if (file.mediaLinks?.original?.hasDownload == true) QuickTile(Icons.Rounded.FileDownload, stringResource(R.string.viewer_action_download), Modifier.weight(1f)) { vm.saveToDevice(); onDismiss() }
+                            if (state.offlinePath != null || file.mediaLinks?.original?.hasDownload == true) QuickTile(
                                 Icons.Rounded.DownloadForOffline, if (state.offlinePath != null) stringResource(R.string.viewer_action_offline_done) else stringResource(R.string.viewer_action_offline), Modifier.weight(1f),
                             ) {
                                 if (state.offlinePath != null) vm.removeOffline() else vm.downloadForOffline()
                                 onDismiss()
                             }
                         }
-                        if (file.mediaLinks?.original?.downloadUrl == null) {
+                        if (file.mediaLinks?.original?.hasDownload != true) {
                             Text(stringResource(R.string.viewer_msg_downloads_disabled), Modifier.padding(16.dp))
                         }
                         Group {
@@ -143,7 +143,7 @@ fun AssetActionsSheet(
                             onCompareTake?.let { ActionRow(Icons.AutoMirrored.Rounded.CompareArrows, stringResource(R.string.viewer_action_compare_take)) { onDismiss(); it() } }
                         }
                         Group {
-                            if (file.kind == MediaKind.Video && file.mediaLinks?.original?.downloadUrl != null) {
+                            if (file.kind == MediaKind.Video && file.mediaLinks?.original?.hasDownload == true) {
                                 ActionRow(Icons.Rounded.Image, stringResource(R.string.viewer_action_save_frame)) { vm.downloadStill(); onDismiss() }
                             }
                             ActionRow(Icons.AutoMirrored.Rounded.DriveFileMove, stringResource(R.string.viewer_action_move_to)) { onDismiss(); onMove() }
@@ -195,7 +195,7 @@ private fun Header(file: Asset, state: ViewerState) {
     // Like the official sheet: the thumbnail with its duration, the name, who uploaded it.
     Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(Modifier.width(150.dp).aspectRatio(16f / 9f).clip(RoundedCornerShape(10.dp)).background(Palette.Surface3)) {
-            RemoteImage(file.thumbnailUrl, Modifier.fillMaxSize(), fallback = {})
+            RemoteImage(file.thumbnail, Modifier.fillMaxSize(), fallback = {})
             file.meta("Duration")?.doubleValue?.takeIf { it > 0 }?.let { d ->
                 Text(
                     Format.clock((d * 1000).toLong()),

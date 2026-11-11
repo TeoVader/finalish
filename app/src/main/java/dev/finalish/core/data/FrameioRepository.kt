@@ -249,22 +249,23 @@ class FrameioRepository(
     suspend fun folderPreview(account: String, folder: Asset, force: Boolean = false): dev.finalish.core.model.FolderPreview? {
         val key = "preview2:$account:${folder.id}:${folder.updatedAt}"
         val stale = stalePreviews.remove(folder.id)
-        // Its thumbnails are signed links: once one has expired, fetch fresh ones.
+        // Its thumbnails are signed links, kept in memory only: once one has expired, or the entry was
+        // read back from disk without them, fetch fresh ones.
         val cached = if (!force && !stale) cache.get(key, dev.finalish.core.model.FolderPreview.serializer()) else null
-        if (cached != null && cached.thumbnails.none { signedUrlExpired(it) }) return cached
+        if (cached != null && cached.thumbnails.none { it.needsFreshLink() }) return cached
         val fresh = previewGate.withPermit {
             runCatchingCancellable {
                 val page = api.childrenPreview(account, folder.id)
                 val thumbs = page.data
                     .sortedByDescending { it.id == folder.coverFileId }
-                    .mapNotNull { child -> if (child.isFolder) null else child.thumbnailCandidates.lastOrNull { MediaKind.Image == child.kind } ?: child.thumbnailUrl }
+                    .mapNotNull { child -> if (child.isFolder) null else child.thumbnailCandidates.lastOrNull { MediaKind.Image == child.kind } ?: child.thumbnail }
                     .take(3)
                 val preview = dev.finalish.core.model.FolderPreview(thumbs, page.totalCount ?: page.data.size.takeIf { page.links?.next == null })
                 cache.put(key, dev.finalish.core.model.FolderPreview.serializer(), preview)
                 preview
             }.getOrNull()
         }
-        // Offline: the expired entry still shows the images the image cache kept (stable keys).
+        // Offline: the expired (or link-less) entry still shows the images the image cache kept, by key.
         return fresh ?: cached
     }
 
@@ -275,7 +276,7 @@ class FrameioRepository(
     suspend fun projectCover(account: String, project: dev.finalish.core.model.Project): dev.finalish.core.model.FolderPreview {
         val key = "projcover2:$account:${project.id}:${project.updatedAt}"
         val cached = if (project.rootFolderId !in stalePreviews) cache.get(key, dev.finalish.core.model.FolderPreview.serializer()) else null
-        if (cached != null && cached.thumbnails.none { signedUrlExpired(it) }) return cached
+        if (cached != null && cached.thumbnails.none { it.needsFreshLink() }) return cached
         val root = Asset(id = project.rootFolderId, type = "folder", updatedAt = project.updatedAt)
         val rootPreview = folderPreview(account, root)
         val direct = rootPreview?.thumbnails.orEmpty()
@@ -632,7 +633,7 @@ class FrameioRepository(
             items.firstNotNullOfOrNull { it.thumbnailUrl }
                 // The share listing can come back with empty media links: ask the file itself.
                 ?: items.firstOrNull { !it.isFolder }?.let { runCatchingCancellable { api.file(account, it.id, include = FrameioApi.INCLUDE_BROWSE).data.thumbnailUrl }.getOrNull() }
-                ?: items.firstOrNull { it.isFolder }?.let { folderPreview(account, it)?.thumbnails?.firstOrNull() }
+                ?: items.firstOrNull { it.isFolder }?.let { folderPreview(account, it)?.thumbnails?.firstOrNull()?.url }
         }.getOrNull()?.also { shareCovers.put(shareId, it) }
     }
 
@@ -952,3 +953,6 @@ data class CommentDraft(
         val URL_REGEX = Regex("""https?://[^\s]+""")
     }
 }
+
+/** True when this image's link is missing (read back from the disk cache) or about to expire. */
+internal fun dev.finalish.core.model.ImageRef.needsFreshLink(): Boolean = url?.let(::signedUrlExpired) ?: true

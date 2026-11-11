@@ -93,9 +93,21 @@ data class MediaLink(
     @SerialName("download_url") val downloadUrl: String? = null,
     @SerialName("inline_url") val inlineUrl: String? = null,
     val metadata: ScrubSheetMeta? = null,
+    /**
+     * The URL fields ("url", "download_url", "inline_url") that had a value when the disk cache
+     * dropped them: Frame.io's signed links are kept in memory only (see JsonCache), so a copy
+     * read back from disk knows a link exists without holding it. Never sent by the API.
+     */
+    val stripped: List<String> = emptyList(),
 ) {
     /** Best URL for in-app streaming/display. */
     val streamUrl: String? get() = url ?: inlineUrl ?: downloadUrl
+
+    /** Frame.io gave a link to show or play this, here or in the copy the disk cache read back. */
+    val hasStream: Boolean get() = streamUrl != null || stripped.isNotEmpty()
+
+    /** Frame.io gave a download link (so the user may download), here or before the disk cache dropped it. */
+    val hasDownload: Boolean get() = downloadUrl != null || "download_url" in stripped
 }
 
 @Immutable
@@ -118,7 +130,26 @@ data class MediaLinks(
     @SerialName("high_quality") val highQuality: MediaLink? = null,
     val efficient: MediaLink? = null,
     @SerialName("scrub_sheet") val scrubSheet: MediaLink? = null,
+) {
+    /** Read back from the disk cache, which keeps no signed links: ask Frame.io for fresh ones to show the media. */
+    val withoutUrls: Boolean
+        get() = listOfNotNull(original, thumbnail, thumbnailHq, video180, highQuality, efficient, scrubSheet).any { it.stripped.isNotEmpty() }
+}
+
+/**
+ * An image with a stable identity: [key] (asset and rendition, see [imageKey]) names it in the
+ * image cache, [url] is the signed link to fetch it, held in memory only (the disk cache drops
+ * every `signed_url`). With no [url], the image cache can still show it by [key].
+ */
+@Immutable
+@Serializable
+data class ImageRef(
+    val key: String,
+    @SerialName("signed_url") val url: String? = null,
 )
+
+/** The image cache key of an asset's rendition: stable across the signed links Frame.io rotates. */
+fun imageKey(assetId: String, rendition: String): String = "frameio:$assetId:$rendition"
 
 @Immutable
 @Serializable
@@ -200,7 +231,7 @@ data class Asset(
                 // A design file only counts as an image when Frame.io made a picture of it.
                 // Links come back as objects with null URLs when there is no picture. SVGs are
                 // drawn from the original, so they stay images.
-                val pictured = media.mediaLinks?.let { it.thumbnailHq?.streamUrl ?: it.thumbnail?.streamUrl } != null ||
+                val pictured = media.mediaLinks?.let { it.thumbnailHq?.hasStream == true || it.thumbnail?.hasStream == true } == true ||
                     media.name.endsWith(".svg", ignoreCase = true)
                 if (byName == MediaKind.Image && fileType != null && !pictured) MediaKind.Other else byName
             }
@@ -208,18 +239,26 @@ data class Asset(
     val thumbnailUrl: String?
         get() = media.mediaLinks?.thumbnailHq?.streamUrl ?: media.mediaLinks?.thumbnail?.streamUrl
     /**
-     * Thumbnail URLs in order of preference. Frame.io's image resizer sometimes
-     * returns 500 for large stills, so callers fall back through these.
+     * Thumbnails in order of preference, each with its stable image-cache key and, when at hand, its
+     * signed URL. Frame.io's image resizer sometimes returns 500 for large stills, so callers fall
+     * back through these. A copy read from the disk cache has keys only.
      */
-    val thumbnailCandidates: List<String>
+    val thumbnailCandidates: List<ImageRef>
         get() {
             val l = media.mediaLinks ?: return emptyList()
             return listOfNotNull(
-                l.thumbnailHq?.streamUrl, l.thumbnail?.streamUrl,
-                l.efficient?.streamUrl.takeIf { kind == MediaKind.Image },
-                l.highQuality?.streamUrl.takeIf { kind == MediaKind.Image },
-            ).distinct()
+                imageRef(l.thumbnailHq, "thumbnail_high_quality"), imageRef(l.thumbnail, "thumbnail"),
+                imageRef(l.efficient, "efficient").takeIf { kind == MediaKind.Image },
+                imageRef(l.highQuality, "high_quality").takeIf { kind == MediaKind.Image },
+            ).distinctBy { it.url ?: it.key }
         }
+
+    /** The card thumbnail ([thumbnailUrl]) with its stable key, or null when Frame.io made none. */
+    val thumbnail: ImageRef?
+        get() = media.mediaLinks?.let { l -> imageRef(l.thumbnailHq, "thumbnail_high_quality") ?: imageRef(l.thumbnail, "thumbnail") }
+
+    private fun imageRef(link: MediaLink?, rendition: String): ImageRef? =
+        link?.takeIf { it.hasStream }?.let { ImageRef(imageKey(media.id, rendition), it.streamUrl) }
 
     val isReady: Boolean get() = media.status == "transcoded" || kind == MediaKind.Other || kind == MediaKind.Pdf
 
@@ -390,7 +429,7 @@ data class Collection(
 @Immutable
 @Serializable
 data class FolderPreview(
-    val thumbnails: List<String> = emptyList(),
+    val thumbnails: List<ImageRef> = emptyList(),
     val count: Int? = null,
 )
 

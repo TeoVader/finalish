@@ -418,7 +418,8 @@ fun AssetThumbnail(asset: Asset, modifier: Modifier, scrubbable: Boolean, fit: B
             } else Modifier,
         ),
     ) {
-        val thumb = asset.thumbnailUrl
+        // A picture exists (its link may be missing in a copy from the disk cache: the image cache shows it).
+        val thumb = asset.thumbnail
         if (thumb != null) {
             dev.finalish.ui.components.RemoteImageChain(
                 asset.thumbnailCandidates, Modifier.fillMaxSize(),

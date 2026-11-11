@@ -36,7 +36,10 @@ class ModelsTest {
         assertTrue(a.isVersionStack)
         assertEquals(MediaKind.Video, a.kind)
         assertEquals("https://assets.example/thumb_hq.jpg", a.thumbnailUrl)
-        assertEquals(listOf("https://assets.example/thumb_hq.jpg", "https://picture2.example/thumb.jpg"), a.thumbnailCandidates)
+        assertEquals(listOf("https://assets.example/thumb_hq.jpg", "https://picture2.example/thumb.jpg"), a.thumbnailCandidates.map { it.url })
+        // Keyed by the head version and the rendition, not by the signed link.
+        assertEquals(listOf("frameio:file2:thumbnail_high_quality", "frameio:file2:thumbnail"), a.thumbnailCandidates.map { it.key })
+        assertEquals(ImageRef("frameio:file2:thumbnail_high_quality", "https://assets.example/thumb_hq.jpg"), a.thumbnail)
         assertEquals("https://cdn.example/hq.mp4", a.media.mediaLinks?.highQuality?.streamUrl)
     }
 
