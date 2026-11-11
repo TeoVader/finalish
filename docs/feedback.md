@@ -61,6 +61,54 @@ signed in with access; the GitHub mobile app may show the link instead of the im
 `.github/workflows/label-reports.yml` labels any issue that arrives without a label and whose body
 uses these headings (e.g. one written by hand in the GitHub app).
 
+## Deleting reports
+
+The [privacy policy](https://teovader.github.io/finalish/privacy-policy) promises that a report is
+kept until its problem is resolved and deleted at most 12 months after that, and deleted sooner when
+the reporter asks. A report is two things: the issue, and its files on `feedback-assets`. The relay
+stores each file as a commit, so deleting a file in a new commit (or on github.com) leaves it in the
+branch history: the history itself has to be rewritten.
+
+`scripts/purge-feedback-assets.sh` does it. The maintainer runs it by hand once a month (its default
+cutoff is 11 months, so no report outlives the promised 12 between two runs), on a machine with `gh` (signed in with admin rights on the feedback repository, needed to
+delete issues), `git` and [`git-filter-repo`](https://github.com/newren/git-filter-repo).
+
+1. Dry run, which changes nothing and lists what expires:
+   ```bash
+   scripts/purge-feedback-assets.sh
+   ```
+   - issues closed more than 11 months ago (`--months N` or `--before YYYY-MM-DD` to change the
+     cutoff);
+   - the `reports/<date>-<id>/` folders those issues link to;
+   - folders no issue links to (the issue was deleted, or creating it failed after the upload) that
+     were uploaded before the cutoff, including folders that are only left in the history.
+
+   A folder that an issue which stays still links to is kept and listed separately.
+2. Check the list, then run it again with `--apply` and type `purge` to confirm. The script
+   - clones only `feedback-assets` into a temporary folder;
+   - removes the folders from every commit of that branch with
+     `git filter-repo --invert-paths --paths-from-file …` (commits left empty are dropped);
+   - force-pushes `feedback-assets` with `--force-with-lease`, so it refuses if the relay stored a new
+     report in the meantime: run it again then. No other branch is touched;
+   - deletes the expired issues (`gh issue delete`).
+3. A deletion request from a reporter: find the issue, then
+   `scripts/purge-feedback-assets.sh --issue <number> --apply` (it can be open). `--folder
+   reports/<date>-<id>` purges a folder by hand, for example an attachment that should never have
+   been sent.
+4. After a purge:
+   - delete or re-clone every other clone of the feedback repository that fetched
+     `feedback-assets` (a `git fetch` alone keeps the old commits in that clone);
+   - the old commits stay reachable on GitHub by their SHA, and in GitHub's cached views, until
+     GitHub garbage-collects them. When a purge removes personal data (always, for a deletion
+     request), ask [GitHub Support](https://support.github.com/contact) to remove cached views and
+     unreferenced commits of the feedback repository, as described in GitHub's
+     [Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
+     Name only the repository and the purged paths in the request;
+   - note the date of the purge in the maintainer's notes (not in this repository).
+
+Never paste issue content, report folders or other data from the feedback repository into this
+repository, its issues or its pull requests.
+
 ## Relay
 
 A Cloudflare Worker: `https://finalish-report-relay.<subdomain>.workers.dev` (`/health` answers
