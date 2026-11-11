@@ -1,0 +1,10 @@
+Demo clips used by the Final(ish) demo mode. Each file is a 10-second excerpt.
+Copies of the encodes published at https://test-videos.co.uk/, which asks users to host the files themselves.
+
+Big_Buck_Bunny_720_10s_1MB.mp4
+  Big Buck Bunny (c) copyright 2008, Blender Foundation / www.bigbuckbunny.org
+  License: Creative Commons Attribution 3.0 (CC BY 3.0), https://creativecommons.org/licenses/by/3.0/
+
+Sintel_720_10s_1MB.mp4
+  Sintel © copyright Blender Foundation | durian.blender.org
+  License: Creative Commons Attribution 3.0 (CC BY 3.0), https://creativecommons.org/licenses/by/3.0/
