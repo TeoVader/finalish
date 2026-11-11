@@ -296,7 +296,9 @@ fun FolderScreen(
                         filterCount = fieldFilters.size,
                         onFilters = { filtersOpen = true },
                         projectActions = ProjectActions(
-                            { onOpenMembers(project.ifBlank { title }) }, { onOpenTrash(project.ifBlank { title }) }, { onOpenShares(project.ifBlank { title }) },
+                            { onOpenMembers(project.ifBlank { title }) },
+                            trash = if (fileAccess.manage) ({ onOpenTrash(project.ifBlank { title }) }) else null,
+                            shares = if (fileAccess.share) ({ onOpenShares(project.ifBlank { title }) }) else null,
                             folderMembers = if (isProjectRoot) null else ({ onOpenFolderMembers(folderId, title) }),
                         ),
                     )
@@ -685,7 +687,8 @@ fun FolderScreen(
     }
 }
 
-class ProjectActions(val members: () -> Unit, val trash: () -> Unit, val shares: () -> Unit, val folderMembers: (() -> Unit)? = null)
+/** The project "⋯" in the top bar; a null action is one the user's role can't use (see [projectActionsFor][dev.finalish.ui.home.projectActionsFor]). */
+class ProjectActions(val members: () -> Unit, val trash: (() -> Unit)?, val shares: (() -> Unit)?, val folderMembers: (() -> Unit)? = null)
 
 @Composable
 private fun ImportFromLinkDialog(onDismiss: () -> Unit, onImport: (url: String, name: String) -> Unit) {
@@ -790,8 +793,12 @@ private fun BrowserTopBar(
                     DropdownMenuItem(text = { Text(stringResource(R.string.browser_folder_members)) }, leadingIcon = { Icon(Icons.Rounded.FolderShared, null) }, onClick = { projectMenu = false; fm() })
                 }
                 DropdownMenuItem(text = { Text(stringResource(if (projectActions.folderMembers != null) R.string.browser_project_members else R.string.browser_action_members)) }, leadingIcon = { Icon(Icons.Rounded.Group, null) }, onClick = { projectMenu = false; projectActions.members() })
-                DropdownMenuItem(text = { Text(stringResource(R.string.browser_share_links)) }, leadingIcon = { Icon(Icons.Rounded.Link, null) }, onClick = { projectMenu = false; projectActions.shares() })
-                DropdownMenuItem(text = { Text(stringResource(R.string.browser_recently_deleted)) }, leadingIcon = { Icon(Icons.Rounded.DeleteSweep, null) }, onClick = { projectMenu = false; projectActions.trash() })
+                projectActions.shares?.let { shares ->
+                    DropdownMenuItem(text = { Text(stringResource(R.string.browser_share_links)) }, leadingIcon = { Icon(Icons.Rounded.Link, null) }, onClick = { projectMenu = false; shares() })
+                }
+                projectActions.trash?.let { trash ->
+                    DropdownMenuItem(text = { Text(stringResource(R.string.browser_recently_deleted)) }, leadingIcon = { Icon(Icons.Rounded.DeleteSweep, null) }, onClick = { projectMenu = false; trash() })
+                }
             }
         }
     }

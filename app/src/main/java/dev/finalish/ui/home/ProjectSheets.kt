@@ -68,6 +68,23 @@ import dev.finalish.ui.components.RemoteImage
 import dev.finalish.ui.components.pressable
 import dev.finalish.ui.theme.Palette
 
+/** A row of the project "⋯" sheet. */
+enum class ProjectAction { Members, ShareLinks, Collections, RecentlyDeleted, SendLink, Rename, Restricted, Archive, Delete }
+
+/**
+ * The project actions the user's role allows (see [dev.finalish.core.model.FileAccess]); `null` while
+ * the role is still loading shows only the rows every role can use. Members and Collections stay for
+ * every role: viewing them is read-only and Frame.io's guide doesn't restrict it.
+ */
+fun projectActionsFor(access: dev.finalish.core.model.FileAccess?): List<ProjectAction> = ProjectAction.entries.filter { action ->
+    when (action) {
+        ProjectAction.Members, ProjectAction.Collections -> true
+        ProjectAction.ShareLinks, ProjectAction.SendLink -> access?.share == true
+        ProjectAction.RecentlyDeleted -> access?.manage == true
+        ProjectAction.Rename, ProjectAction.Restricted, ProjectAction.Archive, ProjectAction.Delete -> access?.projectSettings == true
+    }
+}
+
 /** Project "⋯": a sheet with the project's header and its places, with counts (mockup). */
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -87,6 +104,13 @@ internal fun ProjectMenuSheet(
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val repo = remember { dev.finalish.FinalishApp.container(context).repository }
+    // The role is read only when the sheet opens (never per card), then kept for the session.
+    val access by androidx.compose.runtime.produceState(
+        if (accountId == null) dev.finalish.core.model.FileAccess.Full else repo.cachedFileAccess(accountId, project.id),
+        accountId, project.id,
+    ) {
+        if (value == null && accountId != null) value = repo.fileAccess(accountId, project.id)
+    }
     // Counts load in the background; rows show them when they arrive.
     val shares by androidx.compose.runtime.produceState<Int?>(null, project.id) {
         if (accountId != null) repo.shares(accountId, project.id).collect { r -> r.data?.let { value = it.size } }
@@ -97,99 +121,133 @@ internal fun ProjectMenuSheet(
     val members by androidx.compose.runtime.produceState<Int?>(null, project.id) {
         if (accountId != null) value = runCatching { repo.members(accountId, "projects", project.id).size }.getOrNull()
     }
+    // The project's image, else its latest file (same cover as the card).
+    val cover by androidx.compose.runtime.produceState(
+        project.image?.let { dev.finalish.core.model.ImageRef(dev.finalish.ui.components.stableImageKey(it), it) },
+        project.id,
+    ) {
+        if (value == null && accountId != null) value = runCatching { repo.projectCover(accountId, project).thumbnails.firstOrNull() }.getOrNull()
+    }
+    val watch = remember { dev.finalish.FinalishApp.container(context).activityWatch }
+    val muted by watch.mutedProjects.collectAsStateWithLifecycle()
+    val notifying = project.id !in muted
+    // Free and Pro have no restricted projects: the row would only fail.
+    val noRestricted = "restricted_projects" in dev.finalish.core.network.PlanLimits.missing.collectAsStateWithLifecycle().value[accountId].orEmpty() &&
+        project.restricted != true
     androidx.compose.material3.ModalBottomSheet(
         modifier = Modifier.offset(x = dev.finalish.ui.components.LocalSideBarWidth.current / 2),
         onDismissRequest = onDismiss,
         sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = Palette.Surface2,
     ) {
-        Column(Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState()).navigationBarsPadding().padding(bottom = 12.dp)) {
-            // Header like the official app: cover, name, members · size · bell when notifications are on.
-            val watch = remember { dev.finalish.FinalishApp.container(context).activityWatch }
-            val muted by watch.mutedProjects.collectAsStateWithLifecycle()
-            val notifying = project.id !in muted
-            Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(
-                    Modifier.size(width = 112.dp, height = 70.dp).clip(RoundedCornerShape(14.dp)).background(projectGradient(project.id)),
-                    contentAlignment = Alignment.BottomStart,
-                ) {
-                    // The project's image, else its latest file (same cover as the card).
-                    val cover by androidx.compose.runtime.produceState(
-                        project.image?.let { dev.finalish.core.model.ImageRef(dev.finalish.ui.components.stableImageKey(it), it) },
-                        project.id,
-                    ) {
-                        if (value == null && accountId != null) value = runCatching { repo.projectCover(accountId, project).thumbnails.firstOrNull() }.getOrNull()
-                    }
-                    cover?.let { RemoteImage(it, Modifier.fillMaxSize(), fallback = {}) }
-                        ?: Text(Format.initials(project.name), style = MaterialTheme.typography.titleMedium, color = Color.White, modifier = Modifier.padding(10.dp))
-                }
-                Spacer(Modifier.height(10.dp))
-                Text(project.name, style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        listOfNotNull(
-                            workspaceName,
-                            members?.let { pluralStringResource(R.plurals.home_member_count, it, it) },
-                            Format.bytes(project.storage).takeIf { project.storage > 0 },
-                        ).joinToString(" · "),
-                        style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
-                    )
-                    if (notifying) Icon(Icons.Rounded.Notifications, stringResource(R.string.home_notifications_on), tint = Palette.TextTertiary, modifier = Modifier.padding(start = 4.dp).size(14.dp))
-                }
-            }
-            Row(
-                Modifier.fillMaxWidth().pressable({ watch.setMuted(project.id, notifying) }, scaleTo = 0.99f).padding(horizontal = 24.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(Icons.Rounded.NotificationsNone, null, tint = Palette.TextSecondary, modifier = Modifier.size(22.dp))
-                Spacer(Modifier.width(16.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.home_notifications), style = MaterialTheme.typography.bodyLarge)
-                    Text(stringResource(R.string.home_project_notifications_desc), style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary)
-                }
-                androidx.compose.material3.Switch(
-                    checked = notifying, onCheckedChange = { watch.setMuted(project.id, !it) },
-                    colors = androidx.compose.material3.SwitchDefaults.colors(checkedTrackColor = Palette.Accent, checkedThumbColor = Palette.OnAccent),
-                )
-            }
-            HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(vertical = 6.dp, horizontal = 24.dp))
-            MenuRow(Icons.Rounded.Group, stringResource(R.string.home_members), members, onMembers)
-            MenuRow(Icons.Rounded.Link, stringResource(R.string.home_share_links), shares, onShares)
-            MenuRow(Icons.Rounded.ViewCarousel, stringResource(R.string.home_collections), collections, onCollections)
-            MenuRow(Icons.Rounded.DeleteSweep, stringResource(R.string.home_recently_deleted), null, onTrash)
-            MenuRow(Icons.Rounded.IosShare, stringResource(R.string.home_send_project_link), null, onClick = {
+        ProjectMenuContent(
+            project = project, workspaceName = workspaceName, cover = cover,
+            members = members, shares = shares, collections = collections,
+            notifying = notifying, onNotifying = { watch.setMuted(project.id, !it) },
+            actions = projectActionsFor(access).filter { it != ProjectAction.Restricted || !noRestricted },
+            onShares = onShares, onCollections = onCollections, onMembers = onMembers, onTrash = onTrash,
+            onSendLink = {
                 val link = "https://next.frame.io/project/${project.id}"
                 val send = android.content.Intent(android.content.Intent.ACTION_SEND).setType("text/plain")
                     .putExtra(android.content.Intent.EXTRA_TEXT, link).putExtra(android.content.Intent.EXTRA_SUBJECT, project.name)
                 context.startActivity(android.content.Intent.createChooser(send, null))
                 onDismiss()
-            })
-            HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(vertical = 6.dp, horizontal = 24.dp))
-            MenuRow(Icons.Rounded.Edit, stringResource(R.string.home_rename), null, onRename)
-            // Free and Pro have no restricted projects: the row would only fail.
-            val noRestricted = "restricted_projects" in dev.finalish.core.network.PlanLimits.missing.collectAsStateWithLifecycle().value[accountId].orEmpty() &&
-                project.restricted != true
-            if (!noRestricted) Row(
-                Modifier.fillMaxWidth().pressable(onRestricted, scaleTo = 0.99f).padding(horizontal = 24.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            },
+            onRename = onRename, onRestricted = onRestricted, onArchive = onArchive, onDelete = onDelete,
+        )
+    }
+}
+
+/** The body of [ProjectMenuSheet]: header, notifications switch and the [actions] rows. */
+@Composable
+fun ProjectMenuContent(
+    project: Project,
+    workspaceName: String?,
+    cover: dev.finalish.core.model.ImageRef?,
+    members: Int?,
+    shares: Int?,
+    collections: Int?,
+    notifying: Boolean,
+    onNotifying: (Boolean) -> Unit,
+    actions: List<ProjectAction>,
+    onShares: () -> Unit,
+    onCollections: () -> Unit,
+    onMembers: () -> Unit,
+    onTrash: () -> Unit,
+    onSendLink: () -> Unit,
+    onRename: () -> Unit,
+    onRestricted: () -> Unit,
+    onArchive: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    Column(Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState()).navigationBarsPadding().padding(bottom = 12.dp)) {
+        // Header like the official app: cover, name, members · size · bell when notifications are on.
+        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(
+                Modifier.size(width = 112.dp, height = 70.dp).clip(RoundedCornerShape(14.dp)).background(projectGradient(project.id)),
+                contentAlignment = Alignment.BottomStart,
             ) {
-                Icon(Icons.Rounded.Lock, null, tint = Palette.TextSecondary, modifier = Modifier.size(22.dp))
-                Spacer(Modifier.width(16.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.home_restricted), style = MaterialTheme.typography.bodyLarge)
-                    Text(stringResource(R.string.home_restricted_menu_desc), style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary)
-                }
-                androidx.compose.material3.Switch(
-                    checked = project.restricted == true, onCheckedChange = { onRestricted() },
-                    colors = androidx.compose.material3.SwitchDefaults.colors(checkedTrackColor = Palette.Accent, checkedThumbColor = Palette.OnAccent),
-                )
+                cover?.let { RemoteImage(it, Modifier.fillMaxSize(), fallback = {}) }
+                    ?: Text(Format.initials(project.name), style = MaterialTheme.typography.titleMedium, color = Color.White, modifier = Modifier.padding(10.dp))
             }
-            MenuRow(
-                if (project.status == "inactive") Icons.Rounded.Unarchive else Icons.Rounded.Archive,
-                if (project.status == "inactive") stringResource(R.string.home_restore) else stringResource(R.string.home_archive), null, onArchive,
-            )
-            MenuRow(Icons.Rounded.Delete, stringResource(R.string.home_delete), null, onDelete, danger = true)
+            Spacer(Modifier.height(10.dp))
+            Text(project.name, style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    listOfNotNull(
+                        workspaceName,
+                        members?.let { pluralStringResource(R.plurals.home_member_count, it, it) },
+                        Format.bytes(project.storage).takeIf { project.storage > 0 },
+                    ).joinToString(" · "),
+                    style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
+                )
+                if (notifying) Icon(Icons.Rounded.Notifications, stringResource(R.string.home_notifications_on), tint = Palette.TextTertiary, modifier = Modifier.padding(start = 4.dp).size(14.dp))
+            }
         }
+        Row(
+            Modifier.fillMaxWidth().pressable({ onNotifying(!notifying) }, scaleTo = 0.99f).padding(horizontal = 24.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Rounded.NotificationsNone, null, tint = Palette.TextSecondary, modifier = Modifier.size(22.dp))
+            Spacer(Modifier.width(16.dp))
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.home_notifications), style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.home_project_notifications_desc), style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary)
+            }
+            androidx.compose.material3.Switch(
+                checked = notifying, onCheckedChange = onNotifying,
+                colors = androidx.compose.material3.SwitchDefaults.colors(checkedTrackColor = Palette.Accent, checkedThumbColor = Palette.OnAccent),
+            )
+        }
+        HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(vertical = 6.dp, horizontal = 24.dp))
+        if (ProjectAction.Members in actions) MenuRow(Icons.Rounded.Group, stringResource(R.string.home_members), members, onMembers)
+        if (ProjectAction.ShareLinks in actions) MenuRow(Icons.Rounded.Link, stringResource(R.string.home_share_links), shares, onShares)
+        if (ProjectAction.Collections in actions) MenuRow(Icons.Rounded.ViewCarousel, stringResource(R.string.home_collections), collections, onCollections)
+        if (ProjectAction.RecentlyDeleted in actions) MenuRow(Icons.Rounded.DeleteSweep, stringResource(R.string.home_recently_deleted), null, onTrash)
+        if (ProjectAction.SendLink in actions) MenuRow(Icons.Rounded.IosShare, stringResource(R.string.home_send_project_link), null, onSendLink)
+        val settings = listOf(ProjectAction.Rename, ProjectAction.Restricted, ProjectAction.Archive, ProjectAction.Delete).filter { it in actions }
+        if (settings.isNotEmpty()) HorizontalDivider(color = Palette.Hairline, modifier = Modifier.padding(vertical = 6.dp, horizontal = 24.dp))
+        if (ProjectAction.Rename in settings) MenuRow(Icons.Rounded.Edit, stringResource(R.string.home_rename), null, onRename)
+        if (ProjectAction.Restricted in settings) Row(
+            Modifier.fillMaxWidth().pressable(onRestricted, scaleTo = 0.99f).padding(horizontal = 24.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Rounded.Lock, null, tint = Palette.TextSecondary, modifier = Modifier.size(22.dp))
+            Spacer(Modifier.width(16.dp))
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.home_restricted), style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.home_restricted_menu_desc), style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary)
+            }
+            androidx.compose.material3.Switch(
+                checked = project.restricted == true, onCheckedChange = { onRestricted() },
+                colors = androidx.compose.material3.SwitchDefaults.colors(checkedTrackColor = Palette.Accent, checkedThumbColor = Palette.OnAccent),
+            )
+        }
+        if (ProjectAction.Archive in settings) MenuRow(
+            if (project.status == "inactive") Icons.Rounded.Unarchive else Icons.Rounded.Archive,
+            if (project.status == "inactive") stringResource(R.string.home_restore) else stringResource(R.string.home_archive), null, onArchive,
+        )
+        if (ProjectAction.Delete in settings) MenuRow(Icons.Rounded.Delete, stringResource(R.string.home_delete), null, onDelete, danger = true)
     }
 }
 

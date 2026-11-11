@@ -596,4 +596,19 @@ class ComponentsScreenshotTest {
             dev.finalish.ui.viewer.MediaUnavailableCard(onOpenOnFrameio = {}, modifier = Modifier.padding(16.dp))
         }
     }
+
+    /** A viewer's project "⋯": only notifications, Members and Collections; no rename, archive, delete or sharing. */
+    @Test fun projectMenuViewer() = snap("project_menu_viewer") {
+        androidx.compose.foundation.layout.Box(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(top = 20.dp)) {
+            dev.finalish.ui.home.ProjectMenuContent(
+                project = dev.finalish.core.model.Project("p1", name = "Saltmarsh", storage = 2_100_000_000),
+                workspaceName = "Mosswood Pictures", cover = null,
+                members = 4, shares = 2, collections = 1,
+                notifying = true, onNotifying = {},
+                actions = dev.finalish.ui.home.projectActionsFor(dev.finalish.core.model.FileAccess.ofRole("viewer")),
+                onShares = {}, onCollections = {}, onMembers = {}, onTrash = {}, onSendLink = {},
+                onRename = {}, onRestricted = {}, onArchive = {}, onDelete = {},
+            )
+        }
+    }
 }
