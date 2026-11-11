@@ -323,7 +323,7 @@
     <string name="login_link_help_open_frameio">Open frame.io</string>
     <string name="login_link_help_sign_in_again">I\'ve linked it, sign in again</string>
     <string name="login_v4_title">Frame.io V4 only</string>
-    <string name="login_v4_body">Final(ish) works with Frame.io V4 and signs in with an Adobe ID. Accounts managed by Adobe work; accounts managed by Frame.io work once they sign in with an Adobe ID (the steps above). Frame.io will move every account to Adobe management by itself, with no date announced yet. Most Legacy accounts are already on V4; if yours isn\'t, an Owner or Admin can update it from the account menu on frame.io, or ask Frame.io support.</string>
+    <string name="login_v4_body">Final(ish) works with Frame.io V4 and signs in with an Adobe ID. Accounts managed by Adobe work; accounts managed by Frame.io work once they sign in with an Adobe ID (the steps above). Personal Adobe IDs work; company or school accounts (Enterprise or Federated ID) may not be able to sign in yet, until Adobe reviews the app or their admin allows third-party apps. Frame.io will move every account to Adobe management by itself, with no date announced yet. Most Legacy accounts are already on V4; if yours isn\'t, an Owner or Admin can update it from the account menu on frame.io, or ask Frame.io support.</string>
     <string name="login_v4_learn_more">About the move to V4</string>
     <string name="login_error_missing_config">Add an Adobe client ID and redirect URI first.</string>
     <string name="login_error_unsupported_redirect">This APK can\'t receive the redirect “%1$s://”. Rebuild with finalish.redirectUri set to it, or use a loopback URI like http://127.0.0.1:8765/callback.</string>

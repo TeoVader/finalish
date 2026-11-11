@@ -26,16 +26,21 @@ Download: [Google Play](https://play.google.com/store/apps/details?id=dev.finali
   <a href="https://play.google.com/store/apps/details?id=dev.finalish"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80"></a>
 </p>
 
-Frame.io has no official Android app (as of 2026). Final(ish) brings the Frame.io review workflow to
+Frame.io has no official Android app (as of November 2026). Final(ish) brings the Frame.io review workflow to
 Android phones and tablets, using the official Frame.io **V4** API.
 
 **Which Frame.io accounts work.** Final(ish) uses the Frame.io V4 API and signs in with an Adobe ID.
 Accounts managed by Adobe (Adobe Admin Console) work. Accounts managed by Frame.io work once the user signs
-in to Frame.io with an Adobe ID that uses the same email; without that link Frame.io's API answers
+in to Frame.io with an Adobe ID that uses the same email; without that link the Frame.io API answers
 "Frame user is not linked to an Adobe ID". Frame.io plans to move every Frame-managed account to Adobe management; no date is announced yet, organizations are moved
 automatically when scheduled (admins get notice about 30 days ahead and can ask support@frame.io for a
 different date). See [Frame managed vs Adobe managed accounts](https://help.frame.io/en/articles/13719174-frame-managed-vs-adobe-managed-accounts)
 and [the migration to Adobe-managed subscriptions](https://help.frame.io/en/articles/10552820-understanding-the-migration-to-adobe-managed-frame-subscriptions-and-users).
+
+Personal Adobe IDs work. Company or school accounts (Enterprise or Federated ID) may be blocked until
+Adobe reviews the app or the organization's admin allows third-party apps: Adobe lets apps that haven't
+passed its review sign in only personal accounts
+([Adobe Developer Console docs](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/)).
 
 Legacy (V3) accounts don't work. Frame.io moved its remaining Legacy retail accounts to V4
 [as of June 1, 2026](https://help.frame.io/en/articles/15291379-adobe-after-effects-frame-io-v4-panel-overview).

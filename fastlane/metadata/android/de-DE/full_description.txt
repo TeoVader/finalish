@@ -1,6 +1,6 @@
 Inoffizielle App. Final(ish) ist weder mit Adobe oder Frame.io verbunden noch von ihnen unterstützt oder gesponsert. Adobe und Frame.io sind eingetragene Marken oder Marken von Adobe in den USA und/oder anderen Ländern.
 
-Final(ish) ist ein kostenloser Open-Source-Client für Frame.io auf Android-Smartphones und -Tablets. Frame.io hat keine eigene Android-App – Final(ish) bringt die Video-Review von Frame.io auf Android: Cutter, Produzenten und Kunden prüfen Schnitte, kommentieren per Timecode und geben Versionen frei, egal wo sie sind.
+Final(ish) ist ein kostenloser Open-Source-Client für Frame.io auf Android-Smartphones und -Tablets. Frame.io hat keine offizielle Android-App (Stand: November 2026) – Final(ish) bringt die Video-Review von Frame.io auf Android: Cutter, Produzenten und Kunden prüfen Schnitte, kommentieren per Timecode und geben Versionen frei, egal wo sie sind.
 
 REVIEW
 • Framegenauer Player mit Timecode, 0,25–2× Geschwindigkeit, Loop, echten Auflösungen bis 4K und Bild-im-Bild
@@ -27,6 +27,7 @@ UND AUSSERDEM
 • Demo-Modus: App ohne Konto ausprobieren
 
 Melde dich mit deiner eigenen Adobe ID an; du brauchst ein bestehendes Frame.io-Konto (V4).
+Mit Adobe-Konten von Unternehmen oder Schulen (Enterprise oder Federated ID) ist die Anmeldung eventuell noch nicht möglich.
 
 Um Frame.io-Links in der App zu öffnen, aktiviere „Frame.io-Links“ unter Einstellungen › Berechtigungen in der App.
 
