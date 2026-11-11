@@ -133,7 +133,7 @@ class LoginViewModel(app: Application, private val auth: AuthManager) : AndroidV
             is LoginEvent.SaveConfig -> saveConfig(e.clientId, e.redirectUri)
             is LoginEvent.StartSignIn -> startSignIn(e.context)
             is LoginEvent.Complete -> complete(e.redirect)
-            LoginEvent.StartDemo -> auth.signInDemo()
+            LoginEvent.StartDemo -> viewModelScope.launch { auth.signInDemo() }
         }
     }
 

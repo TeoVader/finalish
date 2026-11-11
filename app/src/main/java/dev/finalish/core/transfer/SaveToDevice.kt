@@ -96,3 +96,23 @@ fun openDeviceDownload(context: Context, d: DeviceDownload) {
     runCatching { context.startActivity((intent ?: fallback).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
         .onFailure { runCatching { context.startActivity(fallback.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) } }
 }
+
+/**
+ * Removes [ids] from the system DownloadManager unless they already finished: removing a finished
+ * download would delete the file the user saved.
+ */
+internal fun cancelSystemDownloads(context: Context, ids: List<Long>) {
+    if (ids.isEmpty()) return
+    val dm = context.getSystemService(DownloadManager::class.java) ?: return
+    runCatching {
+        val unfinished = ArrayList<Long>()
+        dm.query(DownloadManager.Query().setFilterById(*ids.toLongArray()))?.use { cur ->
+            val idCol = cur.getColumnIndexOrThrow(DownloadManager.COLUMN_ID)
+            val statusCol = cur.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS)
+            while (cur.moveToNext()) {
+                if (cur.getInt(statusCol) != DownloadManager.STATUS_SUCCESSFUL) unfinished += cur.getLong(idCol)
+            }
+        }
+        if (unfinished.isNotEmpty()) dm.remove(*unfinished.toLongArray())
+    }
+}
