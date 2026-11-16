@@ -410,7 +410,7 @@ class FrameioRepository(
         val days = ownerless.filter { it.id in wanted }.mapNotNull { it.createdAt?.take(10) }.sorted()
         if (wanted.isNotEmpty() && days.isNotEmpty() && account !in auditUnavailable) {
             runCatchingCancellable {
-                val to = java.time.LocalDate.parse(days.last()).plusDays(1).toString()
+                val to = auditToDate(days.last())
                 var after: String? = null
                 var pages = 0
                 do {
@@ -441,6 +441,14 @@ class FrameioRepository(
         fun named(c: Comment) = if (c.owner == null) known[c.id]?.let { c.copy(owner = it) } ?: c else c
         return comments.map { c -> named(c).let { it.copy(replies = it.replies.map(::named)) } }
     }
+
+    /**
+     * The audit log's `to_date` for comments up to [lastDay]: the day after, to be sure that day is
+     * covered, but never a future date, which the log refuses with a 422 (#27 in the feedback repo:
+     * comments left today stayed "Guest reviewer"). Then no upper bound, which reaches up to now.
+     */
+    internal fun auditToDate(lastDay: String, today: java.time.LocalDate = java.time.LocalDate.now(java.time.ZoneOffset.UTC)): String? =
+        java.time.LocalDate.parse(lastDay).plusDays(1).takeIf { !it.isAfter(today) }?.toString()
 
     suspend fun cachedComments(account: String, fileId: String): List<Comment>? =
         cache.get("comments:$account:$fileId", ListSerializer(Comment.serializer()))

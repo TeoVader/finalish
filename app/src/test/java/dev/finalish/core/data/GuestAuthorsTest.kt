@@ -52,6 +52,12 @@ class GuestAuthorsTest : ViewModelTest() {
 
     private fun auditCalls() = frameio.calls.count { it == audit }
 
+    @Test fun `the audit log is never asked for a future date`() {
+        val today = java.time.LocalDate.parse("2026-11-12")
+        assertEquals("2026-11-12", frameio.repository.auditToDate("2026-11-11", today))
+        assertEquals(null, frameio.repository.auditToDate("2026-11-12", today))
+    }
+
     @Test fun `an expired avatar is refreshed from the audit log`() {
         remember(User(name = "Ann", avatarUrl = expired))
         frameio.on(audit, logged(valid))
