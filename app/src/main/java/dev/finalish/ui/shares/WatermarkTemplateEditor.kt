@@ -56,28 +56,36 @@ import dev.finalish.ui.components.pressable
 import dev.finalish.ui.theme.Palette
 import kotlinx.coroutines.launch
 
-/** What the editor changes: the template's first block. Any other blocks are kept as they are. */
+/**
+ * What the editor changes: the template's first block. Any other blocks are kept as they are.
+ * [position], [fontSize] and [alpha] are null when the template doesn't set them; they're only
+ * written once the user picks one, so a template saved unchanged is sent back as it was.
+ */
 internal data class WatermarkDraft(
     val name: String = "",
     /** Data point types in the order they're drawn. */
     val lines: List<String> = listOf("email", "timestamp"),
     val customText: String = "",
-    val position: String = "bottom_right",
-    val fontSize: String = "medium",
-    val alpha: Double = 0.6,
+    val position: String? = "bottom_right",
+    val fontSize: String? = "medium",
+    val alpha: Double? = 0.6,
 ) {
     val valid: Boolean get() = name.isNotBlank() && lines.isNotEmpty() && ("custom_text" !in lines || customText.isNotBlank())
 
     /** [base] with this draft as its first block; the first block's other settings (color, rotation…) stay. */
     fun applyTo(base: WatermarkTemplate?): WatermarkTemplate {
         val first = base?.blocks?.firstOrNull() ?: WatermarkBlock()
+        val unchangedLines = base != null && of(base).let { it.lines == lines && it.customText.trim() == customText.trim() }
+        val movedToSlot = position != null && position != first.position
         val block = first.copy(
-            position = position,
+            position = position ?: first.position,
             // A named slot replaces free-form coordinates, which would otherwise win.
-            positionX = null, positionY = null, positionReferencePoint = null,
-            fontSize = fontSize,
-            alpha = alpha,
-            dataPoints = lines.mapIndexed { i, type ->
+            positionX = if (movedToSlot) null else first.positionX,
+            positionY = if (movedToSlot) null else first.positionY,
+            positionReferencePoint = if (movedToSlot) null else first.positionReferencePoint,
+            fontSize = fontSize ?: first.fontSize,
+            alpha = alpha ?: first.alpha,
+            dataPoints = if (unchangedLines) first.dataPoints else lines.mapIndexed { i, type ->
                 WatermarkDataPoint(type, value = customText.trim().takeIf { type == "custom_text" }, order = (i + 1).toDouble())
             },
         )
@@ -86,15 +94,15 @@ internal data class WatermarkDraft(
 
     companion object {
         fun of(t: WatermarkTemplate): WatermarkDraft {
-            val b = t.blocks.firstOrNull() ?: return WatermarkDraft(name = t.name)
+            val b = t.blocks.firstOrNull() ?: return WatermarkDraft(name = t.name, position = null, fontSize = null, alpha = null)
             val points = b.dataPoints.sortedBy { it.order ?: 0.0 }
             return WatermarkDraft(
                 name = t.name,
                 lines = points.map { it.type }.filter { it in LINE_TYPES }.distinct(),
                 customText = points.firstOrNull { it.type == "custom_text" }?.value.orEmpty(),
-                position = b.position ?: "bottom_right",
-                fontSize = b.fontSize ?: "medium",
-                alpha = b.alpha ?: 0.6,
+                position = b.position,
+                fontSize = b.fontSize,
+                alpha = b.alpha,
             )
         }
 
@@ -192,9 +200,10 @@ internal fun WatermarkTemplateEditorContent(
             }
         }
 
-        Section(stringResource(R.string.shares_template_opacity, (draft.alpha * 100).toInt())) {
+        // Not set by the template: the slider sits at 100% and nothing is sent until it moves.
+        Section(stringResource(R.string.shares_template_opacity, ((draft.alpha ?: 1.0) * 100).toInt())) {
             Slider(
-                draft.alpha.toFloat(), { onChange(draft.copy(alpha = (Math.round(it * 20) / 20.0).coerceIn(0.1, 1.0))) },
+                (draft.alpha ?: 1.0).toFloat(), { onChange(draft.copy(alpha = (Math.round(it * 20) / 20.0).coerceIn(0.1, 1.0))) },
                 valueRange = 0.1f..1f,
                 colors = SliderDefaults.colors(thumbColor = Palette.Accent, activeTrackColor = Palette.Accent),
             )
@@ -246,7 +255,7 @@ private fun Chip(label: String, on: Boolean, onClick: () -> Unit) {
 
 /** The frame as a 3×3 grid: tap where the text goes. */
 @Composable
-private fun PositionGrid(selected: String, onPick: (String) -> Unit) {
+private fun PositionGrid(selected: String?, onPick: (String) -> Unit) {
     Column(
         Modifier.fillMaxWidth().aspectRatio(16f / 10f).clip(RoundedCornerShape(10.dp)).background(Palette.Surface3).padding(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),

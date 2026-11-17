@@ -32,7 +32,7 @@ class WatermarkDraftTest : ViewModelTest() {
         assertEquals("CONFIDENTIAL", d.customText)
         assertEquals("top_left", d.position)
         assertEquals("large", d.fontSize)
-        assertEquals(0.4, d.alpha, 0.0)
+        assertEquals(0.4, d.alpha!!, 0.0)
     }
 
     @Test fun `saving keeps the block's other settings and the other blocks, and drops free-form coordinates`() {
@@ -44,6 +44,14 @@ class WatermarkDraftTest : ViewModelTest() {
         assertEquals("#FF0000", b.textColor); assertEquals(15.0, b.rotation!!, 0.0); assertEquals(true, b.textShadow)
         assertEquals(listOf(WatermarkDataPoint("email", order = 1.0)), b.dataPoints)
         assertEquals(second, saved.blocks[1])
+    }
+
+    @Test fun `a template saved unchanged goes back exactly as it was`() {
+        val bare = WatermarkTemplate("t2", "Custom Text (middle)", listOf(WatermarkBlock("middle_center", listOf(WatermarkDataPoint("custom_text", "Watermark", 0.0)))))
+        assertEquals(bare, WatermarkDraft.of(bare).applyTo(bare))
+        assertEquals(template, WatermarkDraft.of(template).applyTo(template))
+        // Only the name changes: the block, with its unset size and opacity, stays the same.
+        assertEquals(bare.copy(name = "Renamed"), WatermarkDraft.of(bare).copy(name = "Renamed").applyTo(bare))
     }
 
     @Test fun `a draft needs a name, a line, and the fixed text when it shows one`() {
