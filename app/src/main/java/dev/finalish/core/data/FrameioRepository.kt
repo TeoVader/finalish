@@ -670,6 +670,20 @@ class FrameioRepository(
         api.watermarkTemplates(account).data
 
     /** Frame.io doesn't return a share's template, so the one picked here is remembered locally. */
+    /** Creates a template ([id] null) or saves an existing one; its blocks replace the old ones. */
+    suspend fun saveWatermarkTemplate(account: String, template: dev.finalish.core.model.WatermarkTemplate): dev.finalish.core.model.WatermarkTemplate {
+        val data = body {
+            putJsonObject("data") {
+                put("name", template.name)
+                put("watermark_blocks", dev.finalish.core.network.AppJson.encodeToJsonElement(
+                    kotlinx.serialization.builtins.ListSerializer(dev.finalish.core.model.WatermarkBlock.serializer()), template.blocks,
+                ))
+            }
+        }
+        return if (template.id.isBlank()) api.createWatermarkTemplate(account, data).data
+        else api.updateWatermarkTemplate(account, template.id, data).data
+    }
+
     suspend fun shareWatermarkTemplate(shareId: String): String? = cache.get("wmtpl:$shareId", String.serializer())
 
     /** [templateId] null = the workspace or account default template. */

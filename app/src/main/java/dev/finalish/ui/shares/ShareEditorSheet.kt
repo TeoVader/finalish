@@ -117,6 +117,9 @@ fun ShareEditorSheet(
     var confirmPublicFolder by remember { mutableStateOf<List<Asset>?>(null) }
     var qr by remember { mutableStateOf(false) }
     var pickingTemplate by remember { mutableStateOf(false) }
+    // From the picker: a template to edit, or a new one.
+    var editingTemplate by remember { mutableStateOf<dev.finalish.core.model.WatermarkTemplate?>(null) }
+    var creatingTemplate by remember { mutableStateOf(false) }
     var templates by remember { mutableStateOf<List<dev.finalish.core.model.WatermarkTemplate>?>(null) }
     var templateId by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(initial.id) { templateId = repo.shareWatermarkTemplate(initial.id) }
@@ -640,7 +643,20 @@ fun ShareEditorSheet(
             runCatching { repo.setShareWatermarkTemplate(accountId, share.id, id) }
                 .onFailure { templateId = before; notify(it.userMessage()) }
         }
-    }, onDismiss = { pickingTemplate = false })
+    }, onDismiss = { pickingTemplate = false }, onEdit = { if (it == null) creatingTemplate = true else editingTemplate = it })
+
+    if (creatingTemplate || editingTemplate != null) {
+        WatermarkTemplateEditorSheet(
+            accountId, editingTemplate,
+            onSaved = { saved ->
+                editingTemplate = null
+                creatingTemplate = false
+                templates = templates.orEmpty().filterNot { it.id == saved.id }.plus(saved).sortedBy { it.name.lowercase() }
+                notify(context.getString(R.string.shares_template_saved, saved.name))
+            },
+            onDismiss = { editingTemplate = null; creatingTemplate = false },
+        )
+    }
 
     if (inviting) {
         InviteReviewersDialog(
@@ -705,9 +721,10 @@ internal fun WatermarkTemplateSheet(
     selectedId: String?,
     onPick: (String?) -> Unit,
     onDismiss: () -> Unit,
+    onEdit: ((dev.finalish.core.model.WatermarkTemplate?) -> Unit)? = null,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = Palette.Surface1) {
-        WatermarkTemplateList(templates, selectedId, onPick)
+        WatermarkTemplateList(templates, selectedId, onPick, onEdit)
     }
 }
 
@@ -716,6 +733,8 @@ internal fun WatermarkTemplateList(
     templates: List<dev.finalish.core.model.WatermarkTemplate>?,
     selectedId: String?,
     onPick: (String?) -> Unit,
+    /** Edit a template, or with null make a new one; null hides both. */
+    onEdit: ((dev.finalish.core.model.WatermarkTemplate?) -> Unit)? = null,
 ) {
     Column(Modifier.navigationBarsPadding().padding(bottom = 16.dp)) {
         Text(stringResource(R.string.shares_watermark_template), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
@@ -725,7 +744,7 @@ internal fun WatermarkTemplateList(
             modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 8.dp),
         )
         @Composable
-        fun row(name: String, detail: String, selected: Boolean, onClick: () -> Unit) = Row(
+        fun row(name: String, detail: String, selected: Boolean, onEditRow: (() -> Unit)? = null, onClick: () -> Unit) = Row(
             Modifier.fillMaxWidth().pressable(onClick, scaleTo = 0.99f).padding(horizontal = 20.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -734,6 +753,10 @@ internal fun WatermarkTemplateList(
                 if (detail.isNotBlank()) Text(detail, style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary)
             }
             if (selected) Icon(Icons.Rounded.Check, stringResource(R.string.shares_selected_cd), tint = Palette.AccentBright)
+            if (onEditRow != null) Icon(
+                Icons.Rounded.Edit, stringResource(R.string.shares_edit_template), tint = Palette.TextTertiary,
+                modifier = Modifier.padding(start = 8.dp).size(36.dp).clip(RoundedCornerShape(10.dp)).pressable(onEditRow, scaleTo = 0.9f).padding(8.dp),
+            )
         }
         val untitled = stringResource(R.string.shares_untitled_template)
         row(stringResource(R.string.shares_default), stringResource(R.string.shares_watermark_default_template), selectedId == null) { onPick(null) }
@@ -743,7 +766,15 @@ internal fun WatermarkTemplateList(
                 stringResource(R.string.shares_no_templates),
                 style = MaterialTheme.typography.bodyMedium, color = Palette.TextTertiary, modifier = Modifier.padding(20.dp),
             )
-            else -> templates.forEach { t -> row(t.name.ifBlank { untitled }, t.summary, t.id == selectedId) { onPick(t.id) } }
+            else -> templates.forEach { t -> row(t.name.ifBlank { untitled }, t.summary, t.id == selectedId, onEdit?.let { e -> { e(t) } }) { onPick(t.id) } }
+        }
+        if (onEdit != null && templates != null) Row(
+            Modifier.fillMaxWidth().pressable({ onEdit(null) }, scaleTo = 0.99f).padding(horizontal = 20.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Rounded.Add, null, tint = Palette.AccentBright, modifier = Modifier.size(20.dp))
+            Spacer(Modifier.size(10.dp))
+            Text(stringResource(R.string.shares_new_template), style = MaterialTheme.typography.bodyLarge, color = Palette.AccentBright)
         }
     }
 }

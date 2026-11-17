@@ -365,6 +365,22 @@ interface FrameioApi {
         @Query("sort") sort: String = "name_asc",
     ): PageEnvelope<dev.finalish.core.model.WatermarkTemplate>
 
+    @Headers(EXPERIMENTAL)
+    @POST("accounts/{account}/session_watermark_templates")
+    suspend fun createWatermarkTemplate(
+        @Path("account") account: String,
+        @Body body: JsonObject,
+    ): DataEnvelope<dev.finalish.core.model.WatermarkTemplate>
+
+    /** Blocks sent here replace the template's blocks wholesale. */
+    @Headers(EXPERIMENTAL)
+    @PATCH("accounts/{account}/session_watermark_templates/{template}")
+    suspend fun updateWatermarkTemplate(
+        @Path("account") account: String,
+        @Path("template") template: String,
+        @Body body: JsonObject,
+    ): DataEnvelope<dev.finalish.core.model.WatermarkTemplate>
+
     @DELETE("accounts/{account}/shares/{share}")
     suspend fun deleteShare(
         @Path("account") account: String,

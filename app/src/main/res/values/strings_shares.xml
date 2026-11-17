@@ -273,4 +273,22 @@
     <string name="shares_opened_with_access_title">Opened with your access</string>
     <string name="shares_opened_with_access_body">This share link is from your account, so it opened as the file or folder with your own permissions. Its expiry, passphrase, download setting and watermark don\'t apply here.</string>
     <string name="shares_open_link_in_browser">Open the share link in the browser</string>
+    <string name="shares_new_template">New template</string>
+    <string name="shares_edit_template">Edit template</string>
+    <string name="shares_template_name">Template name</string>
+    <string name="shares_template_lines">What it shows</string>
+    <string name="shares_template_custom_text">Fixed text</string>
+    <string name="shares_template_position">Where</string>
+    <string name="shares_template_size">Size</string>
+    <string name="shares_template_opacity">Opacity: %1$d%%</string>
+    <string name="shares_template_size_small">Small</string>
+    <string name="shares_template_size_medium">Medium</string>
+    <string name="shares_template_size_large">Large</string>
+    <string name="shares_template_size_huge">Huge</string>
+    <string name="shares_template_save">Save template</string>
+    <string name="shares_template_saved">Template “%1$s” saved</string>
+    <plurals name="shares_template_other_blocks">
+        <item quantity="one">This template has %1$d more block, kept as it is.</item>
+        <item quantity="other">This template has %1$d more blocks, kept as they are.</item>
+    </plurals>
 </resources>

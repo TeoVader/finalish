@@ -282,4 +282,23 @@
     <string name="shares_opened_with_access_title">Ouvert avec votre accès</string>
     <string name="shares_opened_with_access_body">Ce lien de partage provient de votre compte : il s\'est ouvert comme le fichier ou le dossier, avec vos propres autorisations. Son expiration, sa phrase secrète, son réglage de téléchargement et son filigrane ne s\'appliquent pas ici.</string>
     <string name="shares_open_link_in_browser">Ouvrir le lien de partage dans le navigateur</string>
+    <string name="shares_new_template">Nouveau modèle</string>
+    <string name="shares_edit_template">Modifier le modèle</string>
+    <string name="shares_template_name">Nom du modèle</string>
+    <string name="shares_template_lines">Ce qu\'il affiche</string>
+    <string name="shares_template_custom_text">Texte fixe</string>
+    <string name="shares_template_position">Où</string>
+    <string name="shares_template_size">Taille</string>
+    <string name="shares_template_opacity">Opacité : %1$d %%</string>
+    <string name="shares_template_size_small">Petite</string>
+    <string name="shares_template_size_medium">Moyenne</string>
+    <string name="shares_template_size_large">Grande</string>
+    <string name="shares_template_size_huge">Énorme</string>
+    <string name="shares_template_save">Enregistrer le modèle</string>
+    <string name="shares_template_saved">Modèle « %1$s » enregistré</string>
+    <plurals name="shares_template_other_blocks">
+        <item quantity="one">Ce modèle a %1$d autre bloc, conservé tel quel.</item>
+        <item quantity="many">Ce modèle a %1$d autres blocs, conservés tels quels.</item>
+        <item quantity="other">Ce modèle a %1$d autres blocs, conservés tels quels.</item>
+    </plurals>
 </resources>

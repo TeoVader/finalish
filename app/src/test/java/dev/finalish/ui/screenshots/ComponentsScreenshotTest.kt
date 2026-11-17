@@ -623,6 +623,16 @@ class ComponentsScreenshotTest {
         ).forEach { dev.finalish.ui.members.MemberRow(it, "projects", {}, {}, canManage = false) }
     }
 
+    /** Share link › Watermark template › New template / edit. */
+    @Test fun watermarkEditor() = snap("watermark_editor") {
+        androidx.compose.foundation.layout.Box(Modifier.fillMaxWidth().clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface1).padding(top = 20.dp)) {
+            dev.finalish.ui.shares.WatermarkTemplateEditorContent(
+                draft = dev.finalish.ui.shares.WatermarkDraft(name = "Client review", lines = listOf("email", "timestamp", "custom_text"), customText = "CONFIDENTIAL", position = "bottom_right", fontSize = "medium", alpha = 0.6),
+                isNew = false, otherBlocks = 1, saving = false, error = null, onChange = {}, onSave = {},
+            )
+        }
+    }
+
     /** A viewer's comments: no marking done, and a note where the composer would be. */
     @Test fun commentsViewer() = snap("comments_viewer") {
         val noa = User(id = "1", name = "Noa Lindqvist")

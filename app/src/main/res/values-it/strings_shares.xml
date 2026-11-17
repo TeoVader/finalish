@@ -278,4 +278,23 @@
     <string name="shares_opened_with_access_title">Aperto con il tuo accesso</string>
     <string name="shares_opened_with_access_body">Questo link di condivisione è del tuo account, quindi si è aperto come file o cartella con i tuoi permessi. Scadenza, passphrase, impostazione dei download e filigrana del link qui non valgono.</string>
     <string name="shares_open_link_in_browser">Apri il link di condivisione nel browser</string>
+    <string name="shares_new_template">Nuovo modello</string>
+    <string name="shares_edit_template">Modifica modello</string>
+    <string name="shares_template_name">Nome del modello</string>
+    <string name="shares_template_lines">Cosa mostra</string>
+    <string name="shares_template_custom_text">Testo fisso</string>
+    <string name="shares_template_position">Dove</string>
+    <string name="shares_template_size">Dimensione</string>
+    <string name="shares_template_opacity">Opacità: %1$d%%</string>
+    <string name="shares_template_size_small">Piccola</string>
+    <string name="shares_template_size_medium">Media</string>
+    <string name="shares_template_size_large">Grande</string>
+    <string name="shares_template_size_huge">Enorme</string>
+    <string name="shares_template_save">Salva modello</string>
+    <string name="shares_template_saved">Modello “%1$s” salvato</string>
+    <plurals name="shares_template_other_blocks">
+        <item quantity="one">Questo modello ha %1$d altro blocco, che resta com\'è.</item>
+        <item quantity="many">Questo modello ha altri %1$d blocchi, che restano come sono.</item>
+        <item quantity="other">Questo modello ha altri %1$d blocchi, che restano come sono.</item>
+    </plurals>
 </resources>

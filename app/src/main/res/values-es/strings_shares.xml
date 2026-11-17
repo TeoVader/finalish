@@ -282,4 +282,23 @@
     <string name="shares_opened_with_access_title">Abierto con tu acceso</string>
     <string name="shares_opened_with_access_body">Este enlace compartido es de tu cuenta, así que se abrió como el archivo o la carpeta con tus propios permisos. Su caducidad, frase de contraseña, ajuste de descargas y marca de agua no se aplican aquí.</string>
     <string name="shares_open_link_in_browser">Abrir el enlace compartido en el navegador</string>
+    <string name="shares_new_template">Nueva plantilla</string>
+    <string name="shares_edit_template">Editar plantilla</string>
+    <string name="shares_template_name">Nombre de la plantilla</string>
+    <string name="shares_template_lines">Qué muestra</string>
+    <string name="shares_template_custom_text">Texto fijo</string>
+    <string name="shares_template_position">Dónde</string>
+    <string name="shares_template_size">Tamaño</string>
+    <string name="shares_template_opacity">Opacidad: %1$d %%</string>
+    <string name="shares_template_size_small">Pequeño</string>
+    <string name="shares_template_size_medium">Mediano</string>
+    <string name="shares_template_size_large">Grande</string>
+    <string name="shares_template_size_huge">Enorme</string>
+    <string name="shares_template_save">Guardar plantilla</string>
+    <string name="shares_template_saved">Plantilla «%1$s» guardada</string>
+    <plurals name="shares_template_other_blocks">
+        <item quantity="one">Esta plantilla tiene %1$d bloque más, que se queda como está.</item>
+        <item quantity="many">Esta plantilla tiene %1$d bloques más, que se quedan como están.</item>
+        <item quantity="other">Esta plantilla tiene %1$d bloques más, que se quedan como están.</item>
+    </plurals>
 </resources>
