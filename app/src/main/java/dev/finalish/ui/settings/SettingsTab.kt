@@ -29,6 +29,7 @@ import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material.icons.rounded.Gavel
 import androidx.compose.material.icons.rounded.Groups
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.NetworkCell
@@ -111,6 +112,7 @@ fun SettingsTab(
     onOpenMetadataFields: () -> Unit = {},
     onOpenGroups: () -> Unit = {},
     onOpenLicenses: () -> Unit = {},
+    onOpenAccountPeople: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val container = remember { FinalishApp.container(context) }
@@ -248,6 +250,8 @@ fun SettingsTab(
         item { SectionHeader(stringResource(R.string.settings_section_account)) }
         item {
             Group {
+                Row0(Icons.Rounded.Person, stringResource(R.string.settings_account_people), onClick = onOpenAccountPeople)
+                Divider()
                 Row0(Icons.Rounded.Groups, stringResource(R.string.settings_groups), onClick = onOpenGroups)
                 Divider()
                 Row0(Icons.Rounded.Tune, stringResource(R.string.settings_metadata_fields), onClick = onOpenMetadataFields)

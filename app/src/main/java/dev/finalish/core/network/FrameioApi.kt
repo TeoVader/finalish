@@ -390,6 +390,14 @@ interface FrameioApi {
         @Query("after") after: String? = null,
     ): PageEnvelope<Project>
 
+    /** An account member's role: "admin" or "member" (the owner can't be changed). */
+    @PATCH("accounts/{account}/users/{user}")
+    suspend fun setAccountRole(
+        @Path("account") account: String,
+        @Path("user") user: String,
+        @Body body: JsonObject,
+    ): Response<Unit>
+
     @GET("accounts/{account}/users")
     @Headers(EXPERIMENTAL)
     suspend fun accountUsers(

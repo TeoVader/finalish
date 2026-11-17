@@ -207,6 +207,7 @@ fun AppNav(
                 onOpenTrash = { nav.navigate(TrashRoute(it.id, it.name)) },
                 onOpenMetadataFields = { nav.navigate(MetadataFieldsRoute) },
                 onOpenGroups = { nav.navigate(GroupsRoute) },
+                onOpenAccountPeople = { state.accountId?.let { id -> nav.navigate(MembersRoute(dev.finalish.ui.members.ACCOUNT_SCOPE, id, state.account?.displayName.orEmpty())) } },
                 onOpenLicenses = { nav.navigate(LicensesRoute) },
                 onOpenNotifications = { nav.navigate(NotificationsRoute) },
             )

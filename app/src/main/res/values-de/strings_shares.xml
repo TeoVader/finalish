@@ -273,4 +273,8 @@
     <string name="shares_opened_with_access_title">Mit deinem Zugriff geöffnet</string>
     <string name="shares_opened_with_access_body">Dieser Freigabelink gehört zu deinem Konto und wurde daher als Datei oder Ordner mit deinen eigenen Berechtigungen geöffnet. Ablaufdatum, Passphrase, Download-Einstellung und Wasserzeichen des Links gelten hier nicht.</string>
     <string name="shares_open_link_in_browser">Freigabelink im Browser öffnen</string>
+    <string name="members_role_account_admin_desc">Verwaltet das ganze Konto: alle Workspaces und Projekte, Personen, Abrechnung und Einstellungen.</string>
+    <string name="members_role_member_desc">Arbeitet in den Workspaces und Projekten, zu denen die Person eingeladen ist.</string>
+    <string name="members_make_admin_title">%1$s zum Kontoadmin machen?</string>
+    <string name="members_make_admin">Zum Admin machen</string>
 </resources>

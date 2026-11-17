@@ -273,4 +273,8 @@
     <string name="shares_opened_with_access_title">Opened with your access</string>
     <string name="shares_opened_with_access_body">This share link is from your account, so it opened as the file or folder with your own permissions. Its expiry, passphrase, download setting and watermark don\'t apply here.</string>
     <string name="shares_open_link_in_browser">Open the share link in the browser</string>
+    <string name="members_role_account_admin_desc">Manages the whole account: every workspace and project, its people, billing and settings.</string>
+    <string name="members_role_member_desc">Can work in the workspaces and projects they\'re invited to.</string>
+    <string name="members_make_admin_title">Make %1$s an account admin?</string>
+    <string name="members_make_admin">Make admin</string>
 </resources>

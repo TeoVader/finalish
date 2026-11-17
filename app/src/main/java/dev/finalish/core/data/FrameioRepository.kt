@@ -729,6 +729,16 @@ class FrameioRepository(
         if (!r.isSuccessful) throw retrofit2.HttpException(r)
     }
 
+    /** Makes an account member an admin or a plain member ("admin" / "member"). */
+    suspend fun setAccountRole(account: String, userId: String, role: String) {
+        val r = api.setAccountRole(account, userId, body { putJsonObject("data") { put("role", role) } })
+        if (!r.isSuccessful) throw retrofit2.HttpException(r)
+    }
+
+    /** Whether the signed-in user owns or administers [account] (who may change account roles). */
+    suspend fun isAccountAdmin(account: String): Boolean =
+        accounts().firstOrNull { it.id == account }?.roles.orEmpty().let { "owner" in it || "admin" in it }
+
     suspend fun removeMember(account: String, scope: String, id: String, userId: String) {
         val r = api.removeMember(account, scope, id, userId)
         if (!r.isSuccessful) throw retrofit2.HttpException(r)

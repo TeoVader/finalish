@@ -104,6 +104,7 @@ fun HomeScreen(
     onOpenTrash: (Project) -> Unit = {},
     onOpenMetadataFields: () -> Unit = {},
     onOpenGroups: () -> Unit = {},
+    onOpenAccountPeople: () -> Unit = {},
     onOpenLicenses: () -> Unit = {},
     onOpenNotifications: () -> Unit = {},
     requestedTab: Int? = null,
@@ -193,7 +194,7 @@ fun HomeScreen(
                 }
                 HomeTab.Transfers -> ReadableWidth(wide) { TransfersTab(onOpenOffline, padding, onOpenUpload) }
                 HomeTab.Settings -> ReadableWidth(wide) {
-                    SettingsTab(session, onSignOut, padding, onSelectAccount, onOpenMetadataFields = onOpenMetadataFields, onOpenGroups = onOpenGroups, onOpenLicenses = onOpenLicenses)
+                    SettingsTab(session, onSignOut, padding, onSelectAccount, onOpenMetadataFields = onOpenMetadataFields, onOpenGroups = onOpenGroups, onOpenLicenses = onOpenLicenses, onOpenAccountPeople = onOpenAccountPeople)
                 }
             }
             }
