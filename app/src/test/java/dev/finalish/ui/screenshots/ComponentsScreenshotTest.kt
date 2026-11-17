@@ -665,6 +665,8 @@ class ComponentsScreenshotTest {
                 isNew = false, otherBlocks = 1, saving = false, error = null, onChange = {}, onSave = {},
             )
         }
+    }
+
     /** Settings › People in the account, for an admin: roles to change, owner fixed, no Add or Remove. */
     @Test fun membersAccount() = snap("members_account") {
         listOf(
