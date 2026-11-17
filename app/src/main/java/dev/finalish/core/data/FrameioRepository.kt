@@ -943,13 +943,16 @@ class FrameioRepository(
     }
 
     /**
-     * Breaks a version stack up: every version moves into the stack's folder as a separate file.
-     * Returns how many files moved.
+     * Breaks a version stack up: every version moves into the stack's folder as a separate file,
+     * then the empty stack Frame.io leaves behind is deleted (to Recently deleted). The files are
+     * out either way: if that delete fails, the empty stack just stays. Returns how many files moved.
      */
     suspend fun unstack(account: String, stackId: String): Int {
         val folder = versionStackParent(account, stackId) ?: error("Version stack $stackId has no parent folder")
         val ids = versionsNow(account, stackId).map { it.id }
         ids.chunked(100).forEach { bulk(api::bulkMove, account, "files", "file_ids", it, folder) }
+        runCatchingCancellable { api.delete(account, "version_stacks", stackId).also { if (!it.isSuccessful) throw retrofit2.HttpException(it) } }
+            .onFailure { dev.finalish.core.util.AppLog.w("Couldn't delete the empty stack: ${it.javaClass.simpleName}") }
         cache.invalidate("versions:$account:$stackId")
         invalidateFolder(account, folder)
         return ids.size

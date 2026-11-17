@@ -307,7 +307,7 @@
     <string name="viewer_unstack">Défaire la pile</string>
     <string name="viewer_unstack_title">Défaire cette pile ?</string>
     <plurals name="viewer_unstack_body">
-        <item quantity="one">Sa %1$d version devient un fichier distinct dans le dossier, avec ses commentaires.</item>
+        <item quantity="one">Sa version (%1$d) devient un fichier distinct dans le dossier, avec ses commentaires.</item>
         <item quantity="many">Ses %1$d versions deviennent des fichiers distincts dans le dossier, chacun avec ses commentaires.</item>
         <item quantity="other">Ses %1$d versions deviennent des fichiers distincts dans le dossier, chacun avec ses commentaires.</item>
     </plurals>
