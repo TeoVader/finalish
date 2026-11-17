@@ -282,4 +282,8 @@
     <string name="shares_opened_with_access_title">Abierto con tu acceso</string>
     <string name="shares_opened_with_access_body">Este enlace compartido es de tu cuenta, así que se abrió como el archivo o la carpeta con tus propios permisos. Su caducidad, frase de contraseña, ajuste de descargas y marca de agua no se aplican aquí.</string>
     <string name="shares_open_link_in_browser">Abrir el enlace compartido en el navegador</string>
+    <string name="members_role_account_admin_desc">Gestiona toda la cuenta: cada espacio de trabajo y proyecto, las personas, la facturación y los ajustes.</string>
+    <string name="members_role_member_desc">Trabaja en los espacios de trabajo y proyectos a los que está invitado.</string>
+    <string name="members_make_admin_title">¿Hacer a %1$s admin. de la cuenta?</string>
+    <string name="members_make_admin">Hacer admin.</string>
 </resources>

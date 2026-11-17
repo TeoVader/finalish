@@ -86,9 +86,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
+/** [MembersScreen]'s scope for the account's own people: roles only (admin or member), no adding or removing. */
+const val ACCOUNT_SCOPE = "accounts"
+
 /** Roles that can be assigned through the API, per scope. */
 fun assignableRoles(scope: String): List<String> =
-    if (scope == "workspaces") listOf("workspace_admin", "full_access", "editor", "edit_only", "commenter", "viewer")
+    if (scope == ACCOUNT_SCOPE) listOf("admin", "member")
+    else if (scope == "workspaces") listOf("workspace_admin", "full_access", "editor", "edit_only", "commenter", "viewer")
     else listOf("full_access", "editor", "edit_only", "commenter", "viewer")
 
 private fun roleLabelRes(role: String): Int? = when (role) {
@@ -120,6 +124,8 @@ private fun roleDescriptionRes(role: String): Int? = when (role) {
     "edit_only" -> R.string.members_role_edit_only_desc
     "commenter" -> R.string.members_role_commenter_desc
     "viewer" -> R.string.members_role_viewer_desc
+    "admin" -> R.string.members_role_account_admin_desc
+    "member" -> R.string.members_role_member_desc
     else -> null
 }
 
@@ -187,6 +193,11 @@ class MembersViewModel(app: Application, private val repo: FrameioRepository) : 
     val canManage: StateFlow<Boolean?> = _canManage.asStateFlow()
 
     private fun loadManage(projectId: String) {
+        if (scope == ACCOUNT_SCOPE) {
+            _canManage.value = null
+            viewModelScope.launch { _canManage.value = runCatching { repo.isAccountAdmin(account) }.getOrDefault(false) }
+            return
+        }
         val cached = when (scope) {
             "projects" -> repo.cachedFileAccess(account, id)
             "folders" -> if (projectId.isBlank()) dev.finalish.core.model.FileAccess.Full else repo.cachedFileAccess(account, projectId)
@@ -210,9 +221,10 @@ class MembersViewModel(app: Application, private val repo: FrameioRepository) : 
 
     private fun load() = viewModelScope.launch {
         _state.update { it.copy(error = null) }
-        runCatching { repo.members(account, scope, id) }
+        runCatching { if (scope == ACCOUNT_SCOPE) repo.accountUsers(account) else repo.members(account, scope, id) }
             .onSuccess { list -> _state.update { it.copy(members = list) } }
             .onFailure { e -> _state.update { it.copy(error = e.userMessage()) } }
+        if (scope == ACCOUNT_SCOPE) return@launch
         // Older accounts or plans without groups: just no section.
         runCatching { repo.scopeGroups(account, scope, id) }.onSuccess { list -> _state.update { it.copy(groups = list) } }
     }
@@ -237,7 +249,7 @@ class MembersViewModel(app: Application, private val repo: FrameioRepository) : 
         updateMembers { list -> list.map { if (it.user.id == uid) it.copy(role = role) else it } }
         viewModelScope.launch {
             _messages.report({ app.getString(R.string.members_is_now_role, m.user.displayName, roleLabel(app, role)) }) {
-                repo.setMemberRole(account, scope, id, uid, role)
+                if (scope == ACCOUNT_SCOPE) repo.setAccountRole(account, uid, role) else repo.setMemberRole(account, scope, id, uid, role)
             }
                 // Undo only this change; others made meanwhile stay.
                 .onFailure { updateMembers { list -> list.map { x -> if (x.user.id == uid) m else x } } }
@@ -314,11 +326,13 @@ fun MembersScreen(
     var adding by remember { mutableStateOf(false) }
     var removing by remember { mutableStateOf<UserRole?>(null) }
     var removingGroup by remember { mutableStateOf<GroupRole?>(null) }
+    // Making someone an account admin hands them the whole account: asked first.
+    var promoting by remember { mutableStateOf<UserRole?>(null) }
 
     Box(Modifier.fillMaxSize().background(Palette.Ink)) {
         Column(Modifier.fillMaxSize()) {
             SimpleTopBar(stringResource(R.string.members_members), title, onBack) {
-                if (canManage) AccentPill(Icons.Rounded.PersonAdd, stringResource(R.string.members_add)) { adding = true; vm.onEvent(MembersEvent.LoadCandidates) }
+                if (canManage && scope != ACCOUNT_SCOPE) AccentPill(Icons.Rounded.PersonAdd, stringResource(R.string.members_add)) { adding = true; vm.onEvent(MembersEvent.LoadCandidates) }
             }
             val list0 = members
             val stage = when {
@@ -359,7 +373,7 @@ fun MembersScreen(
                             )
                         }
                         items(list, key = { it.user.id ?: it.user.email.orEmpty() }) { m ->
-                            MemberRow(m, scope, onRole = { vm.onEvent(MembersEvent.SetRole(m, it)) }, onRemove = { removing = m }, modifier = Modifier.animateItem(), canManage = canManage)
+                            MemberRow(m, scope, onRole = { if (it == "admin") promoting = m else vm.onEvent(MembersEvent.SetRole(m, it)) }, onRemove = { removing = m }, modifier = Modifier.animateItem(), canManage = canManage)
                         }
                         if (canManage) item(key = "roles-hint") {
                             Text(
@@ -377,6 +391,16 @@ fun MembersScreen(
     }
 
     if (adding) AddMemberSheet(scope, state, vm::onEvent, onDismiss = { adding = false })
+    promoting?.let { m ->
+        AlertDialog(
+            onDismissRequest = { promoting = null },
+            containerColor = Palette.Surface2,
+            title = { Text(stringResource(R.string.members_make_admin_title, m.user.displayName)) },
+            text = { Text(stringResource(R.string.members_role_account_admin_desc), color = Palette.TextSecondary) },
+            confirmButton = { TextButton(onClick = { promoting = null; vm.onEvent(MembersEvent.SetRole(m, "admin")) }) { Text(stringResource(R.string.members_make_admin)) } },
+            dismissButton = { TextButton(onClick = { promoting = null }) { Text(stringResource(R.string.members_cancel)) } },
+        )
+    }
     removingGroup?.let { g ->
         AlertDialog(
             onDismissRequest = { removingGroup = null },
@@ -417,8 +441,9 @@ internal fun MemberRow(m: UserRole, scope: String, onRole: (String) -> Unit, onR
     title = m.user.displayName,
     subtitle = listOfNotNull(m.user.email.takeIf { it != m.user.displayName }, if (m.user.active == false) stringResource(R.string.members_inactive) else null).joinToString(" · "),
     role = m.role,
-    editable = canManage && m.user.id != null && m.role !in setOf("owner", "admin"),
-    scope = scope, onRole = onRole, onRemove = onRemove, modifier = modifier,
+    // Account admins can be made members again; elsewhere owners and admins already have everything.
+    editable = canManage && m.user.id != null && m.role != "owner" && (scope == ACCOUNT_SCOPE || m.role != "admin"),
+    scope = scope, onRole = onRole, onRemove = onRemove.takeIf { scope != ACCOUNT_SCOPE }, modifier = modifier,
 )
 
 @Composable
@@ -440,7 +465,7 @@ private fun RoleRow(
     editable: Boolean,
     scope: String,
     onRole: (String) -> Unit,
-    onRemove: () -> Unit,
+    onRemove: (() -> Unit)?,
     modifier: Modifier,
 ) {
     var menu by remember { mutableStateOf(false) }
@@ -482,12 +507,14 @@ private fun RoleRow(
                         onClick = { menu = false; if (role != r) onRole(r) },
                     )
                 }
-                HorizontalDivider(color = Palette.Hairline)
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.members_remove), color = Palette.Red) },
-                    leadingIcon = { Icon(Icons.Rounded.PersonRemove, null, tint = Palette.Red) },
-                    onClick = { menu = false; onRemove() },
-                )
+                if (onRemove != null) {
+                    HorizontalDivider(color = Palette.Hairline)
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.members_remove), color = Palette.Red) },
+                        leadingIcon = { Icon(Icons.Rounded.PersonRemove, null, tint = Palette.Red) },
+                        onClick = { menu = false; onRemove() },
+                    )
+                }
             }
         }
     }

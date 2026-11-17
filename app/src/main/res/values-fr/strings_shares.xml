@@ -282,4 +282,8 @@
     <string name="shares_opened_with_access_title">Ouvert avec votre accès</string>
     <string name="shares_opened_with_access_body">Ce lien de partage provient de votre compte : il s\'est ouvert comme le fichier ou le dossier, avec vos propres autorisations. Son expiration, sa phrase secrète, son réglage de téléchargement et son filigrane ne s\'appliquent pas ici.</string>
     <string name="shares_open_link_in_browser">Ouvrir le lien de partage dans le navigateur</string>
+    <string name="members_role_account_admin_desc">Gère tout le compte : chaque espace de travail et projet, les personnes, la facturation et les réglages.</string>
+    <string name="members_role_member_desc">Travaille dans les espaces de travail et projets où il est invité.</string>
+    <string name="members_make_admin_title">Faire de %1$s un admin du compte ?</string>
+    <string name="members_make_admin">Faire admin</string>
 </resources>

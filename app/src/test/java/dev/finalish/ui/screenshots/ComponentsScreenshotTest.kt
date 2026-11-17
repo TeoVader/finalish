@@ -623,6 +623,15 @@ class ComponentsScreenshotTest {
         ).forEach { dev.finalish.ui.members.MemberRow(it, "projects", {}, {}, canManage = false) }
     }
 
+    /** Settings › People in the account, for an admin: roles to change, owner fixed, no Add or Remove. */
+    @Test fun membersAccount() = snap("members_account") {
+        listOf(
+            dev.finalish.core.model.UserRole("owner", User("u1", name = "Noa Lindqvist", email = "noa@example.com")),
+            dev.finalish.core.model.UserRole("admin", User("u2", name = "Mira Solberg", email = "mira@example.com")),
+            dev.finalish.core.model.UserRole("member", User("u3", name = "Teo Varga", email = "teo@example.com")),
+        ).forEach { dev.finalish.ui.members.MemberRow(it, dev.finalish.ui.members.ACCOUNT_SCOPE, {}, {}, canManage = true) }
+    }
+
     /** A viewer's comments: no marking done, and a note where the composer would be. */
     @Test fun commentsViewer() = snap("comments_viewer") {
         val noa = User(id = "1", name = "Noa Lindqvist")

@@ -278,4 +278,8 @@
     <string name="shares_opened_with_access_title">Aperto con il tuo accesso</string>
     <string name="shares_opened_with_access_body">Questo link di condivisione è del tuo account, quindi si è aperto come file o cartella con i tuoi permessi. Scadenza, passphrase, impostazione dei download e filigrana del link qui non valgono.</string>
     <string name="shares_open_link_in_browser">Apri il link di condivisione nel browser</string>
+    <string name="members_role_account_admin_desc">Gestisce tutto l\'account: ogni workspace e progetto, le persone, la fatturazione e le impostazioni.</string>
+    <string name="members_role_member_desc">Lavora nei workspace e nei progetti a cui è invitato.</string>
+    <string name="members_make_admin_title">Rendere %1$s amministratore dell\'account?</string>
+    <string name="members_make_admin">Rendi amministratore</string>
 </resources>
