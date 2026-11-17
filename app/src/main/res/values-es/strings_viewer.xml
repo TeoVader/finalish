@@ -307,7 +307,7 @@
     <string name="viewer_unstack">Deshacer pila</string>
     <string name="viewer_unstack_title">¿Deshacer la pila?</string>
     <plurals name="viewer_unstack_body">
-        <item quantity="one">Su versión pasa a ser un archivo aparte en la carpeta, con sus comentarios.</item>
+        <item quantity="one">Su %1$d versión pasa a ser un archivo aparte en la carpeta, con sus comentarios.</item>
         <item quantity="many">Sus %1$d versiones pasan a ser archivos aparte en la carpeta, cada uno con sus comentarios.</item>
         <item quantity="other">Sus %1$d versiones pasan a ser archivos aparte en la carpeta, cada uno con sus comentarios.</item>
     </plurals>

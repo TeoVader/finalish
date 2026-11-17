@@ -299,7 +299,7 @@
     <string name="viewer_unstack">Unstack</string>
     <string name="viewer_unstack_title">Unstack these versions?</string>
     <plurals name="viewer_unstack_body">
-        <item quantity="one">Its version becomes a separate file in the folder, with its comments.</item>
+        <item quantity="one">Its %1$d version becomes a separate file in the folder, with its comments.</item>
         <item quantity="other">Its %1$d versions become separate files in the folder, each with its comments.</item>
     </plurals>
     <plurals name="viewer_msg_unstacked">

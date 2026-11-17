@@ -299,7 +299,7 @@
     <string name="viewer_unstack">Stapel auflösen</string>
     <string name="viewer_unstack_title">Stapel auflösen?</string>
     <plurals name="viewer_unstack_body">
-        <item quantity="one">Seine Version wird eine eigene Datei im Ordner, mit ihren Kommentaren.</item>
+        <item quantity="one">Seine %1$d Version wird eine eigene Datei im Ordner, mit ihren Kommentaren.</item>
         <item quantity="other">Seine %1$d Versionen werden eigene Dateien im Ordner, jeweils mit ihren Kommentaren.</item>
     </plurals>
     <plurals name="viewer_msg_unstacked">

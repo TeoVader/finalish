@@ -307,7 +307,7 @@
     <string name="viewer_unstack">Sciogli pila</string>
     <string name="viewer_unstack_title">Sciogliere la pila?</string>
     <plurals name="viewer_unstack_body">
-        <item quantity="one">La sua versione diventa un file a sé nella cartella, con i suoi commenti.</item>
+        <item quantity="one">La sua %1$d versione diventa un file a sé nella cartella, con i suoi commenti.</item>
         <item quantity="many">Le sue %1$d versioni diventano file separati nella cartella, ognuno con i suoi commenti.</item>
         <item quantity="other">Le sue %1$d versioni diventano file separati nella cartella, ognuno con i suoi commenti.</item>
     </plurals>

@@ -308,7 +308,7 @@
     <string name="viewer_unstack">Desfazer pilha</string>
     <string name="viewer_unstack_title">Desfazer a pilha?</string>
     <plurals name="viewer_unstack_body">
-        <item quantity="one">Sua versão vira um arquivo separado na pasta, com seus comentários.</item>
+        <item quantity="one">Sua %1$d versão vira um arquivo separado na pasta, com seus comentários.</item>
         <item quantity="many">Suas %1$d versões viram arquivos separados na pasta, cada um com seus comentários.</item>
         <item quantity="other">Suas %1$d versões viram arquivos separados na pasta, cada um com seus comentários.</item>
     </plurals>
