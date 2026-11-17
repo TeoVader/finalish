@@ -1081,6 +1081,8 @@ fun TextPromptDialog(
     initial: String,
     confirm: String,
     onDismiss: () -> Unit,
+    /** Whether an empty value can be confirmed (it then clears the field). */
+    allowBlank: Boolean = false,
     onConfirm: (String) -> Unit,
 ) {
     var text by remember {
@@ -1101,7 +1103,7 @@ fun TextPromptDialog(
             )
         },
         confirmButton = {
-            TextButton(enabled = text.text.isNotBlank(), onClick = { onConfirm(text.text.trim()) }) { Text(confirm) }
+            TextButton(enabled = allowBlank || text.text.isNotBlank(), onClick = { onConfirm(text.text.trim()) }) { Text(confirm) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.browser_cancel)) } },
     )

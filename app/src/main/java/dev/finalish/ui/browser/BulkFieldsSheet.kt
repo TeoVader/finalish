@@ -126,7 +126,7 @@ internal fun BulkFieldsSheet(
     userEditing?.let { f -> UserPickerSheet(f, people, onDone = { set(f, FieldValues.users(it)) }, onDismiss = { userEditing = null }) }
     dateEditing?.let { f -> DateFieldDialog(f, onPick = { set(f, FieldValues.date(it)) }, onDismiss = { dateEditing = null }) }
     editing?.let { f ->
-        TextPromptDialog(f.name, f.name, f.textValue.orEmpty(), stringResource(R.string.viewer_save), onDismiss = { editing = null }) { v ->
+        TextPromptDialog(f.name, f.name, f.textValue.orEmpty(), stringResource(R.string.viewer_save), onDismiss = { editing = null }, allowBlank = true) { v ->
             editing = null
             set(f, if (f.fieldType == "number") FieldValues.number(v.trim().replace(',', '.').toDoubleOrNull()) else FieldValues.text(v))
         }
