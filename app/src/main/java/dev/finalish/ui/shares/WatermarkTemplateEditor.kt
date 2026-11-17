@@ -144,7 +144,11 @@ internal fun WatermarkTemplateEditorSheet(
                 scope.launch {
                     runCatching { repo.saveWatermarkTemplate(accountId, draft.applyTo(template)) }
                         .onSuccess { onSaved(it) }
-                        .onFailure { error = it.userMessage(context) }
+                        .onFailure {
+                            // Pro and Team allow one template: creating a second one is refused with 403.
+                            val full = template == null && (it as? retrofit2.HttpException)?.code() == 403
+                            error = if (full) context.getString(R.string.shares_template_limit) else it.userMessage(context)
+                        }
                     saving = false
                 }
             },

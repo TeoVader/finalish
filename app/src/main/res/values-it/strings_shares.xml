@@ -130,7 +130,7 @@
     <string name="shares_save">Salva</string>
     <string name="shares_rename_title">Rinomina condivisione</string>
     <string name="shares_passphrase_hint">Lascia vuoto per rimuoverla</string>
-    <string name="shares_watermark_template_intro">Ciò che ogni spettatore vede impresso sul contenuto. I modelli si creano su frame.io.</string>
+    <string name="shares_watermark_template_intro">Ciò che ogni spettatore vede impresso sul contenuto.</string>
     <string name="shares_selected_cd">Selezionato</string>
     <string name="shares_watermark_default_template">Il modello predefinito del workspace o dell\'account</string>
     <string name="shares_no_templates">Questo account non ha ancora modelli.</string>
@@ -297,4 +297,5 @@
         <item quantity="many">Questo modello ha altri %1$d blocchi, che restano come sono.</item>
         <item quantity="other">Questo modello ha altri %1$d blocchi, che restano come sono.</item>
     </plurals>
+    <string name="shares_template_limit">Il tuo piano non permette altri modelli (Pro e Team ne hanno uno). Modifica quello che hai.</string>
 </resources>

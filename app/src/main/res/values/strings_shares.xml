@@ -126,7 +126,7 @@
     <string name="shares_save">Save</string>
     <string name="shares_rename_title">Rename share</string>
     <string name="shares_passphrase_hint">Leave empty to remove</string>
-    <string name="shares_watermark_template_intro">What each viewer sees burned over the media. Templates are made on frame.io.</string>
+    <string name="shares_watermark_template_intro">What each viewer sees burned over the media.</string>
     <string name="shares_selected_cd">Selected</string>
     <string name="shares_watermark_default_template">The workspace or account default template</string>
     <string name="shares_no_templates">This account has no templates yet.</string>
@@ -291,4 +291,5 @@
         <item quantity="one">This template has %1$d more block, kept as it is.</item>
         <item quantity="other">This template has %1$d more blocks, kept as they are.</item>
     </plurals>
+    <string name="shares_template_limit">Your plan has no room for another template (Pro and Team have one). Edit the one you have instead.</string>
 </resources>
