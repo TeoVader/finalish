@@ -299,11 +299,11 @@
     <string name="viewer_unstack">Unstack</string>
     <string name="viewer_unstack_title">Unstack these versions?</string>
     <plurals name="viewer_unstack_body">
-        <item quantity="one">Its version becomes a separate file in the folder, with its comments.</item>
-        <item quantity="other">Its %1$d versions become separate files in the folder, each with its comments.</item>
+        <item quantity="one">Its version becomes a separate file in the folder, with its comments. Frame.io keeps the empty stack, though: delete it on the web.</item>
+        <item quantity="other">Its %1$d versions become separate files in the folder, each with its comments. Frame.io keeps the empty stack, though: delete it on the web.</item>
     </plurals>
     <plurals name="viewer_msg_unstacked">
-        <item quantity="one">Unstacked: %1$d file is now in the folder</item>
-        <item quantity="other">Unstacked: %1$d files are now in the folder</item>
+        <item quantity="one">Unstacked: %1$d file is out. The empty stack stays: delete it on the web.</item>
+        <item quantity="other">Unstacked: %1$d files are out. The empty stack stays: delete it on the web.</item>
     </plurals>
 </resources>

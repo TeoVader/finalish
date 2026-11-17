@@ -308,13 +308,13 @@
     <string name="viewer_unstack">Desfazer pilha</string>
     <string name="viewer_unstack_title">Desfazer a pilha?</string>
     <plurals name="viewer_unstack_body">
-        <item quantity="one">Sua versão (%1$d) vira um arquivo separado na pasta, com seus comentários.</item>
-        <item quantity="many">Suas %1$d versões viram arquivos separados na pasta, cada um com seus comentários.</item>
-        <item quantity="other">Suas %1$d versões viram arquivos separados na pasta, cada um com seus comentários.</item>
+        <item quantity="one">Sua versão (%1$d) vira um arquivo separado na pasta, com seus comentários. Mas o Frame.io mantém a pilha vazia: exclua-a na web.</item>
+        <item quantity="many">Suas %1$d versões viram arquivos separados na pasta, cada um com seus comentários. Mas o Frame.io mantém a pilha vazia: exclua-a na web.</item>
+        <item quantity="other">Suas %1$d versões viram arquivos separados na pasta, cada um com seus comentários. Mas o Frame.io mantém a pilha vazia: exclua-a na web.</item>
     </plurals>
     <plurals name="viewer_msg_unstacked">
-        <item quantity="one">Pilha desfeita: %1$d arquivo agora está na pasta</item>
-        <item quantity="many">Pilha desfeita: %1$d arquivos agora estão na pasta</item>
-        <item quantity="other">Pilha desfeita: %1$d arquivos agora estão na pasta</item>
+        <item quantity="one">Pilha desfeita: %1$d arquivo saiu. A pilha vazia fica: exclua-a na web.</item>
+        <item quantity="many">Pilha desfeita: %1$d arquivos saíram. A pilha vazia fica: exclua-a na web.</item>
+        <item quantity="other">Pilha desfeita: %1$d arquivos saíram. A pilha vazia fica: exclua-a na web.</item>
     </plurals>
 </resources>
