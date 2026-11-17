@@ -94,6 +94,8 @@ class ViewerViewModel(
     private var bound = false
     /** The asset this viewer was opened on (a version stack's id for a stack). */
     val boundAssetId: String get() = session.boundId
+    /** "file" or "version_stack": what the viewer was opened on. */
+    val boundType: String get() = session.boundType
     private var fileJob: Job? = null
 
     fun bind(accountId: String, assetId: String, type: String) {

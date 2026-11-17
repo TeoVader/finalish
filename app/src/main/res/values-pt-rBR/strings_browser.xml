@@ -462,4 +462,9 @@
         <item quantity="many">Campo definido em %1$d arquivos</item>
         <item quantity="other">Campo definido em %1$d arquivos</item>
     </plurals>
+    <plurals name="browser_msg_stacks_not_deleted">
+        <item quantity="one">%1$d pilha de versões não excluída: pilhas só podem ser excluídas na web</item>
+        <item quantity="many">%1$d pilhas de versões não excluídas: pilhas só podem ser excluídas na web</item>
+        <item quantity="other">%1$d pilhas de versões não excluídas: pilhas só podem ser excluídas na web</item>
+    </plurals>
 </resources>
