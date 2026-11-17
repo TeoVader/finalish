@@ -163,6 +163,7 @@
     <string name="viewer_version_move_up">Nach oben (neuer)</string>
     <string name="viewer_version_move_down">Nach unten (älter)</string>
     <string name="viewer_version_make_current">Zur aktuellen Version machen</string>
+    <string name="viewer_version_remove_from_stack">Aus dem Stapel entfernen</string>
     <string name="viewer_new_version">Neue Version</string>
     <string name="viewer_versions_reorder_hint">Über das ⋯ jeder Version: zur aktuellen machen oder nach oben bzw. unten verschieben.</string>
 
@@ -273,6 +274,7 @@
         <item quantity="other">%1$d Anhänge hochgeladen</item>
     </plurals>
     <string name="viewer_msg_version_order_updated">Versionsreihenfolge aktualisiert</string>
+    <string name="viewer_msg_version_removed_from_stack">Aus dem Stapel entfernt: jetzt eine eigene Datei im Ordner</string>
     <string name="viewer_msg_comment_deleted">Kommentar gelöscht</string>
     <string name="viewer_msg_no_frame">Noch kein Frame zum Aufnehmen</string>
     <string name="viewer_msg_still_saved">Standbild in Pictures/Finalish gespeichert</string>

@@ -169,6 +169,7 @@
     <string name="viewer_version_move_up">Mover para cima (mais recente)</string>
     <string name="viewer_version_move_down">Mover para baixo (mais antiga)</string>
     <string name="viewer_version_make_current">Tornar versão atual</string>
+    <string name="viewer_version_remove_from_stack">Remover da pilha</string>
     <string name="viewer_new_version">Nova versão</string>
     <string name="viewer_versions_reorder_hint">No ⋯ de cada versão: torne-a atual ou mova-a para cima ou para baixo.</string>
 
@@ -281,6 +282,7 @@
         <item quantity="other">%1$d anexos enviados</item>
     </plurals>
     <string name="viewer_msg_version_order_updated">Ordem das versões atualizada</string>
+    <string name="viewer_msg_version_removed_from_stack">Removida da pilha: agora é um arquivo separado na pasta</string>
     <string name="viewer_msg_comment_deleted">Comentário excluído</string>
     <string name="viewer_msg_no_frame">Ainda não há frame para capturar</string>
     <string name="viewer_msg_still_saved">Still salvo em Pictures/Finalish</string>
