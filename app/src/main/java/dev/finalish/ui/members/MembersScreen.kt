@@ -375,7 +375,8 @@ fun MembersScreen(
                         items(list, key = { it.user.id ?: it.user.email.orEmpty() }) { m ->
                             MemberRow(m, scope, onRole = { if (it == "admin") promoting = m else vm.onEvent(MembersEvent.SetRole(m, it)) }, onRemove = { removing = m }, modifier = Modifier.animateItem(), canManage = canManage)
                         }
-                        if (canManage) item(key = "roles-hint") {
+                        // The project roles' ladder; account roles are just admin or member, each described in its menu.
+                        if (canManage && scope != ACCOUNT_SCOPE) item(key = "roles-hint") {
                             Text(
                                 stringResource(R.string.members_roles_hint),
                                 style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
