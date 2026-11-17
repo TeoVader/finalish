@@ -354,9 +354,18 @@ class FrameioRepository(
     }
 
     suspend fun delete(account: String, asset: Asset) {
-        val r = api.delete(account, FrameioApi.kindPath(asset.type), asset.id)
-        if (!r.isSuccessful) throw retrofit2.HttpException(r)
+        deleteById(account, asset.type, asset.id)
         asset.parentId?.let { invalidateFolder(account, it) }
+    }
+
+    /**
+     * The V4 API documents no delete for version stacks: `DELETE version_stacks/{id}` answers 404.
+     * A stack is then deleted through the files endpoint.
+     */
+    private suspend fun deleteById(account: String, type: String, id: String) {
+        var r = api.delete(account, FrameioApi.kindPath(type), id)
+        if (r.code() == 404 && type == "version_stack") r = api.delete(account, "files", id)
+        if (!r.isSuccessful) throw retrofit2.HttpException(r)
     }
 
     suspend fun stackVersions(account: String, folder: String, fileIds: List<String>): Asset =
@@ -951,7 +960,7 @@ class FrameioRepository(
         val folder = versionStackParent(account, stackId) ?: error("Version stack $stackId has no parent folder")
         val ids = versionsNow(account, stackId).map { it.id }
         ids.chunked(100).forEach { bulk(api::bulkMove, account, "files", "file_ids", it, folder) }
-        runCatchingCancellable { api.delete(account, "version_stacks", stackId).also { if (!it.isSuccessful) throw retrofit2.HttpException(it) } }
+        runCatchingCancellable { deleteById(account, "version_stack", stackId) }
             .onFailure { dev.finalish.core.util.AppLog.w("Couldn't delete the empty stack: ${it.javaClass.simpleName}") }
         cache.invalidate("versions:$account:$stackId")
         invalidateFolder(account, folder)
