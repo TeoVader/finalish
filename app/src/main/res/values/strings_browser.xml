@@ -418,4 +418,15 @@
         <item quantity="one">Rating set on %1$d file</item>
         <item quantity="other">Rating set on %1$d files</item>
     </plurals>
+    <string name="browser_action_edit_fields">Edit fields…</string>
+    <string name="browser_bulk_fields_hint">Each change goes on every selected file. Empty rows: the files may have different values.</string>
+    <string name="browser_bulk_no_other_fields">This project has no other fields to edit.</string>
+    <plurals name="browser_bulk_fields_title">
+        <item quantity="one">Fields of %1$d file</item>
+        <item quantity="other">Fields of %1$d files</item>
+    </plurals>
+    <plurals name="browser_msg_field_set">
+        <item quantity="one">Field set on %1$d file</item>
+        <item quantity="other">Field set on %1$d files</item>
+    </plurals>
 </resources>
