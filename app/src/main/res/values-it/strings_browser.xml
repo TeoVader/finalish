@@ -417,4 +417,30 @@
         <item quantity="many">%1$d saltati</item>
         <item quantity="other">%1$d saltati</item>
     </plurals>
+    <string name="browser_action_set_status">Imposta stato…</string>
+    <string name="browser_action_rate">Valuta…</string>
+    <string name="browser_bulk_field_missing">Questi file non hanno questo campo in Frame.io.</string>
+    <string name="browser_bulk_clear_rating">Rimuovi valutazione</string>
+    <string name="browser_bulk_folders_skipped">Le cartelle restano come sono.</string>
+    <string name="browser_bulk_no_files">Nessun file nella selezione</string>
+    <plurals name="browser_bulk_status_title">
+        <item quantity="one">Stato di %1$d file</item>
+        <item quantity="many">Stato di %1$d file</item>
+        <item quantity="other">Stato di %1$d file</item>
+    </plurals>
+    <plurals name="browser_bulk_rating_title">
+        <item quantity="one">Valutazione di %1$d file</item>
+        <item quantity="many">Valutazione di %1$d file</item>
+        <item quantity="other">Valutazione di %1$d file</item>
+    </plurals>
+    <plurals name="browser_msg_status_set">
+        <item quantity="one">Stato impostato su %1$d file</item>
+        <item quantity="many">Stato impostato su %1$d file</item>
+        <item quantity="other">Stato impostato su %1$d file</item>
+    </plurals>
+    <plurals name="browser_msg_rating_set">
+        <item quantity="one">Valutazione impostata su %1$d file</item>
+        <item quantity="many">Valutazione impostata su %1$d file</item>
+        <item quantity="other">Valutazione impostata su %1$d file</item>
+    </plurals>
 </resources>

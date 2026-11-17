@@ -62,6 +62,8 @@ import androidx.compose.material.icons.rounded.GridView
 import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Layers
+import androidx.compose.material.icons.rounded.Flag
+import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.MoreHoriz
 import androidx.compose.material.icons.rounded.PhotoLibrary
@@ -120,6 +122,7 @@ import dev.finalish.core.data.BrowseLayout
 import dev.finalish.core.data.SortOrder
 import dev.finalish.core.model.Asset
 import dev.finalish.core.transfer.TransferState
+import dev.finalish.ui.components.RatingStars
 import dev.finalish.ui.components.AutoRefresh
 import dev.finalish.ui.components.EmptyState
 import dev.finalish.ui.components.ErrorState
@@ -208,6 +211,8 @@ fun FolderScreen(
     var newFolder by remember { mutableStateOf(false) }
     var renameTarget by remember { mutableStateOf<Asset?>(null) }
     var confirmDelete by remember { mutableStateOf<List<Asset>?>(null) }
+    // Status or Rating for the selection: (assets, true for status).
+    var bulkEdit by remember { mutableStateOf<Pair<List<Asset>, Boolean>?>(null) }
     var moveTargets by remember { mutableStateOf<Pair<List<Asset>, Boolean>?>(null) } // (assets, isCopy)
     var shareTargets by remember { mutableStateOf<List<Asset>?>(null) }
     var addToShareTargets by remember { mutableStateOf<List<Asset>?>(null) }
@@ -359,6 +364,8 @@ fun FolderScreen(
                     onCopy = { moveTargets = selected to true },
                     onRename = { renameTarget = selected.firstOrNull() },
                     onStack = { vm.stackAsVersions(selected) },
+                    onStatus = { bulkEdit = selected to true; vm.loadBulkFields(selected) },
+                    onRating = { bulkEdit = selected to false; vm.loadBulkFields(selected) },
                     onDelete = { confirmDelete = selected },
                     onDone = vm::clearSelection,
                 )
@@ -648,6 +655,18 @@ fun FolderScreen(
             dismissButton = { TextButton(onClick = { confirmDelete = null }) { Text(stringResource(R.string.browser_cancel)) } },
         )
     }
+    bulkEdit?.let { (list, isStatus) ->
+        val fields by vm.bulkFields.collectAsStateWithLifecycle()
+        BulkFieldDialog(
+            count = list.count { !it.isFolder },
+            skippedFolders = list.any { it.isFolder },
+            isStatus = isStatus,
+            fields = fields,
+            onStatus = { field, option -> bulkEdit = null; vm.setBulkStatus(list, field, option) },
+            onRating = { field, n -> bulkEdit = null; vm.setBulkRating(list, field, n) },
+            onDismiss = { bulkEdit = null },
+        )
+    }
     moveTargets?.let { (list, isCopy) ->
         FolderPickerSheet(
             accountId = accountId,
@@ -838,6 +857,8 @@ private fun SelectionActions(
     onCopy: () -> Unit,
     onRename: () -> Unit,
     onStack: () -> Unit,
+    onStatus: () -> Unit,
+    onRating: () -> Unit,
     onDelete: () -> Unit,
     onDone: () -> Unit = {},
 ) {
@@ -882,6 +903,16 @@ private fun SelectionActions(
                         text = { Text(stringResource(R.string.browser_action_copy_to)) }, leadingIcon = { Icon(Icons.Rounded.ContentCopy, null) },
                         enabled = selected.isNotEmpty(), onClick = { more = false; onCopy() },
                     )
+                    // Status and rating go on files and on each stack's current version; folders are skipped.
+                    val withFields = selected.any { !it.isFolder }
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.browser_action_set_status)) }, leadingIcon = { Icon(Icons.Rounded.Flag, null) },
+                        enabled = withFields, onClick = { more = false; onStatus() },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.browser_action_rate)) }, leadingIcon = { Icon(Icons.Rounded.StarOutline, null) },
+                        enabled = withFields, onClick = { more = false; onRating() },
+                    )
                     HorizontalDivider(color = Palette.Hairline)
                     // Files make a new stack; files plus one existing stack go into that stack.
                     val stacks = selected.filter { it.isVersionStack }
@@ -911,6 +942,70 @@ private fun SelectionActions(
                 .padding(horizontal = 14.dp, vertical = 12.dp),
         )
     }
+    }
+}
+
+/** Status or Rating for several files at once; the options come from one of the selected files. */
+@Composable
+private fun BulkFieldDialog(
+    count: Int,
+    skippedFolders: Boolean,
+    isStatus: Boolean,
+    fields: dev.finalish.core.data.Remote<FolderViewModel.BulkFields>,
+    onStatus: (dev.finalish.core.model.MetadataField, dev.finalish.core.model.SelectOption?) -> Unit,
+    onRating: (dev.finalish.core.model.MetadataField, Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val field = fields.data?.let { if (isStatus) it.status else it.rating }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = Palette.Surface2,
+        title = {
+            Text(pluralStringResource(if (isStatus) R.plurals.browser_bulk_status_title else R.plurals.browser_bulk_rating_title, count, count))
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                when {
+                    fields.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+                        androidx.compose.material3.CircularProgressIndicator(Modifier.size(28.dp), color = Palette.Accent, strokeWidth = 3.dp)
+                    }
+                    fields.error != null -> Text(fields.error, color = Palette.TextSecondary)
+                    field == null -> Text(stringResource(R.string.browser_bulk_field_missing), color = Palette.TextSecondary)
+                    isStatus -> {
+                        BulkStatusRow(stringResource(R.string.viewer_no_status), null) { onStatus(field, null) }
+                        field.options.forEach { opt ->
+                            BulkStatusRow(opt.displayName, dev.finalish.ui.theme.statusColor(opt.displayName)) { onStatus(field, opt) }
+                        }
+                    }
+                    else -> {
+                        Box(Modifier.fillMaxWidth().padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
+                            RatingStars(0, size = 36.dp, onChange = { n -> onRating(field, n) })
+                        }
+                        TextButton(onClick = { onRating(field, 0) }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                            Text(stringResource(R.string.browser_bulk_clear_rating), color = Palette.TextSecondary)
+                        }
+                    }
+                }
+                if (skippedFolders) Text(
+                    stringResource(R.string.browser_bulk_folders_skipped),
+                    style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary, modifier = Modifier.padding(top = 8.dp),
+                )
+            }
+        },
+        confirmButton = {},
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.browser_cancel)) } },
+    )
+}
+
+@Composable
+private fun BulkStatusRow(label: String, color: Color?, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).pressable(onClick, scaleTo = 0.98f).padding(horizontal = 8.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(8.dp).clip(RoundedCornerShape(50)).background(color ?: Palette.TextTertiary))
+        Spacer(Modifier.width(12.dp))
+        Text(label, style = MaterialTheme.typography.bodyLarge, color = if (color == null) Palette.TextSecondary else Palette.Text)
     }
 }
 

@@ -26,6 +26,8 @@ class FakeFrameio(cacheDir: File) {
     private val routes = HashMap<String, Pair<Int, String>>()
     /** Every request made, as "METHOD path". */
     val calls = mutableListOf<String>()
+    /** The body of every request that had one, as "METHOD path" to the JSON sent. */
+    val bodies = mutableListOf<Pair<String, String>>()
 
     fun on(route: String, json: String, code: Int = 200) {
         routes[route] = code to json
@@ -37,6 +39,7 @@ class FakeFrameio(cacheDir: File) {
             val req = chain.request()
             val key = "${req.method} ${req.url.encodedPath.removePrefix("/v4/")}"
             synchronized(calls) { calls += key }
+            req.body?.let { b -> val buf = okio.Buffer(); b.writeTo(buf); synchronized(bodies) { bodies += key to buf.readUtf8() } }
             val (code, body) = routes[key] ?: (404 to """{"errors":[{"detail":"Not found"}]}""")
             Response.Builder()
                 .request(req)

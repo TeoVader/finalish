@@ -396,4 +396,26 @@
         <item quantity="one">%1$d übersprungen</item>
         <item quantity="other">%1$d übersprungen</item>
     </plurals>
+    <string name="browser_action_set_status">Status festlegen…</string>
+    <string name="browser_action_rate">Bewerten…</string>
+    <string name="browser_bulk_field_missing">Diese Dateien haben dieses Feld in Frame.io nicht.</string>
+    <string name="browser_bulk_clear_rating">Bewertung entfernen</string>
+    <string name="browser_bulk_folders_skipped">Ordner bleiben unverändert.</string>
+    <string name="browser_bulk_no_files">Keine Dateien in der Auswahl</string>
+    <plurals name="browser_bulk_status_title">
+        <item quantity="one">Status für %1$d Datei</item>
+        <item quantity="other">Status für %1$d Dateien</item>
+    </plurals>
+    <plurals name="browser_bulk_rating_title">
+        <item quantity="one">Bewertung für %1$d Datei</item>
+        <item quantity="other">Bewertung für %1$d Dateien</item>
+    </plurals>
+    <plurals name="browser_msg_status_set">
+        <item quantity="one">Status für %1$d Datei festgelegt</item>
+        <item quantity="other">Status für %1$d Dateien festgelegt</item>
+    </plurals>
+    <plurals name="browser_msg_rating_set">
+        <item quantity="one">Bewertung für %1$d Datei festgelegt</item>
+        <item quantity="other">Bewertung für %1$d Dateien festgelegt</item>
+    </plurals>
 </resources>

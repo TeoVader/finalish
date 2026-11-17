@@ -423,4 +423,30 @@
         <item quantity="many">%1$d ignorés</item>
         <item quantity="other">%1$d ignorés</item>
     </plurals>
+    <string name="browser_action_set_status">Définir le statut…</string>
+    <string name="browser_action_rate">Noter…</string>
+    <string name="browser_bulk_field_missing">Ces fichiers n\'ont pas ce champ dans Frame.io.</string>
+    <string name="browser_bulk_clear_rating">Retirer la note</string>
+    <string name="browser_bulk_folders_skipped">Les dossiers restent inchangés.</string>
+    <string name="browser_bulk_no_files">Aucun fichier dans la sélection</string>
+    <plurals name="browser_bulk_status_title">
+        <item quantity="one">Statut de %1$d fichier</item>
+        <item quantity="many">Statut de %1$d fichiers</item>
+        <item quantity="other">Statut de %1$d fichiers</item>
+    </plurals>
+    <plurals name="browser_bulk_rating_title">
+        <item quantity="one">Note de %1$d fichier</item>
+        <item quantity="many">Note de %1$d fichiers</item>
+        <item quantity="other">Note de %1$d fichiers</item>
+    </plurals>
+    <plurals name="browser_msg_status_set">
+        <item quantity="one">Statut défini sur %1$d fichier</item>
+        <item quantity="many">Statut défini sur %1$d fichiers</item>
+        <item quantity="other">Statut défini sur %1$d fichiers</item>
+    </plurals>
+    <plurals name="browser_msg_rating_set">
+        <item quantity="one">Note définie sur %1$d fichier</item>
+        <item quantity="many">Note définie sur %1$d fichiers</item>
+        <item quantity="other">Note définie sur %1$d fichiers</item>
+    </plurals>
 </resources>

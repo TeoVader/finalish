@@ -396,4 +396,26 @@
         <item quantity="one">%1$d skipped</item>
         <item quantity="other">%1$d skipped</item>
     </plurals>
+    <string name="browser_action_set_status">Set status…</string>
+    <string name="browser_action_rate">Rate…</string>
+    <string name="browser_bulk_field_missing">These files have no such field in Frame.io.</string>
+    <string name="browser_bulk_clear_rating">Remove rating</string>
+    <string name="browser_bulk_folders_skipped">Folders are left as they are.</string>
+    <string name="browser_bulk_no_files">No files in the selection</string>
+    <plurals name="browser_bulk_status_title">
+        <item quantity="one">Status for %1$d file</item>
+        <item quantity="other">Status for %1$d files</item>
+    </plurals>
+    <plurals name="browser_bulk_rating_title">
+        <item quantity="one">Rating for %1$d file</item>
+        <item quantity="other">Rating for %1$d files</item>
+    </plurals>
+    <plurals name="browser_msg_status_set">
+        <item quantity="one">Status set on %1$d file</item>
+        <item quantity="other">Status set on %1$d files</item>
+    </plurals>
+    <plurals name="browser_msg_rating_set">
+        <item quantity="one">Rating set on %1$d file</item>
+        <item quantity="other">Rating set on %1$d files</item>
+    </plurals>
 </resources>
