@@ -429,4 +429,8 @@
         <item quantity="one">Feld für %1$d Datei festgelegt</item>
         <item quantity="other">Feld für %1$d Dateien festgelegt</item>
     </plurals>
+    <plurals name="browser_msg_stacks_not_deleted">
+        <item quantity="one">%1$d Versionsstapel nicht gelöscht: Stapel lassen sich nur im Web löschen</item>
+        <item quantity="other">%1$d Versionsstapel nicht gelöscht: Stapel lassen sich nur im Web löschen</item>
+    </plurals>
 </resources>

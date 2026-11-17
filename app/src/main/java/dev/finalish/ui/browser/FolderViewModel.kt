@@ -392,7 +392,12 @@ class FolderViewModel(
 
     fun rename(asset: Asset, name: String) = op(str(R.string.browser_msg_renamed)) { repo.rename(account, asset, name) }
 
-    fun delete(assets: List<Asset>) {
+    fun delete(all: List<Asset>) {
+        // The V4 API can't delete a version stack (404 on version_stacks/{id}): stacks are skipped and said so.
+        val stacks = all.count { it.isVersionStack }
+        val assets = all.filterNot { it.isVersionStack }
+        if (stacks > 0) viewModelScope.launch { _messages.emit(plural(R.plurals.browser_msg_stacks_not_deleted, stacks)) }
+        if (assets.isEmpty()) { clearSelection(); return }
         // Optimistic removal keeps the grid responsive.
         val ids = assets.map { it.id }.toSet()
         _remote.update { r -> r.copy(data = r.data?.filterNot { it.id in ids }) }

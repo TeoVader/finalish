@@ -462,4 +462,9 @@
         <item quantity="many">Champ défini sur %1$d fichiers</item>
         <item quantity="other">Champ défini sur %1$d fichiers</item>
     </plurals>
+    <plurals name="browser_msg_stacks_not_deleted">
+        <item quantity="one">%1$d pile de versions non supprimée : les piles se suppriment seulement sur le web</item>
+        <item quantity="many">%1$d piles de versions non supprimées : les piles se suppriment seulement sur le web</item>
+        <item quantity="other">%1$d piles de versions non supprimées : les piles se suppriment seulement sur le web</item>
+    </plurals>
 </resources>

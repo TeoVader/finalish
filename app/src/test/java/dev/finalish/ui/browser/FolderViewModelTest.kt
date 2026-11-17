@@ -174,4 +174,26 @@ class FolderViewModelTest : ViewModelTest() {
         // The fields sheet stays open on the same selection.
         assertEquals(setOf("c1"), vm.selection.value)
     }
+
+    @Test fun `deleting skips version stacks and says so`() {
+        frameio.on("DELETE accounts/acc/files/c1", "", code = 204)
+        val messages = record(vm.messages)
+        val file = dev.finalish.core.model.Asset("c1", type = "file", name = "clip.mov", parentId = "f1")
+        val stack = dev.finalish.core.model.Asset("s1", type = "version_stack", name = "cut", parentId = "f1")
+
+        vm.delete(listOf(file, stack))
+
+        assertTrue(frameio.calls.contains("DELETE accounts/acc/files/c1"))
+        assertTrue(frameio.calls.none { "version_stacks" in it && it.startsWith("DELETE") })
+        val skipped = app.resources.getQuantityString(dev.finalish.R.plurals.browser_msg_stacks_not_deleted, 1, 1)
+        assertTrue(awaitValue(messages) { it.size >= 2 }.contains(skipped))
+    }
+
+    @Test fun `a version stack has no Delete in its menu`() {
+        val stack = dev.finalish.core.model.Asset("s1", type = "version_stack", name = "cut")
+        val file = dev.finalish.core.model.Asset("c1", type = "file", name = "clip.mov")
+        val full = dev.finalish.core.model.FileAccess.Full
+        assertTrue(FileAction.Delete !in fileActionsFor(stack, full))
+        assertTrue(FileAction.Delete in fileActionsFor(file, full))
+    }
 }

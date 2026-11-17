@@ -462,4 +462,9 @@
         <item quantity="many">Campo establecido en %1$d archivos</item>
         <item quantity="other">Campo establecido en %1$d archivos</item>
     </plurals>
+    <plurals name="browser_msg_stacks_not_deleted">
+        <item quantity="one">%1$d pila de versiones no eliminada: las pilas solo se eliminan en la web</item>
+        <item quantity="many">%1$d pilas de versiones no eliminadas: las pilas solo se eliminan en la web</item>
+        <item quantity="other">%1$d pilas de versiones no eliminadas: las pilas solo se eliminan en la web</item>
+    </plurals>
 </resources>

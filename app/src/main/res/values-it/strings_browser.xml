@@ -456,4 +456,9 @@
         <item quantity="many">Campo impostato su %1$d file</item>
         <item quantity="other">Campo impostato su %1$d file</item>
     </plurals>
+    <plurals name="browser_msg_stacks_not_deleted">
+        <item quantity="one">%1$d pila di versioni non eliminata: le pile si eliminano solo dal web</item>
+        <item quantity="many">%1$d pile di versioni non eliminate: le pile si eliminano solo dal web</item>
+        <item quantity="other">%1$d pile di versioni non eliminate: le pile si eliminano solo dal web</item>
+    </plurals>
 </resources>
