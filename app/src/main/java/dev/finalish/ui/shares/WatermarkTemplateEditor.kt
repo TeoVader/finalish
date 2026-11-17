@@ -127,6 +127,7 @@ internal fun WatermarkTemplateEditorSheet(
 ) {
     val context = LocalContext.current
     val repo = remember { dev.finalish.FinalishApp.container(context).repository }
+    val res = androidx.compose.ui.platform.LocalResources.current
     val scope = rememberCoroutineScope()
     var draft by remember { mutableStateOf(template?.let(WatermarkDraft::of) ?: WatermarkDraft()) }
     var saving by remember { mutableStateOf(false) }
@@ -147,7 +148,7 @@ internal fun WatermarkTemplateEditorSheet(
                         .onFailure {
                             // Pro and Team allow one template: creating a second one is refused with 403.
                             val full = template == null && (it as? retrofit2.HttpException)?.code() == 403
-                            error = if (full) context.getString(R.string.shares_template_limit) else it.userMessage(context)
+                            error = if (full) res.getString(R.string.shares_template_limit) else it.userMessage(context)
                         }
                     saving = false
                 }
