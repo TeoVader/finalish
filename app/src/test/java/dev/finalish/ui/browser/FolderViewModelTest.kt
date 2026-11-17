@@ -122,4 +122,40 @@ class FolderViewModelTest : ViewModelTest() {
         assertTrue(vm.selection.value.isEmpty())
         assertEquals(listOf(app.resources.getQuantityString(dev.finalish.R.plurals.shares_couldnt_add_items, 3, 3)), awaitValue(messages) { it.isNotEmpty() })
     }
+
+    private val selection = listOf(
+        dev.finalish.core.model.Asset("c1", type = "file", name = "clip.mov", projectId = "pr"),
+        dev.finalish.core.model.Asset("s1", type = "version_stack", name = "cut", projectId = "pr", headVersion = dev.finalish.core.model.Asset("h1", name = "cut v3")),
+        dev.finalish.core.model.Asset("d1", type = "folder", name = "Dailies", projectId = "pr"),
+    )
+    private val status = dev.finalish.core.model.MetadataField(fieldType = "select", definitionId = "st", name = "Status", mutable = true)
+    private val rating = dev.finalish.core.model.MetadataField(fieldType = "rating", definitionId = "rt", name = "Rating", mutable = true)
+    private val metadataRoute = "PATCH accounts/acc/projects/pr/metadata/values"
+
+    @Test fun `a status goes on the selected files and each stack's current version in one call, folders left out`() {
+        frameio.on(metadataRoute, "{}")
+        val messages = record(vm.messages)
+
+        vm.setBulkStatus(selection, status, dev.finalish.core.model.SelectOption("approved", "Approved"))
+
+        val sent = frameio.bodies.filter { it.first == metadataRoute }.map { it.second }
+        assertEquals(1, sent.size)
+        assertTrue(sent.single(), sent.single().contains("""file_ids":["c1","h1"]"""))
+        assertTrue(sent.single(), sent.single().contains("""value":["approved"]"""))
+        assertEquals(listOf("Status set on 2 files"), awaitValue(messages) { it.isNotEmpty() })
+    }
+
+    @Test fun `no status sends an empty list`() {
+        frameio.on(metadataRoute, "{}")
+        vm.setBulkStatus(selection.take(1), status, null)
+        assertTrue(frameio.bodies.single { it.first == metadataRoute }.second.contains("""value":[]"""))
+    }
+
+    @Test fun `removing the rating clears it file by file`() {
+        frameio.on(metadataRoute, "{}")
+        vm.setBulkRating(selection, rating, 0)
+        val sent = frameio.bodies.filter { it.first == metadataRoute }.map { it.second }
+        assertEquals(2, sent.size)
+        assertTrue(sent[0].contains("""file_ids":["c1"]""") && sent[1].contains("""file_ids":["h1"]"""))
+    }
 }

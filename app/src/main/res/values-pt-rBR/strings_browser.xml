@@ -423,4 +423,30 @@
         <item quantity="many">%1$d ignorados</item>
         <item quantity="other">%1$d ignorados</item>
     </plurals>
+    <string name="browser_action_set_status">Definir status…</string>
+    <string name="browser_action_rate">Avaliar…</string>
+    <string name="browser_bulk_field_missing">Estes arquivos não têm este campo no Frame.io.</string>
+    <string name="browser_bulk_clear_rating">Remover avaliação</string>
+    <string name="browser_bulk_folders_skipped">As pastas ficam como estão.</string>
+    <string name="browser_bulk_no_files">Nenhum arquivo na seleção</string>
+    <plurals name="browser_bulk_status_title">
+        <item quantity="one">Status de %1$d arquivo</item>
+        <item quantity="many">Status de %1$d arquivos</item>
+        <item quantity="other">Status de %1$d arquivos</item>
+    </plurals>
+    <plurals name="browser_bulk_rating_title">
+        <item quantity="one">Avaliação de %1$d arquivo</item>
+        <item quantity="many">Avaliação de %1$d arquivos</item>
+        <item quantity="other">Avaliação de %1$d arquivos</item>
+    </plurals>
+    <plurals name="browser_msg_status_set">
+        <item quantity="one">Status definido em %1$d arquivo</item>
+        <item quantity="many">Status definido em %1$d arquivos</item>
+        <item quantity="other">Status definido em %1$d arquivos</item>
+    </plurals>
+    <plurals name="browser_msg_rating_set">
+        <item quantity="one">Avaliação definida em %1$d arquivo</item>
+        <item quantity="many">Avaliação definida em %1$d arquivos</item>
+        <item quantity="other">Avaliação definida em %1$d arquivos</item>
+    </plurals>
 </resources>

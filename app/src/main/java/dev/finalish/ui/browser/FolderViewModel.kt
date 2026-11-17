@@ -434,6 +434,64 @@ class FolderViewModel(
         }
     }
 
+    /** Status and Rating for the selection: the fields and their options, read from one of its files. */
+    data class BulkFields(val status: dev.finalish.core.model.MetadataField?, val rating: dev.finalish.core.model.MetadataField?)
+
+    private val _bulkFields = MutableStateFlow<Remote<BulkFields>>(Remote.loading())
+    val bulkFields = _bulkFields.asStateFlow()
+
+    /** The files whose metadata a selection changes: files, and each stack's current version. Folders are left out. */
+    private suspend fun metadataTargets(assets: List<Asset>): List<String> = assets.mapNotNull { a ->
+        when {
+            a.isFile -> a.id
+            a.isVersionStack -> a.headVersion?.id ?: repo.withThumbnail(account, a)?.headVersion?.id
+            else -> null
+        }
+    }.distinct()
+
+    fun loadBulkFields(assets: List<Asset>) {
+        _bulkFields.value = Remote.loading()
+        viewModelScope.launch {
+            dev.finalish.core.util.runCatchingCancellable {
+                val first = metadataTargets(assets.filterNot { it.isFolder }.take(1)).firstOrNull() ?: error(str(R.string.browser_bulk_no_files))
+                val meta = repo.fullMetadata(account, first)
+                BulkFields(meta.firstOrNull { it.isStatus && it.mutable }, meta.firstOrNull { it.isRating && it.mutable })
+            }
+                .onSuccess { _bulkFields.value = Remote(data = it, loading = false) }
+                .onFailure { _bulkFields.value = Remote(loading = false, error = it.userMessage()) }
+        }
+    }
+
+    /** Sets (or with null clears) the status of every file in [assets]. */
+    fun setBulkStatus(assets: List<Asset>, field: dev.finalish.core.model.MetadataField, option: dev.finalish.core.model.SelectOption?) =
+        bulkUpdate(assets, R.plurals.browser_msg_status_set) { ids ->
+            val value = kotlinx.serialization.json.JsonArray(listOfNotNull(option?.let { kotlinx.serialization.json.JsonPrimitive(it.id) }))
+            repo.updateMetadata(account, assets.first().projectId, ids, field.definitionId, value)
+        }
+
+    /** Sets the rating of every file in [assets]; 0 removes it. */
+    fun setBulkRating(assets: List<Asset>, field: dev.finalish.core.model.MetadataField, rating: Int) =
+        bulkUpdate(assets, R.plurals.browser_msg_rating_set) { ids ->
+            val projectId = assets.first().projectId
+            // Clearing only goes one file at a time (see clearMetadata); setting takes them all at once.
+            if (rating == 0) ids.forEach { repo.clearMetadata(account, projectId, it, field.definitionId) }
+            else repo.updateMetadata(account, projectId, ids, field.definitionId, kotlinx.serialization.json.JsonPrimitive(rating))
+        }
+
+    private fun bulkUpdate(assets: List<Asset>, @androidx.annotation.PluralsRes message: Int, block: suspend (List<String>) -> Unit) {
+        viewModelScope.launch {
+            _messages.report({ n: Int -> plural(message, n) }) {
+                val ids = metadataTargets(assets)
+                ids.chunked(100).forEach { block(it) }
+                ids.size
+            }
+            clearSelection()
+            repo.invalidateFolder(account, folderId)
+            refresh(force = true)
+            if (settings.value.flattenFolders) loadFlat()
+        }
+    }
+
     fun download(assets: List<Asset>) {
         viewModelScope.launch {
             assets.filterNot { it.isFolder }.forEach { asset ->
