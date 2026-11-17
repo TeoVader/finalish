@@ -443,4 +443,17 @@
         <item quantity="many">Valutazione impostata su %1$d file</item>
         <item quantity="other">Valutazione impostata su %1$d file</item>
     </plurals>
+    <string name="browser_action_edit_fields">Modifica campi…</string>
+    <string name="browser_bulk_fields_hint">Ogni modifica vale per tutti i file selezionati. Le righe sono vuote perché i file possono avere valori diversi.</string>
+    <string name="browser_bulk_no_other_fields">Questo progetto non ha altri campi da modificare.</string>
+    <plurals name="browser_bulk_fields_title">
+        <item quantity="one">Campi di %1$d file</item>
+        <item quantity="many">Campi di %1$d file</item>
+        <item quantity="other">Campi di %1$d file</item>
+    </plurals>
+    <plurals name="browser_msg_field_set">
+        <item quantity="one">Campo impostato su %1$d file</item>
+        <item quantity="many">Campo impostato su %1$d file</item>
+        <item quantity="other">Campo impostato su %1$d file</item>
+    </plurals>
 </resources>

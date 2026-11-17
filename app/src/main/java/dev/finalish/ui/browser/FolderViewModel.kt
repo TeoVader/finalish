@@ -435,7 +435,14 @@ class FolderViewModel(
     }
 
     /** Status and Rating for the selection: the fields and their options, read from one of its files. */
-    data class BulkFields(val status: dev.finalish.core.model.MetadataField?, val rating: dev.finalish.core.model.MetadataField?)
+    data class BulkFields(
+        val status: dev.finalish.core.model.MetadataField?,
+        val rating: dev.finalish.core.model.MetadataField?,
+        /** The other editable fields, with no value: the selected files may each have their own. */
+        val others: List<dev.finalish.core.model.MetadataField> = emptyList(),
+        /** Project members, to pick people in user fields. */
+        val people: List<dev.finalish.core.model.User> = emptyList(),
+    )
 
     private val _bulkFields = MutableStateFlow<Remote<BulkFields>>(Remote.loading())
     val bulkFields = _bulkFields.asStateFlow()
@@ -455,7 +462,11 @@ class FolderViewModel(
             dev.finalish.core.util.runCatchingCancellable {
                 val first = metadataTargets(assets.filterNot { it.isFolder }.take(1)).firstOrNull() ?: error(str(R.string.browser_bulk_no_files))
                 val meta = repo.fullMetadata(account, first)
-                BulkFields(meta.firstOrNull { it.isStatus && it.mutable }, meta.firstOrNull { it.isRating && it.mutable })
+                val others = meta.filter { it.mutable && !it.isStatus && !it.isRating && !it.name.equals("Seen By", ignoreCase = true) }
+                    .map { it.copy(value = null) }
+                val people = if (others.none { it.fieldType in USER_FIELD_TYPES }) emptyList()
+                else runCatching { repo.members(account, "projects", assets.first().projectId).map { it.user }.filter { it.id != null } }.getOrDefault(emptyList())
+                BulkFields(meta.firstOrNull { it.isStatus && it.mutable }, meta.firstOrNull { it.isRating && it.mutable }, others, people)
             }
                 .onSuccess { _bulkFields.value = Remote(data = it, loading = false) }
                 .onFailure { _bulkFields.value = Remote(loading = false, error = it.userMessage()) }
@@ -478,14 +489,31 @@ class FolderViewModel(
             else repo.updateMetadata(account, projectId, ids, field.definitionId, kotlinx.serialization.json.JsonPrimitive(rating))
         }
 
-    private fun bulkUpdate(assets: List<Asset>, @androidx.annotation.PluralsRes message: Int, block: suspend (List<String>) -> Unit) {
+    /**
+     * Sets any other field on every file in [assets]. [value] is what the API takes for the field's
+     * type; an empty list clears it (per file for scalar fields, as [setBulkRating] does).
+     */
+    fun setBulkField(assets: List<Asset>, field: dev.finalish.core.model.MetadataField, value: kotlinx.serialization.json.JsonElement) =
+        bulkUpdate(assets, R.plurals.browser_msg_field_set, keepSelection = true) { ids ->
+            val projectId = assets.first().projectId
+            val clearing = value is kotlinx.serialization.json.JsonArray && value.isEmpty()
+            if (clearing && field.fieldType !in LIST_FIELD_TYPES) ids.forEach { repo.clearMetadata(account, projectId, it, field.definitionId) }
+            else repo.updateMetadata(account, projectId, ids, field.definitionId, value)
+        }
+
+    private fun bulkUpdate(
+        assets: List<Asset>,
+        @androidx.annotation.PluralsRes message: Int,
+        keepSelection: Boolean = false,
+        block: suspend (List<String>) -> Unit,
+    ) {
         viewModelScope.launch {
             _messages.report({ n: Int -> plural(message, n) }) {
                 val ids = metadataTargets(assets)
                 ids.chunked(100).forEach { block(it) }
                 ids.size
             }
-            clearSelection()
+            if (!keepSelection) clearSelection()
             repo.invalidateFolder(account, folderId)
             refresh(force = true)
             if (settings.value.flattenFolders) loadFlat()
@@ -646,6 +674,10 @@ class FolderViewModel(
     }
 
     companion object {
+        private val USER_FIELD_TYPES = setOf("user_single", "user_multi", "users")
+        /** Fields whose value is a list: an empty list clears them for every file in one call. */
+        private val LIST_FIELD_TYPES = setOf("select", "select_multi") + USER_FIELD_TYPES
+
         val Factory = viewModelFactory {
             initializer {
                 val c = container

@@ -449,4 +449,17 @@
         <item quantity="many">Valoración establecida en %1$d archivos</item>
         <item quantity="other">Valoración establecida en %1$d archivos</item>
     </plurals>
+    <string name="browser_action_edit_fields">Editar campos…</string>
+    <string name="browser_bulk_fields_hint">Cada cambio se aplica a todos los archivos seleccionados. Las filas están vacías porque los archivos pueden tener valores distintos.</string>
+    <string name="browser_bulk_no_other_fields">Este proyecto no tiene otros campos que editar.</string>
+    <plurals name="browser_bulk_fields_title">
+        <item quantity="one">Campos de %1$d archivo</item>
+        <item quantity="many">Campos de %1$d archivos</item>
+        <item quantity="other">Campos de %1$d archivos</item>
+    </plurals>
+    <plurals name="browser_msg_field_set">
+        <item quantity="one">Campo establecido en %1$d archivo</item>
+        <item quantity="many">Campo establecido en %1$d archivos</item>
+        <item quantity="other">Campo establecido en %1$d archivos</item>
+    </plurals>
 </resources>

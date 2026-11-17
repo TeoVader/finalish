@@ -558,6 +558,40 @@ class ComponentsScreenshotTest {
         }
     }
 
+    /** Status, rating and the other fields for a selection of files (the folder's ⋯ menu). */
+    @Test fun bulkFields() = snap("bulk_fields") {
+        val status = dev.finalish.core.model.MetadataField(
+            fieldType = "select", definitionId = "st", name = "Status", mutable = true,
+            options = listOf(
+                dev.finalish.core.model.SelectOption("1", "Needs Review"),
+                dev.finalish.core.model.SelectOption("2", "In Progress"),
+                dev.finalish.core.model.SelectOption("3", "Approved"),
+            ),
+        )
+        val rating = dev.finalish.core.model.MetadataField(fieldType = "rating", definitionId = "rt", name = "Rating", mutable = true)
+        val others = listOf(
+            dev.finalish.core.model.MetadataField(fieldType = "select", definitionId = "ch", name = "Channel", mutable = true, options = listOf(dev.finalish.core.model.SelectOption("tv", "TV"), dev.finalish.core.model.SelectOption("web", "Web"))),
+            dev.finalish.core.model.MetadataField(fieldType = "text", definitionId = "nt", name = "Notes", mutable = true),
+            dev.finalish.core.model.MetadataField(fieldType = "toggle", definitionId = "fn", name = "Final", mutable = true),
+            dev.finalish.core.model.MetadataField(fieldType = "date", definitionId = "dl", name = "Deadline", mutable = true, value = kotlinx.serialization.json.JsonPrimitive("2026-12-01")),
+        )
+        val fields = dev.finalish.core.data.Remote(data = dev.finalish.ui.browser.FolderViewModel.BulkFields(status, rating, others), loading = false)
+        val dialog = Modifier.fillMaxWidth().clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(20.dp)
+        androidx.compose.foundation.layout.Box(dialog) {
+            dev.finalish.ui.browser.BulkFieldDialogContent(skippedFolders = true, isStatus = true, fields = fields, onStatus = { _, _ -> }, onRating = { _, _ -> })
+        }
+        androidx.compose.foundation.layout.Spacer(Modifier.height(12.dp))
+        androidx.compose.foundation.layout.Box(dialog) {
+            dev.finalish.ui.browser.BulkFieldDialogContent(skippedFolders = false, isStatus = false, fields = fields, onStatus = { _, _ -> }, onRating = { _, _ -> })
+        }
+        androidx.compose.foundation.layout.Spacer(Modifier.height(16.dp))
+        androidx.compose.foundation.layout.Box(Modifier.fillMaxWidth().clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface1).padding(top = 16.dp)) {
+            dev.finalish.ui.browser.BulkFieldsContent(3, skippedFolders = true, fields = fields, onDone = {}) { f ->
+                dev.finalish.ui.viewer.MetadataFieldRow(f, emptyMap(), {}, {}, {}, {}, {}, {}, {})
+            }
+        }
+    }
+
     @Test fun folderDownloadSheet() = snap("folder_download_sheet") {
         val f = { id: String, name: String, size: Long -> dev.finalish.core.transfer.RemoteFile(id, name, size) }
         val tree = dev.finalish.core.transfer.FolderTree(
