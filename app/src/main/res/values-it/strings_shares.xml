@@ -130,7 +130,7 @@
     <string name="shares_save">Salva</string>
     <string name="shares_rename_title">Rinomina condivisione</string>
     <string name="shares_passphrase_hint">Lascia vuoto per rimuoverla</string>
-    <string name="shares_watermark_template_intro">Ciò che ogni spettatore vede impresso sul contenuto. I modelli si creano su frame.io.</string>
+    <string name="shares_watermark_template_intro">Ciò che ogni spettatore vede impresso sul contenuto.</string>
     <string name="shares_selected_cd">Selezionato</string>
     <string name="shares_watermark_default_template">Il modello predefinito del workspace o dell\'account</string>
     <string name="shares_no_templates">Questo account non ha ancora modelli.</string>
@@ -278,6 +278,26 @@
     <string name="shares_opened_with_access_title">Aperto con il tuo accesso</string>
     <string name="shares_opened_with_access_body">Questo link di condivisione è del tuo account, quindi si è aperto come file o cartella con i tuoi permessi. Scadenza, passphrase, impostazione dei download e filigrana del link qui non valgono.</string>
     <string name="shares_open_link_in_browser">Apri il link di condivisione nel browser</string>
+    <string name="shares_new_template">Nuovo modello</string>
+    <string name="shares_edit_template">Modifica modello</string>
+    <string name="shares_template_name">Nome del modello</string>
+    <string name="shares_template_lines">Cosa mostra</string>
+    <string name="shares_template_custom_text">Testo fisso</string>
+    <string name="shares_template_position">Dove</string>
+    <string name="shares_template_size">Dimensione</string>
+    <string name="shares_template_opacity">Opacità: %1$d%%</string>
+    <string name="shares_template_size_small">Piccola</string>
+    <string name="shares_template_size_medium">Media</string>
+    <string name="shares_template_size_large">Grande</string>
+    <string name="shares_template_size_huge">Enorme</string>
+    <string name="shares_template_save">Salva modello</string>
+    <string name="shares_template_saved">Modello “%1$s” salvato</string>
+    <plurals name="shares_template_other_blocks">
+        <item quantity="one">Questo modello ha %1$d altro blocco, che resta com\'è.</item>
+        <item quantity="many">Questo modello ha altri %1$d blocchi, che restano come sono.</item>
+        <item quantity="other">Questo modello ha altri %1$d blocchi, che restano come sono.</item>
+    </plurals>
+    <string name="shares_template_limit">Il tuo piano non permette altri modelli (Pro e Team ne hanno uno). Modifica quello che hai.</string>
     <string name="members_role_account_admin_desc">Gestisce tutto l\'account: ogni workspace e progetto, le persone, la fatturazione e le impostazioni.</string>
     <string name="members_role_member_desc">Lavora nei workspace e nei progetti a cui è invitato.</string>
     <string name="members_make_admin_title">Rendere %1$s amministratore dell\'account?</string>

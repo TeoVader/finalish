@@ -564,10 +564,27 @@ data class WatermarkTemplate(
     }
 }
 
+/**
+ * One positioned chunk of text. Every documented field is kept, even those the app doesn't edit:
+ * saving a template replaces its blocks wholesale, so a block read and saved back must not lose any.
+ */
 @Serializable
 data class WatermarkBlock(
     val position: String? = null,
     @SerialName("data_points") val dataPoints: List<WatermarkDataPoint> = emptyList(),
+    val name: String? = null,
+    /** Opacity, above 0 up to 1. */
+    val alpha: Double? = null,
+    /** "small", "medium", "large" or "huge". */
+    @SerialName("font_size") val fontSize: String? = null,
+    @SerialName("position_reference_point") val positionReferencePoint: String? = null,
+    @SerialName("position_x") val positionX: Double? = null,
+    @SerialName("position_y") val positionY: Double? = null,
+    val rotation: Double? = null,
+    @SerialName("scroll_text") val scrollText: String? = null,
+    @SerialName("text_alignment") val textAlignment: String? = null,
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("text_shadow") val textShadow: Boolean? = null,
 )
 
 @Serializable

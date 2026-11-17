@@ -191,7 +191,7 @@ class ComponentsScreenshotTest {
             listOf(dev.finalish.core.model.WatermarkBlock("middle_center", listOf(dev.finalish.core.model.WatermarkDataPoint("custom_text", "CONFIDENTIAL", 1.0)))),
         )
         Column(Modifier.background(Palette.Surface1).padding(top = 12.dp)) {
-            dev.finalish.ui.shares.WatermarkTemplateList(listOf(wm, conf), "a") {}
+            dev.finalish.ui.shares.WatermarkTemplateList(listOf(wm, conf), "a", onPick = {})
         }
     }
 
@@ -655,6 +655,16 @@ class ComponentsScreenshotTest {
             dev.finalish.core.model.UserRole("commenter", User("u2", name = "Mira Solberg", email = "mira@example.com")),
             dev.finalish.core.model.UserRole("viewer", User("u3", name = "Teo Varga", email = "teo@example.com")),
         ).forEach { dev.finalish.ui.members.MemberRow(it, "projects", {}, {}, canManage = false) }
+    }
+
+    /** Share link › Watermark template › New template / edit. */
+    @Test fun watermarkEditor() = snap("watermark_editor") {
+        androidx.compose.foundation.layout.Box(Modifier.fillMaxWidth().clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface1).padding(top = 20.dp)) {
+            dev.finalish.ui.shares.WatermarkTemplateEditorContent(
+                draft = dev.finalish.ui.shares.WatermarkDraft(name = "Client review", lines = listOf("email", "timestamp", "custom_text"), customText = "CONFIDENTIAL", position = "bottom_right", fontSize = "medium", alpha = 0.6),
+                isNew = false, otherBlocks = 1, saving = false, error = null, onChange = {}, onSave = {},
+            )
+        }
     }
 
     /** Settings › People in the account, for an admin: roles to change, owner fixed, no Add or Remove. */

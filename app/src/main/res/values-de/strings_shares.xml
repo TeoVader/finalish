@@ -126,7 +126,7 @@
     <string name="shares_save">Speichern</string>
     <string name="shares_rename_title">Freigabe umbenennen</string>
     <string name="shares_passphrase_hint">Leer lassen zum Entfernen</string>
-    <string name="shares_watermark_template_intro">Was jeder Betrachter über die Medien eingeblendet sieht. Vorlagen werden auf frame.io erstellt.</string>
+    <string name="shares_watermark_template_intro">Was jeder Betrachter über die Medien eingeblendet sieht.</string>
     <string name="shares_selected_cd">Ausgewählt</string>
     <string name="shares_watermark_default_template">Standardvorlage des Workspace oder Kontos</string>
     <string name="shares_no_templates">Dieses Konto hat noch keine Vorlagen.</string>
@@ -273,6 +273,25 @@
     <string name="shares_opened_with_access_title">Mit deinem Zugriff geöffnet</string>
     <string name="shares_opened_with_access_body">Dieser Freigabelink gehört zu deinem Konto und wurde daher als Datei oder Ordner mit deinen eigenen Berechtigungen geöffnet. Ablaufdatum, Passphrase, Download-Einstellung und Wasserzeichen des Links gelten hier nicht.</string>
     <string name="shares_open_link_in_browser">Freigabelink im Browser öffnen</string>
+    <string name="shares_new_template">Neue Vorlage</string>
+    <string name="shares_edit_template">Vorlage bearbeiten</string>
+    <string name="shares_template_name">Name der Vorlage</string>
+    <string name="shares_template_lines">Was angezeigt wird</string>
+    <string name="shares_template_custom_text">Fester Text</string>
+    <string name="shares_template_position">Wo</string>
+    <string name="shares_template_size">Größe</string>
+    <string name="shares_template_opacity">Deckkraft: %1$d %%</string>
+    <string name="shares_template_size_small">Klein</string>
+    <string name="shares_template_size_medium">Mittel</string>
+    <string name="shares_template_size_large">Groß</string>
+    <string name="shares_template_size_huge">Riesig</string>
+    <string name="shares_template_save">Vorlage speichern</string>
+    <string name="shares_template_saved">Vorlage „%1$s“ gespeichert</string>
+    <plurals name="shares_template_other_blocks">
+        <item quantity="one">Diese Vorlage hat %1$d weiteren Block, der unverändert bleibt.</item>
+        <item quantity="other">Diese Vorlage hat %1$d weitere Blöcke, die unverändert bleiben.</item>
+    </plurals>
+    <string name="shares_template_limit">Ihr Tarif erlaubt keine weitere Vorlage (Pro und Team haben eine). Bearbeiten Sie stattdessen die vorhandene.</string>
     <string name="members_role_account_admin_desc">Verwaltet das ganze Konto: alle Workspaces und Projekte, Personen, Abrechnung und Einstellungen.</string>
     <string name="members_role_member_desc">Arbeitet in den Workspaces und Projekten, zu denen die Person eingeladen ist.</string>
     <string name="members_make_admin_title">%1$s zum Kontoadmin machen?</string>

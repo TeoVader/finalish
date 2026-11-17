@@ -132,7 +132,7 @@
     <string name="shares_save">Guardar</string>
     <string name="shares_rename_title">Cambiar nombre del enlace</string>
     <string name="shares_passphrase_hint">Déjalo vacío para quitarla</string>
-    <string name="shares_watermark_template_intro">Lo que cada espectador ve incrustado sobre el contenido. Las plantillas se crean en frame.io.</string>
+    <string name="shares_watermark_template_intro">Lo que cada espectador ve incrustado sobre el contenido.</string>
     <string name="shares_selected_cd">Seleccionado</string>
     <string name="shares_watermark_default_template">La plantilla predeterminada del espacio de trabajo o de la cuenta</string>
     <string name="shares_no_templates">Esta cuenta aún no tiene plantillas.</string>
@@ -282,6 +282,26 @@
     <string name="shares_opened_with_access_title">Abierto con tu acceso</string>
     <string name="shares_opened_with_access_body">Este enlace compartido es de tu cuenta, así que se abrió como el archivo o la carpeta con tus propios permisos. Su caducidad, frase de contraseña, ajuste de descargas y marca de agua no se aplican aquí.</string>
     <string name="shares_open_link_in_browser">Abrir el enlace compartido en el navegador</string>
+    <string name="shares_new_template">Nueva plantilla</string>
+    <string name="shares_edit_template">Editar plantilla</string>
+    <string name="shares_template_name">Nombre de la plantilla</string>
+    <string name="shares_template_lines">Qué muestra</string>
+    <string name="shares_template_custom_text">Texto fijo</string>
+    <string name="shares_template_position">Dónde</string>
+    <string name="shares_template_size">Tamaño</string>
+    <string name="shares_template_opacity">Opacidad: %1$d %%</string>
+    <string name="shares_template_size_small">Pequeño</string>
+    <string name="shares_template_size_medium">Mediano</string>
+    <string name="shares_template_size_large">Grande</string>
+    <string name="shares_template_size_huge">Enorme</string>
+    <string name="shares_template_save">Guardar plantilla</string>
+    <string name="shares_template_saved">Plantilla «%1$s» guardada</string>
+    <plurals name="shares_template_other_blocks">
+        <item quantity="one">Esta plantilla tiene %1$d bloque más, que se queda como está.</item>
+        <item quantity="many">Esta plantilla tiene %1$d bloques más, que se quedan como están.</item>
+        <item quantity="other">Esta plantilla tiene %1$d bloques más, que se quedan como están.</item>
+    </plurals>
+    <string name="shares_template_limit">Tu plan no permite más plantillas (Pro y Team tienen una). Edita la que ya tienes.</string>
     <string name="members_role_account_admin_desc">Gestiona toda la cuenta: cada espacio de trabajo y proyecto, las personas, la facturación y los ajustes.</string>
     <string name="members_role_member_desc">Trabaja en los espacios de trabajo y proyectos a los que está invitado.</string>
     <string name="members_make_admin_title">¿Hacer a %1$s admin. de la cuenta?</string>
