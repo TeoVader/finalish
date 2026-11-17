@@ -409,6 +409,7 @@ fun VersionsPanel(
     modifier: Modifier = Modifier,
     onReorder: ((file: Asset, above: Asset?, below: Asset?) -> Unit)? = null,
     onNewVersion: (() -> Unit)? = null,
+    onRemove: ((Asset) -> Unit)? = null,
 ) {
     var compareMode by remember { mutableStateOf(false) }
     var menuFor by remember { mutableStateOf<String?>(null) }
@@ -535,6 +536,10 @@ fun VersionsPanel(
                     androidx.compose.material3.DropdownMenuItem(
                         text = { Text(stringResource(R.string.viewer_version_make_current)) }, enabled = idx < versions.lastIndex,
                         onClick = { menuFor = null; onReorder?.invoke(v, versions.last(), null) },
+                    )
+                    if (onRemove != null) androidx.compose.material3.DropdownMenuItem(
+                        text = { Text(stringResource(R.string.viewer_version_remove_from_stack)) },
+                        onClick = { menuFor = null; onRemove(v) },
                     )
                 }
             }

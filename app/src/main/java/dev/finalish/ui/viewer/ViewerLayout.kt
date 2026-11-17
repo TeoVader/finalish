@@ -139,6 +139,7 @@ internal fun SidePanel(
                     PanelTab.Versions -> VersionsPanel(
                         state.versions, file.id, vm::selectVersion, onCompare,
                         onReorder = if (state.access.manage) vm::reorderVersion else null,
+                        onRemove = if (state.access.manage) vm::removeFromStack else null,
                         onNewVersion = if (state.access.manage) onNewVersion else null,
                     )
                 }

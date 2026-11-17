@@ -163,6 +163,7 @@
     <string name="viewer_version_move_up">Move up (newer)</string>
     <string name="viewer_version_move_down">Move down (older)</string>
     <string name="viewer_version_make_current">Make current version</string>
+    <string name="viewer_version_remove_from_stack">Remove from stack</string>
     <string name="viewer_new_version">New version</string>
     <string name="viewer_versions_reorder_hint">From each version\'s ⋯: make it current, or move it up or down.</string>
 
@@ -273,6 +274,7 @@
         <item quantity="other">%1$d attachments uploaded</item>
     </plurals>
     <string name="viewer_msg_version_order_updated">Version order updated</string>
+    <string name="viewer_msg_version_removed_from_stack">Removed from the stack: it\'s now a separate file in the folder</string>
     <string name="viewer_msg_comment_deleted">Comment deleted</string>
     <string name="viewer_msg_no_frame">No frame to capture yet</string>
     <string name="viewer_msg_still_saved">Still saved to Pictures/Finalish</string>

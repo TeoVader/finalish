@@ -370,6 +370,25 @@ class ViewerViewModel(
         }
     }
 
+    /**
+     * Removes a version from the stack (it becomes a separate file in the stack's folder). If it was
+     * on screen, the viewer moves to the stack's current version.
+     */
+    fun removeFromStack(file: Asset) {
+        if (session.boundType != "version_stack") return
+        val before = _state.value.versions
+        if (before.size < 2 || file !in before) return
+        val rest = before - file
+        _state.update { it.copy(versions = rest) }
+        viewModelScope.launch {
+            _messages.report({ _: String -> session.str(R.string.viewer_msg_version_removed_from_stack) }) {
+                repo.removeFromStack(account, session.boundId, file.id)
+            }
+                .onSuccess { if (_state.value.file?.id == file.id) selectVersion(rest.last()) }
+                .onFailure { _state.update { s -> s.copy(versions = before) } }
+        }
+    }
+
     val accountId: String get() = account
 
     // ---- Comments and composer (ViewerComments) -----------------------------

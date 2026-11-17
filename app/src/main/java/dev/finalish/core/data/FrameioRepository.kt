@@ -905,6 +905,18 @@ class FrameioRepository(
         return r.data
     }
 
+    /**
+     * Takes [fileId] out of its version stack: Frame.io has no "unstack" call, so the file is moved
+     * into the folder that holds the stack, next to it. Returns that folder's id.
+     */
+    suspend fun removeFromStack(account: String, stackId: String, fileId: String): String {
+        val folder = versionStackParent(account, stackId) ?: error("Version stack $stackId has no parent folder")
+        api.move(account, "files", fileId, body { putJsonObject("data") { put("parent_id", folder) } })
+        cache.invalidate("versions:$account:$stackId")
+        invalidateFolder(account, folder)
+        return folder
+    }
+
     /** One page of search results; returns the results and the next cursor. */
     suspend fun searchPage(
         account: String, query: String, semantic: Boolean, after: String?,
