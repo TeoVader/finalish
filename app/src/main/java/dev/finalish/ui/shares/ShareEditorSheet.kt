@@ -652,7 +652,7 @@ fun ShareEditorSheet(
                 editingTemplate = null
                 creatingTemplate = false
                 templates = templates.orEmpty().filterNot { it.id == saved.id }.plus(saved).sortedBy { it.name.lowercase() }
-                notify(context.getString(R.string.shares_template_saved, saved.name))
+                notify(res.getString(R.string.shares_template_saved, saved.name))
             },
             onDismiss = { editingTemplate = null; creatingTemplate = false },
         )
