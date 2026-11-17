@@ -410,8 +410,10 @@ fun VersionsPanel(
     onReorder: ((file: Asset, above: Asset?, below: Asset?) -> Unit)? = null,
     onNewVersion: (() -> Unit)? = null,
     onRemove: ((Asset) -> Unit)? = null,
+    onUnstack: (() -> Unit)? = null,
 ) {
     var compareMode by remember { mutableStateOf(false) }
+    var confirmUnstack by remember { mutableStateOf(false) }
     var menuFor by remember { mutableStateOf<String?>(null) }
     var picked by remember { mutableStateOf<List<String>>(emptyList()) }
     LazyColumn(modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -544,7 +546,7 @@ fun VersionsPanel(
                 }
             }
         }
-        if (onNewVersion != null || onReorder != null) item(key = "footer") {
+        if (onNewVersion != null || onReorder != null || onUnstack != null) item(key = "footer") {
             Column(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 if (onNewVersion != null) {
                     Row(
@@ -562,10 +564,24 @@ fun VersionsPanel(
                     Text(
                         stringResource(R.string.viewer_versions_reorder_hint),
                         style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         modifier = Modifier.padding(top = 10.dp),
                     )
+                }
+                if (onUnstack != null && versions.isNotEmpty()) {
+                    androidx.compose.material3.TextButton(onClick = { confirmUnstack = true }, modifier = Modifier.padding(top = 4.dp)) {
+                        Text(stringResource(R.string.viewer_unstack), color = Palette.TextSecondary)
+                    }
                 }
             }
         }
     }
+    if (confirmUnstack && onUnstack != null) androidx.compose.material3.AlertDialog(
+        onDismissRequest = { confirmUnstack = false },
+        containerColor = Palette.Surface2,
+        title = { Text(stringResource(R.string.viewer_unstack_title)) },
+        text = { Text(pluralStringResource(R.plurals.viewer_unstack_body, versions.size, versions.size), color = Palette.TextSecondary) },
+        confirmButton = { androidx.compose.material3.TextButton(onClick = { confirmUnstack = false; onUnstack() }) { Text(stringResource(R.string.viewer_unstack)) } },
+        dismissButton = { androidx.compose.material3.TextButton(onClick = { confirmUnstack = false }) { Text(stringResource(R.string.viewer_cancel)) } },
+    )
 }

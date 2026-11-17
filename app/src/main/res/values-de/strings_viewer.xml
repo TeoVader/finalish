@@ -165,7 +165,7 @@
     <string name="viewer_version_make_current">Zur aktuellen Version machen</string>
     <string name="viewer_version_remove_from_stack">Aus dem Stapel entfernen</string>
     <string name="viewer_new_version">Neue Version</string>
-    <string name="viewer_versions_reorder_hint">Über das ⋯ jeder Version: zur aktuellen machen oder nach oben bzw. unten verschieben.</string>
+    <string name="viewer_versions_reorder_hint">Über das ⋯ jeder Version: zur aktuellen machen, nach oben oder unten verschieben oder aus dem Stapel entfernen.</string>
 
     <!-- Media stage -->
     <string name="viewer_pin_comment">Kommentar %1$d</string>
@@ -295,5 +295,15 @@
     <plurals name="viewer_zip_more">
         <item quantity="one">+ %1$d weitere</item>
         <item quantity="other">+ %1$d weitere</item>
+    </plurals>
+    <string name="viewer_unstack">Stapel auflösen</string>
+    <string name="viewer_unstack_title">Stapel auflösen?</string>
+    <plurals name="viewer_unstack_body">
+        <item quantity="one">Seine einzige Version wird eine eigene Datei im Ordner, mit ihren Kommentaren. Frame.io behält aber den leeren Stapel: im Web löschen.</item>
+        <item quantity="other">Seine %1$d Versionen werden eigene Dateien im Ordner, jeweils mit ihren Kommentaren. Frame.io behält aber den leeren Stapel: im Web löschen.</item>
+    </plurals>
+    <plurals name="viewer_msg_unstacked">
+        <item quantity="one">Stapel aufgelöst: %1$d Datei ist draußen. Der leere Stapel bleibt: im Web löschen.</item>
+        <item quantity="other">Stapel aufgelöst: %1$d Dateien sind draußen. Der leere Stapel bleibt: im Web löschen.</item>
     </plurals>
 </resources>

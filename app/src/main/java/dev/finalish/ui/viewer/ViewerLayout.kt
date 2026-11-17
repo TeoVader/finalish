@@ -77,7 +77,8 @@ internal fun SidePanel(
     val tabs = buildList {
         add(PanelTab.Comments)
         add(PanelTab.Info)
-        if (state.versions.size > 1) add(PanelTab.Versions)
+        // A stack shows it even with one version left, where it can still be unstacked.
+        if (state.versions.size > 1 || (vm.onStack && state.versions.isNotEmpty())) add(PanelTab.Versions)
     }
     // Keep the selected comment in view (e.g. after tapping a timeline marker).
     LaunchedEffect(state.selectedCommentId) {
@@ -141,6 +142,7 @@ internal fun SidePanel(
                         onReorder = if (state.access.manage) vm::reorderVersion else null,
                         onRemove = if (state.access.manage) vm::removeFromStack else null,
                         onNewVersion = if (state.access.manage) onNewVersion else null,
+                        onUnstack = if (state.access.manage && vm.onStack) vm::unstack else null,
                     )
                 }
             }

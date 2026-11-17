@@ -142,7 +142,7 @@ class ComponentsScreenshotTest {
             dev.finalish.core.model.Asset("v2", name = "Full Spot - Graded.mp4", mediaType = "video/mp4", creator = me, metadata = listOf(comments(3))),
         )
         androidx.compose.foundation.layout.Box(Modifier.height(560.dp)) {
-            dev.finalish.ui.viewer.VersionsPanel(versions, "v1", {}, { _, _ -> }, onReorder = { _, _, _ -> }, onNewVersion = {})
+            dev.finalish.ui.viewer.VersionsPanel(versions, "v1", {}, { _, _ -> }, onReorder = { _, _, _ -> }, onNewVersion = {}, onUnstack = {})
         }
     }
 

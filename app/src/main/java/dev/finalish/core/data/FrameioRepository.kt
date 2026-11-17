@@ -942,6 +942,21 @@ class FrameioRepository(
         return folder
     }
 
+    /**
+     * Breaks a version stack up: every version moves into the stack's folder as a separate file.
+     * Frame.io keeps the emptied stack, and the V4 API can't delete a stack (404 on
+     * `version_stacks/{id}`, 422 on `files/{id}`), so it stays until deleted on the web.
+     * Returns how many files moved.
+     */
+    suspend fun unstack(account: String, stackId: String): Int {
+        val folder = versionStackParent(account, stackId) ?: error("Version stack $stackId has no parent folder")
+        val ids = versionsNow(account, stackId).map { it.id }
+        ids.chunked(100).forEach { bulk(api::bulkMove, account, "files", "file_ids", it, folder) }
+        cache.invalidate("versions:$account:$stackId")
+        invalidateFolder(account, folder)
+        return ids.size
+    }
+
     /** One page of search results; returns the results and the next cursor. */
     suspend fun searchPage(
         account: String, query: String, semantic: Boolean, after: String?,
