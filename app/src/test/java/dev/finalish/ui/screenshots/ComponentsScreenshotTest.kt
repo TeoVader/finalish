@@ -191,7 +191,7 @@ class ComponentsScreenshotTest {
             listOf(dev.finalish.core.model.WatermarkBlock("middle_center", listOf(dev.finalish.core.model.WatermarkDataPoint("custom_text", "CONFIDENTIAL", 1.0)))),
         )
         Column(Modifier.background(Palette.Surface1).padding(top = 12.dp)) {
-            dev.finalish.ui.shares.WatermarkTemplateList(listOf(wm, conf), "a") {}
+            dev.finalish.ui.shares.WatermarkTemplateList(listOf(wm, conf), "a", onPick = {})
         }
     }
 
