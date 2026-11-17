@@ -389,6 +389,10 @@ class ViewerViewModel(
         }
     }
 
+    /** Whether the viewer was opened on a version stack (which can be unstacked). */
+    val onStack: Boolean get() = session.boundType == "version_stack"
+    fun unstack() = actions.unstack()
+
     val accountId: String get() = account
 
     // ---- Comments and composer (ViewerComments) -----------------------------

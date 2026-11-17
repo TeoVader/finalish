@@ -143,6 +143,15 @@ internal class ViewerFileActions(private val session: ViewerSession, private val
         }
     }
 
+    /** "Unstack": every version becomes a separate file in the folder; the stack is gone, so the viewer closes. */
+    fun unstack() {
+        if (session.boundType != "version_stack") return
+        scope.launch {
+            messages.report({ n: Int -> session.plural(R.plurals.viewer_msg_unstacked, n) }) { repo.unstack(account, session.boundId) }
+                .onSuccess { _closed.emit(Unit) }
+        }
+    }
+
     fun moveTo(folderId: String, folderName: String) {
         val a = session.browsedAsset() ?: return
         scope.launch {

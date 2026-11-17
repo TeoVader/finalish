@@ -170,7 +170,7 @@
     <string name="viewer_version_make_current">Définir comme version actuelle</string>
     <string name="viewer_version_remove_from_stack">Retirer de la pile</string>
     <string name="viewer_new_version">Nouvelle version</string>
-    <string name="viewer_versions_reorder_hint">Depuis le menu ⋯ de chaque version : définissez-la comme actuelle, ou montez-la ou descendez-la.</string>
+    <string name="viewer_versions_reorder_hint">Depuis le menu ⋯ de chaque version : définissez-la comme actuelle, montez-la, descendez-la ou retirez-la de la pile.</string>
 
     <!-- Media stage -->
     <string name="viewer_pin_comment">Commentaire %1$d</string>
@@ -303,5 +303,17 @@
         <item quantity="one">+ %1$d autre</item>
         <item quantity="many">+ %1$d autres</item>
         <item quantity="other">+ %1$d autres</item>
+    </plurals>
+    <string name="viewer_unstack">Défaire la pile</string>
+    <string name="viewer_unstack_title">Défaire cette pile ?</string>
+    <plurals name="viewer_unstack_body">
+        <item quantity="one">Sa version devient un fichier distinct dans le dossier, avec ses commentaires.</item>
+        <item quantity="many">Ses %1$d versions deviennent des fichiers distincts dans le dossier, chacun avec ses commentaires.</item>
+        <item quantity="other">Ses %1$d versions deviennent des fichiers distincts dans le dossier, chacun avec ses commentaires.</item>
+    </plurals>
+    <plurals name="viewer_msg_unstacked">
+        <item quantity="one">Pile défaite : %1$d fichier est maintenant dans le dossier</item>
+        <item quantity="many">Pile défaite : %1$d fichiers sont maintenant dans le dossier</item>
+        <item quantity="other">Pile défaite : %1$d fichiers sont maintenant dans le dossier</item>
     </plurals>
 </resources>

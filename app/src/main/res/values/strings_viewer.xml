@@ -165,7 +165,7 @@
     <string name="viewer_version_make_current">Make current version</string>
     <string name="viewer_version_remove_from_stack">Remove from stack</string>
     <string name="viewer_new_version">New version</string>
-    <string name="viewer_versions_reorder_hint">From each version\'s ⋯: make it current, or move it up or down.</string>
+    <string name="viewer_versions_reorder_hint">From each version\'s ⋯: make it current, move it up or down, or remove it from the stack.</string>
 
     <!-- Media stage -->
     <string name="viewer_pin_comment">Comment %1$d</string>
@@ -295,5 +295,15 @@
     <plurals name="viewer_zip_more">
         <item quantity="one">+ %1$d more</item>
         <item quantity="other">+ %1$d more</item>
+    </plurals>
+    <string name="viewer_unstack">Unstack</string>
+    <string name="viewer_unstack_title">Unstack these versions?</string>
+    <plurals name="viewer_unstack_body">
+        <item quantity="one">Its version becomes a separate file in the folder, with its comments.</item>
+        <item quantity="other">Its %1$d versions become separate files in the folder, each with its comments.</item>
+    </plurals>
+    <plurals name="viewer_msg_unstacked">
+        <item quantity="one">Unstacked: %1$d file is now in the folder</item>
+        <item quantity="other">Unstacked: %1$d files are now in the folder</item>
     </plurals>
 </resources>

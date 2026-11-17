@@ -171,7 +171,7 @@
     <string name="viewer_version_make_current">Tornar versão atual</string>
     <string name="viewer_version_remove_from_stack">Remover da pilha</string>
     <string name="viewer_new_version">Nova versão</string>
-    <string name="viewer_versions_reorder_hint">No ⋯ de cada versão: torne-a atual ou mova-a para cima ou para baixo.</string>
+    <string name="viewer_versions_reorder_hint">No ⋯ de cada versão: torne-a atual, mova-a para cima ou para baixo ou remova-a da pilha.</string>
 
     <!-- Media stage -->
     <string name="viewer_pin_comment">Comentário %1$d</string>
@@ -304,5 +304,17 @@
         <item quantity="one">+ %1$d a mais</item>
         <item quantity="many">+ %1$d a mais</item>
         <item quantity="other">+ %1$d a mais</item>
+    </plurals>
+    <string name="viewer_unstack">Desfazer pilha</string>
+    <string name="viewer_unstack_title">Desfazer a pilha?</string>
+    <plurals name="viewer_unstack_body">
+        <item quantity="one">Sua versão vira um arquivo separado na pasta, com seus comentários.</item>
+        <item quantity="many">Suas %1$d versões viram arquivos separados na pasta, cada um com seus comentários.</item>
+        <item quantity="other">Suas %1$d versões viram arquivos separados na pasta, cada um com seus comentários.</item>
+    </plurals>
+    <plurals name="viewer_msg_unstacked">
+        <item quantity="one">Pilha desfeita: %1$d arquivo agora está na pasta</item>
+        <item quantity="many">Pilha desfeita: %1$d arquivos agora estão na pasta</item>
+        <item quantity="other">Pilha desfeita: %1$d arquivos agora estão na pasta</item>
     </plurals>
 </resources>

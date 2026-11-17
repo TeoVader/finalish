@@ -170,7 +170,7 @@
     <string name="viewer_version_make_current">Rendi versione attuale</string>
     <string name="viewer_version_remove_from_stack">Rimuovi dalla pila</string>
     <string name="viewer_new_version">Nuova versione</string>
-    <string name="viewer_versions_reorder_hint">Dal menu ⋯ di ogni versione: rendila attuale o spostala su o giù.</string>
+    <string name="viewer_versions_reorder_hint">Dal menu ⋯ di ogni versione: rendila attuale, spostala su o giù o rimuovila dalla pila.</string>
 
     <!-- Media stage -->
     <string name="viewer_pin_comment">Commento %1$d</string>
@@ -303,5 +303,17 @@
         <item quantity="one">+ %1$d altro</item>
         <item quantity="many">+ altri %1$d</item>
         <item quantity="other">+ altri %1$d</item>
+    </plurals>
+    <string name="viewer_unstack">Sciogli pila</string>
+    <string name="viewer_unstack_title">Sciogliere la pila?</string>
+    <plurals name="viewer_unstack_body">
+        <item quantity="one">La sua versione diventa un file a sé nella cartella, con i suoi commenti.</item>
+        <item quantity="many">Le sue %1$d versioni diventano file separati nella cartella, ognuno con i suoi commenti.</item>
+        <item quantity="other">Le sue %1$d versioni diventano file separati nella cartella, ognuno con i suoi commenti.</item>
+    </plurals>
+    <plurals name="viewer_msg_unstacked">
+        <item quantity="one">Pila sciolta: %1$d file ora è nella cartella</item>
+        <item quantity="many">Pila sciolta: %1$d file ora sono nella cartella</item>
+        <item quantity="other">Pila sciolta: %1$d file ora sono nella cartella</item>
     </plurals>
 </resources>

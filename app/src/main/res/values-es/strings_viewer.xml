@@ -170,7 +170,7 @@
     <string name="viewer_version_make_current">Convertir en versión actual</string>
     <string name="viewer_version_remove_from_stack">Quitar de la pila</string>
     <string name="viewer_new_version">Nueva versión</string>
-    <string name="viewer_versions_reorder_hint">Desde el menú ⋯ de cada versión: conviértela en actual o muévela arriba o abajo.</string>
+    <string name="viewer_versions_reorder_hint">Desde el menú ⋯ de cada versión: conviértela en actual, muévela arriba o abajo o quítala de la pila.</string>
 
     <!-- Media stage -->
     <string name="viewer_pin_comment">Comentario %1$d</string>
@@ -303,5 +303,17 @@
         <item quantity="one">+ %1$d más</item>
         <item quantity="many">+ %1$d más</item>
         <item quantity="other">+ %1$d más</item>
+    </plurals>
+    <string name="viewer_unstack">Deshacer pila</string>
+    <string name="viewer_unstack_title">¿Deshacer la pila?</string>
+    <plurals name="viewer_unstack_body">
+        <item quantity="one">Su versión pasa a ser un archivo aparte en la carpeta, con sus comentarios.</item>
+        <item quantity="many">Sus %1$d versiones pasan a ser archivos aparte en la carpeta, cada uno con sus comentarios.</item>
+        <item quantity="other">Sus %1$d versiones pasan a ser archivos aparte en la carpeta, cada uno con sus comentarios.</item>
+    </plurals>
+    <plurals name="viewer_msg_unstacked">
+        <item quantity="one">Pila deshecha: %1$d archivo está ahora en la carpeta</item>
+        <item quantity="many">Pila deshecha: %1$d archivos están ahora en la carpeta</item>
+        <item quantity="other">Pila deshecha: %1$d archivos están ahora en la carpeta</item>
     </plurals>
 </resources>

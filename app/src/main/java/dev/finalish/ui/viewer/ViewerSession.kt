@@ -29,6 +29,8 @@ internal class ViewerSession(
     fun str(@androidx.annotation.StringRes id: Int, vararg args: Any): String =
         if (args.isEmpty()) app.getString(id) else app.getString(id, *args)
 
+    fun plural(@androidx.annotation.PluralsRes id: Int, n: Int): String = app.resources.getQuantityString(id, n, n)
+
     /** Frames per second: decoder info first, then the file's metadata, then 24. */
     fun fps(): Double {
         player.frameRate.takeIf { it > 1f }?.let { return it.toDouble() }
