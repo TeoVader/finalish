@@ -164,7 +164,8 @@ fun AssetActionsSheet(
                             Group {
                                 ActionRow(Icons.Rounded.DriveFileRenameOutline, stringResource(R.string.viewer_action_rename)) { onDismiss(); onRename() }
                             }
-                            Group {
+                            // A stack can't be deleted through the API (only on the web).
+                            if (vm.boundType != "version_stack") Group {
                                 ActionRow(Icons.Rounded.DeleteOutline, stringResource(R.string.viewer_action_delete), danger = true) { onDismiss(); onDelete() }
                             }
                         }

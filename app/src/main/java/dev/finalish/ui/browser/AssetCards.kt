@@ -275,7 +275,11 @@ fun fileActionsFor(asset: Asset, access: dev.finalish.core.model.FileAccess): Li
     }
     // Who can open this folder (restricted folders have their own members).
     if (asset.isFolder) add(FileAction.Members)
-    if (access.manage) { add(FileAction.Rename); add(FileAction.Move); add(FileAction.Copy); add(FileAction.Delete) }
+    if (access.manage) {
+        add(FileAction.Rename); add(FileAction.Move); add(FileAction.Copy)
+        // The V4 API can't delete a version stack (404 on version_stacks/{id}): only on the web.
+        if (!asset.isVersionStack) add(FileAction.Delete)
+    }
 }
 
 /** "⋯" on a card: a small menu that opens from where you tapped (mockup's context menu). */

@@ -429,4 +429,8 @@
         <item quantity="one">Field set on %1$d file</item>
         <item quantity="other">Field set on %1$d files</item>
     </plurals>
+    <plurals name="browser_msg_stacks_not_deleted">
+        <item quantity="one">%1$d version stack wasn\'t deleted: stacks can only be deleted on the web</item>
+        <item quantity="other">%1$d version stacks weren\'t deleted: stacks can only be deleted on the web</item>
+    </plurals>
 </resources>
