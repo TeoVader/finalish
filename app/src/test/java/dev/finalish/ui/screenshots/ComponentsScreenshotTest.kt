@@ -576,13 +576,13 @@ class ComponentsScreenshotTest {
             dev.finalish.core.model.MetadataField(fieldType = "date", definitionId = "dl", name = "Deadline", mutable = true, value = kotlinx.serialization.json.JsonPrimitive("2026-12-01")),
         )
         val fields = dev.finalish.core.data.Remote(data = dev.finalish.ui.browser.FolderViewModel.BulkFields(status, rating, others), loading = false)
-        androidx.compose.foundation.layout.Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
-            androidx.compose.foundation.layout.Box(Modifier.weight(1f).clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(20.dp)) {
-                dev.finalish.ui.browser.BulkFieldDialogContent(skippedFolders = true, isStatus = true, fields = fields, onStatus = { _, _ -> }, onRating = { _, _ -> })
-            }
-            androidx.compose.foundation.layout.Box(Modifier.weight(1f).clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(20.dp)) {
-                dev.finalish.ui.browser.BulkFieldDialogContent(skippedFolders = false, isStatus = false, fields = fields, onStatus = { _, _ -> }, onRating = { _, _ -> })
-            }
+        val dialog = Modifier.fillMaxWidth().clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface2).padding(20.dp)
+        androidx.compose.foundation.layout.Box(dialog) {
+            dev.finalish.ui.browser.BulkFieldDialogContent(skippedFolders = true, isStatus = true, fields = fields, onStatus = { _, _ -> }, onRating = { _, _ -> })
+        }
+        androidx.compose.foundation.layout.Spacer(Modifier.height(12.dp))
+        androidx.compose.foundation.layout.Box(dialog) {
+            dev.finalish.ui.browser.BulkFieldDialogContent(skippedFolders = false, isStatus = false, fields = fields, onStatus = { _, _ -> }, onRating = { _, _ -> })
         }
         androidx.compose.foundation.layout.Spacer(Modifier.height(16.dp))
         androidx.compose.foundation.layout.Box(Modifier.fillMaxWidth().clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)).background(Palette.Surface1).padding(top = 16.dp)) {
