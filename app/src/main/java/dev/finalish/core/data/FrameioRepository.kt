@@ -346,8 +346,9 @@ class FrameioRepository(
         asset.parentId?.let { invalidateFolder(account, it) }
     }
 
+    /** Copies a file, folder or version stack (each has its own copy endpoint). */
     suspend fun copy(account: String, asset: Asset, destination: String) {
-        val r = api.copyFile(account, asset.id, body { putJsonObject("data") { put("parent_id", destination) } })
+        val r = api.copyAsset(account, FrameioApi.kindPath(asset.type), asset.id, body { putJsonObject("data") { put("parent_id", destination) } })
         if (!r.isSuccessful) throw retrofit2.HttpException(r)
         invalidateFolder(account, destination)
     }

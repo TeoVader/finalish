@@ -179,13 +179,6 @@ interface FrameioApi {
         @Body body: JsonObject,
     ): DataEnvelope<Asset>
 
-    @POST("accounts/{account}/files/{id}/copy")
-    suspend fun copyFile(
-        @Path("account") account: String,
-        @Path("id") id: String,
-        @Body body: JsonObject,
-    ): Response<Unit>
-
     @DELETE("accounts/{account}/{kind}/{id}")
     suspend fun delete(
         @Path("account") account: String,
