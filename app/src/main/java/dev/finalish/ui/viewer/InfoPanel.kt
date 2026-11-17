@@ -564,6 +564,7 @@ fun VersionsPanel(
                     Text(
                         stringResource(R.string.viewer_versions_reorder_hint),
                         style = MaterialTheme.typography.bodySmall, color = Palette.TextTertiary,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         modifier = Modifier.padding(top = 10.dp),
                     )
                 }
