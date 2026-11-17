@@ -302,4 +302,8 @@
         <item quantity="other">Ce modèle a %1$d autres blocs, conservés tels quels.</item>
     </plurals>
     <string name="shares_template_limit">Votre forfait ne permet pas d\'autre modèle (Pro et Team en ont un). Modifiez celui que vous avez.</string>
+    <string name="members_role_account_admin_desc">Gère tout le compte : chaque espace de travail et projet, les personnes, la facturation et les réglages.</string>
+    <string name="members_role_member_desc">Travaille dans les espaces de travail et projets où il est invité.</string>
+    <string name="members_make_admin_title">Faire de %1$s un admin du compte ?</string>
+    <string name="members_make_admin">Faire admin</string>
 </resources>

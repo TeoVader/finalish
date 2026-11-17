@@ -298,4 +298,8 @@
         <item quantity="other">Questo modello ha altri %1$d blocchi, che restano come sono.</item>
     </plurals>
     <string name="shares_template_limit">Il tuo piano non permette altri modelli (Pro e Team ne hanno uno). Modifica quello che hai.</string>
+    <string name="members_role_account_admin_desc">Gestisce tutto l\'account: ogni workspace e progetto, le persone, la fatturazione e le impostazioni.</string>
+    <string name="members_role_member_desc">Lavora nei workspace e nei progetti a cui è invitato.</string>
+    <string name="members_make_admin_title">Rendere %1$s amministratore dell\'account?</string>
+    <string name="members_make_admin">Rendi amministratore</string>
 </resources>

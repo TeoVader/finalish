@@ -449,4 +449,17 @@
         <item quantity="many">Note définie sur %1$d fichiers</item>
         <item quantity="other">Note définie sur %1$d fichiers</item>
     </plurals>
+    <string name="browser_action_edit_fields">Modifier les champs…</string>
+    <string name="browser_bulk_fields_hint">Chaque modification s\'applique à tous les fichiers sélectionnés. Les lignes sont vides car les fichiers peuvent avoir des valeurs différentes.</string>
+    <string name="browser_bulk_no_other_fields">Ce projet n\'a pas d\'autres champs à modifier.</string>
+    <plurals name="browser_bulk_fields_title">
+        <item quantity="one">Champs de %1$d fichier</item>
+        <item quantity="many">Champs de %1$d fichiers</item>
+        <item quantity="other">Champs de %1$d fichiers</item>
+    </plurals>
+    <plurals name="browser_msg_field_set">
+        <item quantity="one">Champ défini sur %1$d fichier</item>
+        <item quantity="many">Champ défini sur %1$d fichiers</item>
+        <item quantity="other">Champ défini sur %1$d fichiers</item>
+    </plurals>
 </resources>

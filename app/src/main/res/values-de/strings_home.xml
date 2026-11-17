@@ -358,4 +358,5 @@
     </plurals>
     <string name="settings_language">Sprache</string>
     <string name="settings_language_device">Gerätesprache</string>
+    <string name="settings_account_people">Personen im Konto</string>
 </resources>

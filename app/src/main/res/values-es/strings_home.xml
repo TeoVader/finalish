@@ -369,4 +369,5 @@
     </plurals>
     <string name="settings_language">Idioma</string>
     <string name="settings_language_device">Idioma del dispositivo</string>
+    <string name="settings_account_people">Personas de la cuenta</string>
 </resources>

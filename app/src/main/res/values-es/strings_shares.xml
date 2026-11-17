@@ -302,4 +302,8 @@
         <item quantity="other">Esta plantilla tiene %1$d bloques más, que se quedan como están.</item>
     </plurals>
     <string name="shares_template_limit">Tu plan no permite más plantillas (Pro y Team tienen una). Edita la que ya tienes.</string>
+    <string name="members_role_account_admin_desc">Gestiona toda la cuenta: cada espacio de trabajo y proyecto, las personas, la facturación y los ajustes.</string>
+    <string name="members_role_member_desc">Trabaja en los espacios de trabajo y proyectos a los que está invitado.</string>
+    <string name="members_make_admin_title">¿Hacer a %1$s admin. de la cuenta?</string>
+    <string name="members_make_admin">Hacer admin.</string>
 </resources>

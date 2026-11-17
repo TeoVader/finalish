@@ -292,4 +292,8 @@
         <item quantity="other">This template has %1$d more blocks, kept as they are.</item>
     </plurals>
     <string name="shares_template_limit">Your plan has no room for another template (Pro and Team have one). Edit the one you have instead.</string>
+    <string name="members_role_account_admin_desc">Manages the whole account: every workspace and project, its people, billing and settings.</string>
+    <string name="members_role_member_desc">Can work in the workspaces and projects they\'re invited to.</string>
+    <string name="members_make_admin_title">Make %1$s an account admin?</string>
+    <string name="members_make_admin">Make admin</string>
 </resources>

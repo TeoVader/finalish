@@ -158,4 +158,20 @@ class FolderViewModelTest : ViewModelTest() {
         assertEquals(2, sent.size)
         assertTrue(sent[0].contains("""file_ids":["c1"]""") && sent[1].contains("""file_ids":["h1"]"""))
     }
+
+    @Test fun `another field goes on all files at once, and a cleared text field goes file by file`() {
+        frameio.on(metadataRoute, "{}")
+        val notes = dev.finalish.core.model.MetadataField(fieldType = "text", definitionId = "nt", name = "Notes", mutable = true)
+        vm.toggleSelect("c1")
+
+        vm.setBulkField(selection, notes, kotlinx.serialization.json.JsonPrimitive("Graded"))
+        vm.setBulkField(selection, notes, kotlinx.serialization.json.JsonArray(emptyList()))
+
+        val sent = frameio.bodies.filter { it.first == metadataRoute }.map { it.second }
+        assertEquals(3, sent.size)
+        assertTrue(sent[0], sent[0].contains("""file_ids":["c1","h1"]""") && sent[0].contains("""value":"Graded""""))
+        assertTrue(sent[1].contains("""file_ids":["c1"]""") && sent[2].contains("""file_ids":["h1"]"""))
+        // The fields sheet stays open on the same selection.
+        assertEquals(setOf("c1"), vm.selection.value)
+    }
 }

@@ -302,4 +302,8 @@
         <item quantity="other">Este modelo tem mais %1$d blocos, mantidos como estão.</item>
     </plurals>
     <string name="shares_template_limit">Seu plano não permite outro modelo (Pro e Team têm um). Edite o que você já tem.</string>
+    <string name="members_role_account_admin_desc">Gerencia toda a conta: cada workspace e projeto, as pessoas, o faturamento e as configurações.</string>
+    <string name="members_role_member_desc">Trabalha nos workspaces e projetos para os quais foi convidado.</string>
+    <string name="members_make_admin_title">Tornar %1$s admin da conta?</string>
+    <string name="members_make_admin">Tornar admin</string>
 </resources>
